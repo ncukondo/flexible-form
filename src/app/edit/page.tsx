@@ -62,17 +62,17 @@ function FormItem({ errors, item, register }: { item: FormItemDefinition, regist
       {item.type === "choice_table" && (
         <div className="overflow-x-auto">
           <table className="max-w-full">
-            <thead className="overflow-auto">
+            <thead className="text-sm">
               <tr>
-                <th></th>
-                {item.scales.map(scale => (<th key="scale" className="p-2"><span className="m-auto">{scale}</span></th>))}
+                <th className="sticky top-0"></th>
+                {item.scales.map(scale => (<th key="scale" className="z-10 sticky top-0 font-normal p-2"><span className="m-auto">{scale}</span></th>))}
               </tr>
             </thead>
-            <tbody className="overflow-auto max-w-[80px]">
+            <tbody className="overflow-auto">
               {
                 item.items.map((subItemId) => (
                   <tr key={subItemId}>
-                    <th>{subItemId}</th>
+                    <th className="left-0 sticky font-normal text-sm">{subItemId}</th>
                     {item.scales.map(scale => (
                       <td key={scale} className="p-2">
                         <div className="flex justify-center items-center">
