@@ -26,7 +26,7 @@ function ErrorDisplay() {
   const schemaError = useFormDefinition(s => s.error)
   return (
     <>{(syntaxError || schemaError) &&
-      <div className="alert alert-error shadow-lg z-10 absolute bottom-2 m-4 w-[calc(100%-4rem)]">
+      <div className="alert alert-error shadow-lg z-10 absolute bottom-2 m-4 w-[calc(100%-4rem)] max-h-32 overflow-auto">
         <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
         {syntaxError && "SyntaxError: " + syntaxError}
         {schemaError && "SchemaError: " + schemaError}
@@ -49,11 +49,48 @@ function FormItem({ errors, item, register }: { item: FormItemDefinition, regist
       {item.type === "choice" && item.items.map((choice) => (
         <div key={choice}>
           <label className="label cursor-pointer justify-start gap-x-3">
-            <input type={item.multiple ? "checkbox" : "radio"} className={item.multiple ? "checkbox" : "radio"}  {...register(item.id)} value={choice} id={item.id} />
+            <input
+              type={item.multiple ? "checkbox" : "radio"}
+              className={item.multiple ? "checkbox" : "radio"}
+              {...register(item.id)}
+              value={choice}
+              id={item.id} />
             <span className="label-text">{choice}</span>
           </label>
         </div>
       ))}
+      {item.type === "choice_table" && (
+        <div className="overflow-x-auto">
+          <table className="max-w-full">
+            <thead className="overflow-auto">
+              <tr>
+                <th></th>
+                {item.scales.map(scale => (<th key="scale" className="p-2"><span className="m-auto">{scale}</span></th>))}
+              </tr>
+            </thead>
+            <tbody className="overflow-auto max-w-[80px]">
+              {
+                item.items.map((subItemId) => (
+                  <tr key={subItemId}>
+                    <th>{subItemId}</th>
+                    {item.scales.map(scale => (
+                      <td key={scale} className="p-2">
+                        <div className="flex justify-center items-center">
+                          <input
+                            type={item.multiple ? "checkbox" : "radio"}
+                            className={item.multiple ? "checkbox" : "radio"}
+                            id={subItemId}
+                            {...register(`${item.id}.${subItemId}`)} value={scale} />
+                        </div>
+                      </td>
+                    ))}
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   )
 }

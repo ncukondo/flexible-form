@@ -1,5 +1,33 @@
 import { z } from "zod";
 
+const makeSafeIdValidator = () => {
+  const sanitize = (text: string) => {
+    const percentEscape = (char: string) => `%${char.charCodeAt(0).toString(16)}`
+    const escapceNumberOnly = (text: string) => (/^\d+$/.test(text) ? `_${text}` : text);
+    return escapceNumberOnly(text)
+      .replace(/[ "#$%&'+,./:;<=>\?@\[\\\]^_`\{|\}\,]/g, percentEscape)
+
+  }
+  const duplicates = new Map<string, number>();
+  const ensureSafeId = (item: string): string => {
+    const text = sanitize(item);
+    const ok = !duplicates.has(text);
+    if (ok) {
+      duplicates.set(text, 0);
+      return text;
+    } else {
+      const count = duplicates.get(text) ?? 0;
+      return ensureSafeId(text + (count + 1).toString())
+    }
+  }
+  return ensureSafeId;
+}
+const makeNonDuplicatedSafeIds = (idSources: readonly string[]) => {
+  const ensureSafeId = makeSafeIdValidator();
+  return idSources.map(ensureSafeId);
+}
+
+
 const title = z.string().default("Untitled Form");
 const description = z.string().default("");
 
@@ -25,60 +53,48 @@ const choiceItem = basicFormItem.extend({
   multiple: z.boolean().default(false),
   items: z.string().array().refine(items => new Set(items).size === items.length, {
     message: 'Must be an array of unique strings',
-  }),
+  }).pipe(z.string().array().min(1)),
 })
-const choiceItemValueSchema = (item: z.infer<typeof formItemSchema>) => {
-  const multiple = item.type === "choice" && item.multiple;
-  const requiredValue = multiple ? z.string().array().nonempty() : z.string();
-  const optionalValue = multiple ? z.string().array().default([]) : z.string().default("")
-  const value = item.required ? requiredValue : optionalValue;
-  return value;
+const makeChoiceOptionSchema = <T extends readonly string[]>(choices: [...T], multiple: boolean, required: boolean) => {
+  const [firstChoice, secondChoice, ...restChoices] = choices.map(text => z.literal(text));
+  if (!firstChoice) return z.never();
+  const choiceItem = secondChoice ? z.union([firstChoice, secondChoice, ...restChoices]) : firstChoice;
+  const multipleChoiceValue = required ? choiceItem.array().nonempty() : z.string().array().default([]);
+  const singleChoiceValue = required ? choiceItem : choiceItem.or(z.literal("")).default("");
+  return multiple ? multipleChoiceValue : singleChoiceValue;
 }
-const radioTableItem = basicFormItem.extend({
-  type: z.literal("radio_table"),
-  items: z.string().array(),
-  sub_items: z.string().array()
-})
+const choiceItemValueSchema = (item: z.infer<typeof formItemSchema>) => {
+  if (item.type !== "choice") return z.never();
+  return makeChoiceOptionSchema(item.items, item.multiple, item.required);
+}
+const choiceTableItem = basicFormItem.extend(
+  {
+    type: z.literal("choice_table"),
+    multiple: z.boolean().default(false),
+    items: z.string().min(1).array().refine(items => new Set(items).size === items.length).pipe(z.string().array().min(1).transform(makeNonDuplicatedSafeIds)),
+    scales: z.string().array().refine(items => new Set(items).size === items.length).pipe(z.string().array().min(1)),
+  }
+)
+const choiceTableItemValueSchema = (item: z.infer<typeof formItemSchema>) => {
+  if (item.type !== "choice_table") return z.never();
+  const values = makeChoiceOptionSchema(item.scales, item.multiple, item.required);
+  const object = Object.fromEntries(item.items.map(key => [key, values] as const));
+  return z.object(object);
+}
 
 const constantItem = basicFormItem.extend({
   type: z.literal("constant"),
   value: z.string()
 })
 
-const sanitize = (text: string) => {
-  return text.replace(
-    /[&'`"<>\s \.]/g,
-    (match) => {
-      return {
-        '&': '&amp;',
-        "'": '&#x27;',
-        '`': '&#x60;',
-        '"': '&quot;',
-        '<': '&lt;',
-        '>': '&gt;',
-      }[match] ?? ""
-    }
-  )
-}
 
 
-const formItemSchema = z.union([inputItem, textAreaItem, choiceItem, constantItem]);
+const formItemSchema = z.union([inputItem, textAreaItem, choiceItem, constantItem, choiceTableItem]);
 const formItemsSchema = formItemSchema.array().transform(items => {
-  const duplicates = new Map<string, number>();
-  const ensureNotDuplicate = (item: string): string => {
-    const text = sanitize(item);
-    const ok = !duplicates.has(text);
-    if (ok) {
-      duplicates.set(text, 0);
-      return text;
-    } else {
-      const count = duplicates.get(text) ?? 0;
-      return ensureNotDuplicate(text + (count + 1).toString())
-    }
-  }
+  const ensureSafeId = makeSafeIdValidator();
   return items.map(
     item => {
-      const id = ensureNotDuplicate(item.id || item.question)
+      const id = ensureSafeId(item.id || item.question)
       return { ...item, id };
     }
   )
@@ -90,6 +106,7 @@ const makeFormItemsValueSchema = (formItemsDefinition: FormItemsDefinition | und
     "long_text": basicFormItemValueSchema,
     "choice": choiceItemValueSchema,
     "constant": basicFormItemValueSchema,
+    "choice_table": choiceTableItemValueSchema,
   } as const satisfies { [K in FormItemTypes]: unknown };
   const entries = Object.fromEntries(formItemsDefinition.map((item) => {
     const valueItem = functionDict[item.type](item);
