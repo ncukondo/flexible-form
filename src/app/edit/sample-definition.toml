@@ -2,6 +2,12 @@ title="Test Form"
 description="desctiption of form"
 
 [[items]]
+type="constant"
+question="constant_sample"
+id="constant_test"
+value="value"
+
+[[items]]
 id="id_sample"
 question="Short Text"
 required=true

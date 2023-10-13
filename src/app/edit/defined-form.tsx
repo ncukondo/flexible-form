@@ -94,7 +94,10 @@ export function DefinedForm(
         <div>{formDefinition.description}</div>
         <div>{formDefinition.items.map((item) => <FormItem register={register} errors={errors} key={item.id} item={item} />)}</div>
       </div>
-      <div className="flex justify-end p-2"><button className="btn" onClick={() => reset()}>reset</button><button className="btn">send</button></div>
+      <div className="flex justify-end p-2">
+        <button className="btn btn-ghost" onClick={() => reset()}>reset</button>
+        <button className="btn">send</button>
+      </div>
     </form>
   );
 }
