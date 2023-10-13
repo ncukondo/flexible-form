@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware'
 import { FormDefinition, safeParse as safeParseFormDefinition } from './form-definition-schema'
 import { makeDerivedConnection } from './store-utils';
-import { useTomlDerivedJson } from './store';
+import { useTomlDerivedJson } from './toml-based-definition-store';
 
 interface FormDefinitionStore {
   source: object | null;

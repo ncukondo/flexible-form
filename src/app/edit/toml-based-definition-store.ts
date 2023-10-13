@@ -3,6 +3,7 @@ import { persist, devtools } from 'zustand/middleware'
 import type { } from '@redux-devtools/extension' // required for devtools typing
 import TOML from "@ltd/j-toml";
 import { makeDerivedConnection } from './store-utils';
+import { sampleTomlDefinition } from './sample-toml-definition';
 
 interface TomlTextState {
   toml: string;
@@ -13,7 +14,7 @@ const useTomlText = create<TomlTextState>()(
     persist(
       set => ({
         setToml: (toml: string) => set({ toml }),
-        toml: ""
+        toml: sampleTomlDefinition
       }),
       { name: "tomlText", skipHydration: true }
     )

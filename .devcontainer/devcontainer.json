@@ -15,7 +15,10 @@
 	"features": {
 		"ghcr.io/devcontainers/features/github-cli:1": {
 			"version": "latest"
-		}
+		},
+		"docker-in-docker": {
+			"version": "latest"
+		  }
 	},
 	"postCreateCommand": "sudo chmod -R 777 node_modules"
 	// Features to add to the dev container. More info: https://containers.dev/features.

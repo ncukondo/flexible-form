@@ -1,4 +1,4 @@
-title="Test Form"
+export const sampleTomlDefinition = `title="Test Form"
 description="desctiption of form"
 
 [[items]]
@@ -89,7 +89,4 @@ scales=[
 " scale6",
 " scale7",
 " scale8",
-]
-
-
-
+]`

@@ -28,7 +28,7 @@ const makeNonDuplicatedSafeIds = (idSources: readonly string[]) => {
   return idSources.map(ensureSafeId);
 }
 
-const title = z.string().default("Untitled Form");
+const title = z.string().min(2).default("Untitled Form");
 const description = z.string().default("");
 
 const basicFormItem = z.object({
