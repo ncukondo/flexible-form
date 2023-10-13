@@ -22,11 +22,11 @@ const makeSafeIdValidator = () => {
   }
   return ensureSafeId;
 }
+
 const makeNonDuplicatedSafeIds = (idSources: readonly string[]) => {
   const ensureSafeId = makeSafeIdValidator();
   return idSources.map(ensureSafeId);
 }
-
 
 const title = z.string().default("Untitled Form");
 const description = z.string().default("");
@@ -38,10 +38,6 @@ const basicFormItem = z.object({
   type: z.string(),
   id: z.string().default(""),
 });
-const basicFormItemValueSchema = (item: z.infer<typeof formItemSchema>) => {
-  const value = item.required ? z.string().min(1) : z.string().default("");
-  return value;
-}
 const inputItem = basicFormItem.extend({
   type: z.literal("short_text"),
 })
@@ -55,18 +51,7 @@ const choiceItem = basicFormItem.extend({
     message: 'Must be an array of unique strings',
   }).pipe(z.string().array().min(1)),
 })
-const makeChoiceOptionSchema = <T extends readonly string[]>(choices: [...T], multiple: boolean, required: boolean) => {
-  const [firstChoice, secondChoice, ...restChoices] = choices.map(text => z.literal(text));
-  if (!firstChoice) return z.never();
-  const choiceItem = secondChoice ? z.union([firstChoice, secondChoice, ...restChoices]) : firstChoice;
-  const multipleChoiceValue = required ? choiceItem.array().nonempty() : choiceItem.array().or(z.literal(false).transform(_ => []));
-  const singleChoiceValue = required ? choiceItem : choiceItem.or(z.literal(null).transform(_ => ""));
-  return multiple ? multipleChoiceValue : singleChoiceValue;
-}
-const choiceItemValueSchema = (item: z.infer<typeof formItemSchema>) => {
-  if (item.type !== "choice") return z.never();
-  return makeChoiceOptionSchema(item.items, item.multiple, item.required);
-}
+
 const choiceTableItem = basicFormItem.extend(
   {
     type: z.literal("choice_table"),
@@ -75,21 +60,14 @@ const choiceTableItem = basicFormItem.extend(
     scales: z.string().array().refine(items => new Set(items).size === items.length).pipe(z.string().array().min(1)),
   }
 )
-const choiceTableItemValueSchema = (item: z.infer<typeof formItemSchema>) => {
-  if (item.type !== "choice_table") return z.never();
-  const values = makeChoiceOptionSchema(item.scales, item.multiple, item.required);
-  const object = Object.fromEntries(item.items.map(key => [key, values] as const));
-  return z.object(object);
-}
+
 
 const constantItem = basicFormItem.extend({
   type: z.literal("constant"),
   value: z.string()
 })
 
-
-
-const formItemSchema = z.union([inputItem, textAreaItem, choiceItem, constantItem, choiceTableItem]);
+export const formItemSchema = z.union([inputItem, textAreaItem, choiceItem, constantItem, choiceTableItem]);
 const formItemsSchema = formItemSchema.array().transform(items => {
   const ensureSafeId = makeSafeIdValidator();
   return items.map(
@@ -99,34 +77,22 @@ const formItemsSchema = formItemSchema.array().transform(items => {
     }
   )
 });
-const makeFormItemsValueSchema = (formItemsDefinition: FormItemsDefinition | undefined) => {
-  if (!formItemsDefinition) return z.object({});
-  const functionDict = {
-    "short_text": basicFormItemValueSchema,
-    "long_text": basicFormItemValueSchema,
-    "choice": choiceItemValueSchema,
-    "constant": basicFormItemValueSchema,
-    "choice_table": choiceTableItemValueSchema,
-  } as const satisfies { [K in FormItemTypes]: unknown };
-  const entries = Object.fromEntries(formItemsDefinition.map((item) => {
-    const valueItem = functionDict[item.type](item);
-    return [item.id, valueItem] as const;
-  }));
-  return z.object(entries);
-}
+
 
 const formDefinitionSchema = z.object({
   title,
   description,
   items: formItemsSchema.default([]),
 })
-type FormItemTypes = FormItemDefinition["type"];
-type FormItemsDefinition = z.infer<typeof formItemsSchema>
+
+export type FormItemTypes = FormItemDefinition["type"];
+export type FormItemsDefinition = z.infer<typeof formItemsSchema>
 type FormItemDefinition = z.infer<typeof formItemSchema>
 type FormDefinition = z.infer<typeof formDefinitionSchema>;
 type ChoiceTableItemDefinition = z.infer<typeof choiceTableItem>;
+type ChoiceItemDefinition = z.infer<typeof choiceItem>;
 
 const safeParse = (x: unknown) => formDefinitionSchema.safeParse(x);
 
-export { safeParse, makeFormItemsValueSchema };
-export type { FormDefinition, FormItemDefinition, ChoiceTableItemDefinition }
+export { safeParse };
+export type { FormDefinition, FormItemDefinition, ChoiceTableItemDefinition, ChoiceItemDefinition }

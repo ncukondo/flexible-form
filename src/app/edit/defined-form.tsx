@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldError, FieldErrors, FieldErrorsImpl, FieldValues, Merge, useForm, UseFormRegister } from "react-hook-form";
-import { ChoiceTableItemDefinition, FormDefinition, FormItemDefinition, makeFormItemsValueSchema } from "./form-definition-schema";
+import { ChoiceItemDefinition, ChoiceTableItemDefinition, FormDefinition, FormItemDefinition } from "./form-definition-schema";
+import { makeFormItemsValueSchema } from "./form-value-schema";
 
 
 function ChoiceTableFormItem({ error, item, register }: { item: ChoiceTableItemDefinition; register: UseFormRegister<any>; error: FieldError | Merge<FieldError, FieldErrorsImpl<any>> | undefined; }) {
@@ -36,6 +37,23 @@ function ChoiceTableFormItem({ error, item, register }: { item: ChoiceTableItemD
     </div>
   );
 }
+
+function ChoiceFormItem({ item, register }: { item: ChoiceItemDefinition; register: UseFormRegister<any>; }) {
+  return item.items.map((choice) => (
+    <div key={choice}>
+      <label className="label cursor-pointer justify-start gap-x-3">
+        <input
+          type={item.multiple ? "checkbox" : "radio"}
+          className={item.multiple ? "checkbox" : "radio"}
+          {...register(item.id)}
+          value={choice}
+          id={item.id} />
+        <span className="label-text">{choice}</span>
+      </label>
+    </div>
+  ))
+}
+
 function FormItem({ errors, item, register }: { item: FormItemDefinition; register: UseFormRegister<any>; errors: FieldErrors<FieldValues>; }) {
   if (item.type === "constant") {
     return <div className="text-base mt-10">{item.question}: {item.value}<input type="hidden" value={item.value} {...register(item.id)} /></div>;
@@ -48,19 +66,7 @@ function FormItem({ errors, item, register }: { item: FormItemDefinition; regist
       <div className="text-error">{error?.message?.toString()}</div>
       {item.type === "short_text" && <input {...register(item.id)} className="input input-bordered  w-full" />}
       {item.type === "long_text" && <textarea {...register(item.id)} className="textarea textarea-bordered w-full h-32" />}
-      {item.type === "choice" && item.items.map((choice) => (
-        <div key={choice}>
-          <label className="label cursor-pointer justify-start gap-x-3">
-            <input
-              type={item.multiple ? "checkbox" : "radio"}
-              className={item.multiple ? "checkbox" : "radio"}
-              {...register(item.id)}
-              value={choice}
-              id={item.id} />
-            <span className="label-text">{choice}</span>
-          </label>
-        </div>
-      ))}
+      {item.type === "choice" && <ChoiceFormItem {...{ item, register }} />}
       {item.type === "choice_table" && <ChoiceTableFormItem {...{ item, register, error }} />}
     </div>
   );
