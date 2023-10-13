@@ -73,7 +73,7 @@ function EditConfig(props: EditConfigProps) {
         <textarea className="w-full h-full textarea font-mono" {...restProps} value={toml} onChange={e => setToml?.(e.target.value)} />
         <ErrorDisplay />
       </div>
-      <div className="p-2 grid justify-items-end grid-flow-col">
+      <div className="p-2 grid justify-items-end grid-flow-col grid-cols-1 gap-4">
         {registeredValue && <button onClick={(e) => { e.preventDefault(); showUrl(registeredValue) }} className="btn">show URLs</button>}
         <button className="btn" disabled={!!error && formDefinition !== null && !isPending}>
           {registeredValue ? "update" : "register"}
