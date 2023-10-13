@@ -43,7 +43,7 @@ export default function EditByTomlForm({ defaultValues }: { defaultValues?: { [k
         <EditConfig />
         <ErrorDisplay />
       </div>
-      <div className="bg-red-100 w-full h-full p-2  max-h-[100dvh]">
+      <div className="w-full h-full p-2  max-h-[100dvh]">
         <div className="p-2  h-full">
           {formDefinition && <DefinedForm {...{ onSubmit, formDefinition, defaultValues }} />}
         </div>
