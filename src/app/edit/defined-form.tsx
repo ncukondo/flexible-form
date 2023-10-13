@@ -42,7 +42,7 @@ function FormItem({ errors, item, register }: { item: FormItemDefinition; regist
   }
   const error = item.id in errors && errors[item.id as keyof typeof errors] || undefined;
   return (
-    <div><div className="text-error">{error && JSON.stringify(Object.keys(error))}</div>
+    <div>
       <div className="text-base mt-10">{item.question}<span className="text-error">{item.required && "*"}</span></div>
       <div className="text-sm my-4">{item.description}</div>
       <div className="text-error">{error?.message?.toString()}</div>
