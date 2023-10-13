@@ -2,6 +2,7 @@ title="Test Form"
 description="desctiption of form"
 
 [[items]]
+id="id_sample"
 question="Short Text"
 required=true
 description="description for question"
@@ -44,6 +45,10 @@ items=[
   "option2",
   "option3",
   "option4",
+  "option5",
+  "option6",
+  "option7",
+  "option8",
 ]
 scales=[
   "long long long long long long long long long long scale scale1",
@@ -54,6 +59,8 @@ scales=[
 " scale6",
 " scale7",
 " scale8",
+" scale9",
+" scale10",
 ]
 
 [[items]]

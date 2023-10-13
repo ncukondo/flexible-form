@@ -4,7 +4,9 @@ import { ChoiceItemDefinition, ChoiceTableItemDefinition, FormDefinition, FormIt
 import { makeFormItemsValueSchema } from "./form-value-schema";
 
 
-function ChoiceTableFormItem({ error, item, register }: { item: ChoiceTableItemDefinition; register: UseFormRegister<any>; error: FieldError | Merge<FieldError, FieldErrorsImpl<any>> | undefined; }) {
+function ChoiceTableFormItem(
+  { error, item, register }:
+    { item: ChoiceTableItemDefinition; register: UseFormRegister<any>; error: FieldError | Merge<FieldError, FieldErrorsImpl<any>> | undefined; }) {
   return (
     <div className="overflow-x-auto">
       <table className="max-w-full table-fixed">
@@ -56,7 +58,7 @@ function ChoiceFormItem({ item, register }: { item: ChoiceItemDefinition; regist
 
 function FormItem({ errors, item, register }: { item: FormItemDefinition; register: UseFormRegister<any>; errors: FieldErrors<FieldValues>; }) {
   if (item.type === "constant") {
-    return <div className="text-base mt-10">{item.question}: {item.value}<input type="hidden" value={item.value} {...register(item.id)} /></div>;
+    return <div className="text-base mt-10">{item.question}: <input disabled={true} {...register(item.id)} className="bg-transparent" /></div>;
   }
   const error = item.id in errors && errors[item.id as keyof typeof errors] || undefined;
   return (
@@ -71,12 +73,20 @@ function FormItem({ errors, item, register }: { item: FormItemDefinition; regist
     </div>
   );
 }
-export function DefinedForm({ formDefinition, onSubmit }: { onSubmit: ((data: { [x: string]: any; }) => void) | undefined; formDefinition: FormDefinition; }) {
+export function DefinedForm(
+  {
+    formDefinition, onSubmit, defaultValues
+  }: {
+    onSubmit: ((data: { [x: string]: any; }) => void) | undefined;
+    formDefinition: FormDefinition;
+    defaultValues?: { [key: string]: string | string[] | undefined };
+  }) {
   const formItemsDefinition = formDefinition?.items;
   const formItemValidator = makeFormItemsValueSchema(formItemsDefinition);
   const {
-    register, handleSubmit, formState: { errors }
-  } = useForm({ resolver: zodResolver(formItemValidator), mode: "onBlur" });
+    register, handleSubmit, formState: { errors }, reset
+  } = useForm({ resolver: zodResolver(formItemValidator), mode: "onBlur", defaultValues });
+  console.log(defaultValues);
   return (
     <form onSubmit={handleSubmit(data => onSubmit?.(data))} className="h-full overflow-auto">
       <div>
@@ -84,7 +94,7 @@ export function DefinedForm({ formDefinition, onSubmit }: { onSubmit: ((data: { 
         <div>{formDefinition.description}</div>
         <div>{formDefinition.items.map((item) => <FormItem register={register} errors={errors} key={item.id} item={item} />)}</div>
       </div>
-      <div className="flex justify-end p-2"><button className="btn">send</button></div>
+      <div className="flex justify-end p-2"><button className="btn" onClick={() => reset()}>reset</button><button className="btn">send</button></div>
     </form>
   );
 }
