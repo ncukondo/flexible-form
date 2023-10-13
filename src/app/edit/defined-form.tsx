@@ -96,7 +96,7 @@ export function DefinedForm(
       </div>
       <div className="flex justify-end p-2">
         <button className="btn btn-ghost" onClick={() => reset()}>reset</button>
-        <button className="btn">send</button>
+        <button className="btn btn-primary">send</button>
       </div>
     </form>
   );
