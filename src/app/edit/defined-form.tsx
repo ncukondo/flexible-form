@@ -81,12 +81,12 @@ export function DefinedForm(
     formDefinition: FormDefinition;
     defaultValues?: { [key: string]: string | string[] | undefined };
   }) {
+  defaultValues = { ...Object.fromEntries(formDefinition?.items?.flatMap(item => "value" in item ? [[item.id, item.value]] : [])), ...defaultValues };
   const formItemsDefinition = formDefinition?.items;
   const formItemValidator = makeFormItemsValueSchema(formItemsDefinition);
   const {
     register, handleSubmit, formState: { errors }, reset
   } = useForm({ resolver: zodResolver(formItemValidator), mode: "onBlur", defaultValues });
-  console.log(defaultValues);
   return (
     <form onSubmit={handleSubmit(data => onSubmit?.(data))} className="h-full overflow-auto">
       <div>
