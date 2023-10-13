@@ -1,9 +1,9 @@
 'use client'
-import { useEffect } from "react";
+import { FormEventHandler, useEffect } from "react";
 import { initUseTomlText, useTomlDerivedJson, useTomlText } from "./store";
 import { useFormDefinition } from "./form-definiton-store";
-import { FormItemDefinition, makeFormItemsValueSchema } from "./form-definition-schema";
-import { FieldErrors, FieldValues, useForm, UseFormRegister } from "react-hook-form";
+import { ChoiceTableItemDefinition, FormDefinition, FormItemDefinition, makeFormItemsValueSchema } from "./form-definition-schema";
+import { FieldError, FieldErrors, FieldErrorsImpl, FieldValues, Merge, useForm, UseFormRegister } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 
@@ -35,6 +35,43 @@ function ErrorDisplay() {
     </>
   )
 }
+
+function ChoiceTableFormItem({ error, item, register }: { item: ChoiceTableItemDefinition, register: UseFormRegister<any>, error: FieldError | Merge<FieldError, FieldErrorsImpl<any>> | undefined }) {
+  return (
+    <div className="overflow-x-auto">
+      <table className="max-w-full table-fixed">
+        <thead className="text-sm">
+          <tr>
+            <th className="sticky top-0"></th>
+            {item.scales.map(scale => (<th key="scale" className="z-10 sticky top-0 font-normal p-2"><span className="m-auto">{scale}</span></th>))}
+          </tr>
+        </thead>
+        <tbody className="overflow-auto">
+          {
+            item.items.map((subItemId) => (
+              <tr key={subItemId} id={`${item.id}.${subItemId}`}>
+                <th className={`left-0 sticky font-normal text-sm ${error && subItemId in error && "text-error"}`}>
+                  {subItemId}
+                </th>
+                {item.scales.map(scale => (
+                  <td key={scale} className="p-2">
+                    <div className="flex justify-center items-center">
+                      <input
+                        type={item.multiple ? "checkbox" : "radio"}
+                        className={item.multiple ? "checkbox" : "radio"}
+                        {...register(`${item.id}.${subItemId}`)} value={scale} />
+                    </div>
+                  </td>
+                ))}
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
 function FormItem({ errors, item, register }: { item: FormItemDefinition, register: UseFormRegister<any>, errors: FieldErrors<FieldValues> }) {
   if (item.type === "constant") {
     return <div className="text-base mt-10">{item.question}: {item.value}<input type="hidden" value={item.value}  {...register(item.id)} /></div>
@@ -60,45 +97,12 @@ function FormItem({ errors, item, register }: { item: FormItemDefinition, regist
           </label>
         </div>
       ))}
-      {item.type === "choice_table" && (
-        <div className="overflow-x-auto">
-          <table className="max-w-full table-fixed">
-            <thead className="text-sm">
-              <tr>
-                <th className="sticky top-0"></th>
-                {item.scales.map(scale => (<th key="scale" className="z-10 sticky top-0 font-normal p-2"><span className="m-auto">{scale}</span></th>))}
-              </tr>
-            </thead>
-            <tbody className="overflow-auto">
-              {
-                item.items.map((subItemId) => (
-                  <tr key={subItemId} id={`${item.id}.${subItemId}`}>
-                    <th className={`left-0 sticky font-normal text-sm ${error && subItemId in error && "text-error"}`}>
-                      {subItemId}
-                    </th>
-                    {item.scales.map(scale => (
-                      <td key={scale} className="p-2">
-                        <div className="flex justify-center items-center">
-                          <input
-                            type={item.multiple ? "checkbox" : "radio"}
-                            className={item.multiple ? "checkbox" : "radio"}
-                            {...register(`${item.id}.${subItemId}`)} value={scale} />
-                        </div>
-                      </td>
-                    ))}
-                  </tr>
-                ))
-              }
-            </tbody>
-          </table>
-        </div>
-      )}
+      {item.type === "choice_table" && <ChoiceTableFormItem {...{ item, register, error }} />}
     </div>
   )
 }
 
-export default function EditForm() {
-  const formDefinition = useFormDefinition(s => s.formDefinition);
+function DefinedForm({ formDefinition, onSubmit }: { onSubmit: ((data: { [x: string]: any }) => void) | undefined, formDefinition: FormDefinition }) {
   const formItemsDefinition = formDefinition?.items;
   const formItemValidator = makeFormItemsValueSchema(formItemsDefinition);
   const {
@@ -108,6 +112,21 @@ export default function EditForm() {
     formState: { errors }
   } = useForm({ resolver: zodResolver(formItemValidator), mode: "onBlur" });
   return (
+    <form onSubmit={handleSubmit(data => onSubmit?.(data))} className="h-full overflow-auto">
+      <div>
+        <div className="text-4xl">{formDefinition.title}</div>
+        <div>{formDefinition.description}</div>
+        <div>{formDefinition.items.map((item) => <FormItem register={register} errors={errors} key={item.id} item={item} />)}</div>
+      </div>
+      <div className="flex justify-end p-2"><button className="btn">send</button></div>
+    </form>
+  )
+}
+
+export default function EditForm() {
+  const formDefinition = useFormDefinition(s => s.formDefinition);
+  const onSubmit = (data: { [key: string]: any }) => alert(JSON.stringify(data, null, 2));
+  return (
     <main className="min-h-[100dvh] grid-cols-[repeat(auto-fit,minmax(300px,1fr))] grid">
       <div className="bg-yellow-100 w-full h-full relative p-2 min-h-[50dvh]">
         <EditConfig />
@@ -115,17 +134,7 @@ export default function EditForm() {
       </div>
       <div className="bg-red-100 w-full h-full p-2  max-h-[100dvh]">
         <div className="p-2  h-full">
-          {
-            formDefinition &&
-            <form onSubmit={handleSubmit(data => alert(JSON.stringify(data, null, 2)))} className="h-full overflow-auto">
-              <div>
-                <div className="text-4xl">{formDefinition.title}</div>
-                <div>{formDefinition.description}</div>
-                <div>{formDefinition.items.map((item) => <FormItem register={register} errors={errors} key={item.id} item={item} />)}</div>
-              </div>
-              <div className="flex justify-end p-2"><button className="btn">send</button></div>
-            </form>
-          }
+          {formDefinition && <DefinedForm {...{ onSubmit, formDefinition }} />}
         </div>
       </div>
     </main>

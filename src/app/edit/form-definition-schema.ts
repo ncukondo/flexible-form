@@ -124,8 +124,9 @@ type FormItemTypes = FormItemDefinition["type"];
 type FormItemsDefinition = z.infer<typeof formItemsSchema>
 type FormItemDefinition = z.infer<typeof formItemSchema>
 type FormDefinition = z.infer<typeof formDefinitionSchema>;
+type ChoiceTableItemDefinition = z.infer<typeof choiceTableItem>;
 
 const safeParse = (x: unknown) => formDefinitionSchema.safeParse(x);
 
 export { safeParse, makeFormItemsValueSchema };
-export type { FormDefinition, FormItemDefinition }
+export type { FormDefinition, FormItemDefinition, ChoiceTableItemDefinition }
