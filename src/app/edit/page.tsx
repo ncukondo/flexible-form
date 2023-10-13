@@ -39,11 +39,12 @@ function FormItem({ errors, item, register }: { item: FormItemDefinition, regist
   if (item.type === "constant") {
     return <div className="text-base mt-10">{item.question}: {item.value}<input type="hidden" value={item.value}  {...register(item.id)} /></div>
   }
+  const error = item.id in errors && errors[item.id as keyof typeof errors] || undefined;
   return (
-    <div>
+    <div><div className="text-error">{error && JSON.stringify(Object.keys(error))}</div>
       <div className="text-base mt-10">{item.question}<span className="text-error">{item.required && "*"}</span></div>
       <div className="text-sm my-4">{item.description}</div>
-      <div className="text-error">{item.id in errors && errors[item.id as keyof typeof errors]?.message?.toString()}</div>
+      <div className="text-error">{error?.message?.toString()}</div>
       {item.type === "short_text" && <input {...register(item.id)} className="input input-bordered  w-full" />}
       {item.type === "long_text" && <textarea {...register(item.id)} className="textarea textarea-bordered w-full h-32" />}
       {item.type === "choice" && item.items.map((choice) => (
@@ -61,7 +62,7 @@ function FormItem({ errors, item, register }: { item: FormItemDefinition, regist
       ))}
       {item.type === "choice_table" && (
         <div className="overflow-x-auto">
-          <table className="max-w-full">
+          <table className="max-w-full table-fixed">
             <thead className="text-sm">
               <tr>
                 <th className="sticky top-0"></th>
@@ -71,15 +72,16 @@ function FormItem({ errors, item, register }: { item: FormItemDefinition, regist
             <tbody className="overflow-auto">
               {
                 item.items.map((subItemId) => (
-                  <tr key={subItemId}>
-                    <th className="left-0 sticky font-normal text-sm">{subItemId}</th>
+                  <tr key={subItemId} id={`${item.id}.${subItemId}`}>
+                    <th className={`left-0 sticky font-normal text-sm ${error && subItemId in error && "text-error"}`}>
+                      {subItemId}
+                    </th>
                     {item.scales.map(scale => (
                       <td key={scale} className="p-2">
                         <div className="flex justify-center items-center">
                           <input
                             type={item.multiple ? "checkbox" : "radio"}
                             className={item.multiple ? "checkbox" : "radio"}
-                            id={subItemId}
                             {...register(`${item.id}.${subItemId}`)} value={scale} />
                         </div>
                       </td>

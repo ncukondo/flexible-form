@@ -59,8 +59,8 @@ const makeChoiceOptionSchema = <T extends readonly string[]>(choices: [...T], mu
   const [firstChoice, secondChoice, ...restChoices] = choices.map(text => z.literal(text));
   if (!firstChoice) return z.never();
   const choiceItem = secondChoice ? z.union([firstChoice, secondChoice, ...restChoices]) : firstChoice;
-  const multipleChoiceValue = required ? choiceItem.array().nonempty() : z.string().array().default([]);
-  const singleChoiceValue = required ? choiceItem : choiceItem.or(z.literal("")).default("");
+  const multipleChoiceValue = required ? choiceItem.array().nonempty() : choiceItem.array().or(z.literal(false).transform(_ => []));
+  const singleChoiceValue = required ? choiceItem : choiceItem.or(z.literal(null).transform(_ => ""));
   return multiple ? multipleChoiceValue : singleChoiceValue;
 }
 const choiceItemValueSchema = (item: z.infer<typeof formItemSchema>) => {
