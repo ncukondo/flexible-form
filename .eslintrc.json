@@ -1,3 +1,35 @@
 {
-  "extends": "next/core-web-vitals"
+  "extends": ["next/core-web-vitals",
+  "plugin:import/recommended",
+  "plugin:import/typescript",
+  "plugin:import/warnings",
+  "plugin:tailwindcss/recommended", // class名を整形したりする
+  "plugin:storybook/recommended",
+  "prettier" // prettierとeslintとの衝突回避
+],
+// 追記
+// tailwind.config.js などの config ファイル、ESLint の対象外にする
+"ignorePatterns": ["*.config.js"],
+"plugins": ["unused-imports"],
+"rules": {
+  "@typescript-eslint/no-unused-vars": "off",
+  "unused-imports/no-unused-imports": "warn",
+  "tailwindcss/classnames-order": "off",
+  // import の順番をルール化
+  "import/order": [
+    "error",
+    {
+      "alphabetize": {
+        "order": "asc"
+      },
+      "groups": ["builtin", "external", "internal"]
+    }
+  ],
+  "max-len": [
+    1,
+    {
+      "code": 100
+    }
+  ]
+}
 }

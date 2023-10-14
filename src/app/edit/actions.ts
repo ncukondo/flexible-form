@@ -14,20 +14,20 @@ type RegisteredFormDefinition = {
   limited_edit_id: string;
   view_id: string;
   authorId: number | null;
-}
+};
 
 const prisma = new PrismaClient({
   log: ["query", "error", "info", "warn"],
-})
+});
 
 export async function registerFormDefinition(schema: FormDefinition) {
   const title = schema.title;
   const values: RegisteredFormDefinition = await prisma.formDefinition.create({
     data: {
       title,
-      content: schema
-    }
-  })
+      content: schema,
+    },
+  });
   revalidatePath("/");
   return values;
 }
@@ -36,16 +36,15 @@ export async function updateFormDefinition(id: string, schema: FormDefinition) {
   const title = schema.title;
   const values = await prisma.formDefinition.update({
     where: {
-      id
+      id,
     },
     data: {
       title,
-      content: schema
-    }
-  })
+      content: schema,
+    },
+  });
   revalidatePath("/");
   return values;
 }
 
-
-export type { RegisteredFormDefinition }
+export type { RegisteredFormDefinition };
