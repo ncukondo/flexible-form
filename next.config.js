@@ -7,7 +7,7 @@ const nextConfig = {
     return [
       {
         source: '/e/:id*',
-        destination: '/edit?id=:id*',
+        destination: '/edit?id_for_edit=:id*',
         permanent: true,
       },
       {
@@ -17,7 +17,7 @@ const nextConfig = {
       },
       {
         source: '/v/:id*',
-        destination: '/view?id=:id*',
+        destination: '/view?id_for_view=:id*',
         permanent: true,
       },
     ]

@@ -23,9 +23,9 @@ model FormDefinition {
   updatedAt DateTime @updatedAt
   title     String
   content   Json
-  edit_id   String   @default(dbgenerated("gen_random_uuid()"))
-  limited_edit_id   String   @default(dbgenerated("gen_random_uuid()"))
-  view_id   String   @default(dbgenerated("gen_random_uuid()"))
+  id_for_edit   String   @default(dbgenerated("gen_random_uuid()"))
+  id_for_extention   String   @default(dbgenerated("gen_random_uuid()"))
+  id_for_view   String   @default(dbgenerated("gen_random_uuid()"))
   author    User?    @relation(fields: [authorId], references: [id])
   authorId  Int?
 }

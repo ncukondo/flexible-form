@@ -13,7 +13,8 @@ export default defineConfig({
     alias: {
       "@": __dirname + "/src",
       "@components/*": __dirname + "/src/app/_components/*",
-      "@lib/*": __dirname + "/src/app/_libs/*",
+      "@lib/*": __dirname + "/src/app/_lib/*",
+      "@service/*": __dirname + "/src/app/_service/*",
     },
   },
 });
