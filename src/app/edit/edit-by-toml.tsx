@@ -1,12 +1,13 @@
 "use client";
 import { FormEvent, useEffect, useState, useTransition } from "react";
 import { initUseTomlText, useTomlDerivedJson, useTomlText } from "./toml-based-definition-store";
-import { useFormDefinition, useRegisteredFormDefinition } from "./form-definiton-store";
+import { useFormDefinition, useFormDefinitionForEdit } from "./form-definiton-store";
 import { DefinedForm } from "../_components/defined-form";
 import { FormDefinition } from "./form-definition-schema";
 import { registerFormDefinition, updateFormDefinition } from "./actions";
-import { RegisteredFormDefinition } from "../_service/db";
+import { FormDefinitionForEdit, RegisteredFormDefinition } from "../_service/db";
 import { z } from "zod";
+import { toShortUUID } from "../_lib/uuid";
 
 function useErrorMessage() {
   const { error: syntaxError } = useTomlDerivedJson(s => ({ error: s.error }));
@@ -43,12 +44,12 @@ function ErrorDisplay() {
   );
 }
 
-const registeredDefinitionToUrls = (value: RegisteredFormDefinition) => {
+const registeredDefinitionToUrls = (value: FormDefinitionForEdit) => {
   const urlBase = document.location.origin;
   return {
-    edit: `${urlBase}/e/${value.id_for_edit}`,
-    extend: `${urlBase}/l/${value.id_for_extention}`,
-    view: `${urlBase}/v/${value.id_for_view}`,
+    edit: `${urlBase}/e/${toShortUUID(value.id_for_edit)}`,
+    extend: `${urlBase}/l/${toShortUUID(value.id_for_extend)}`,
+    view: `${urlBase}/v/${toShortUUID(value.id_for_view)}`,
   };
 };
 
@@ -60,7 +61,7 @@ type EditConfigProps = Omit<
 function EditConfig(props: EditConfigProps) {
   const { toml, setToml } = useTomlText(s => ({ toml: s.toml, setToml: s.setToml }));
   const [isPending, startTransition] = useTransition();
-  const { registeredFormDefinition, setRegisteredFormDefinition } = useRegisteredFormDefinition();
+  const { formDefinitionForEdit, setFormDefinitionForEdit } = useFormDefinitionForEdit();
   const { onSubmit, ...restProps } = props;
   const formDefinition = useFormDefinition(s => s.formDefinition);
   const error = useErrorMessage();
@@ -69,17 +70,17 @@ function EditConfig(props: EditConfigProps) {
     if (formDefinition) {
       startTransition(() => {
         (async () => {
-          const value = registeredFormDefinition
-            ? await updateFormDefinition(registeredFormDefinition.id, formDefinition)
+          const value = formDefinitionForEdit
+            ? await updateFormDefinition(formDefinitionForEdit.id_for_edit, formDefinition)
             : await registerFormDefinition(formDefinition);
-          setRegisteredFormDefinition(value);
+          setFormDefinitionForEdit(value);
           const urls = registeredDefinitionToUrls(value);
           alert(JSON.stringify(urls));
         })();
       });
     }
   };
-  const showUrl = (value: RegisteredFormDefinition) => {
+  const showUrl = (value: FormDefinitionForEdit) => {
     const urls = registeredDefinitionToUrls(value);
     alert(JSON.stringify(urls));
   };
@@ -95,11 +96,11 @@ function EditConfig(props: EditConfigProps) {
         <ErrorDisplay />
       </div>
       <div className="p-2 grid justify-items-end grid-flow-col grid-cols-1 gap-4">
-        {registeredFormDefinition && (
+        {formDefinitionForEdit && (
           <button
             onClick={e => {
               e.preventDefault();
-              showUrl(registeredFormDefinition);
+              showUrl(formDefinitionForEdit);
             }}
             className="btn"
           >
@@ -107,7 +108,7 @@ function EditConfig(props: EditConfigProps) {
           </button>
         )}
         <button className="btn" disabled={!!error && formDefinition !== null && !isPending}>
-          {registeredFormDefinition ? "update" : "register"}
+          {formDefinitionForEdit ? "update" : "register"}
         </button>
       </div>
     </form>
@@ -116,17 +117,15 @@ function EditConfig(props: EditConfigProps) {
 
 type EditByTomlFormProps = {
   defaultValues?: { [key: string]: string | string[] | undefined };
-  formDefinitionForEdit?: RegisteredFormDefinition | null;
+  formDefinitionForEdit?: FormDefinitionForEdit | null;
 };
 export default function EditByTomlForm({
   defaultValues,
   formDefinitionForEdit,
 }: EditByTomlFormProps) {
   const formDefinition = useFormDefinition(s => s.formDefinition);
-  const setRegisteredFormDefinition = useRegisteredFormDefinition(
-    s => s.setRegisteredFormDefinition,
-  );
-  if (formDefinitionForEdit) setRegisteredFormDefinition(formDefinitionForEdit);
+  const setFormDefinitionForEdit = useFormDefinitionForEdit(s => s.setFormDefinitionForEdit);
+  if (formDefinitionForEdit) setFormDefinitionForEdit(formDefinitionForEdit);
   useEffect(() => {
     initUseTomlText();
     // eslint-disable-next-line react-hooks/exhaustive-deps

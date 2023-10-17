@@ -1,11 +1,12 @@
 import EditByTomlForm from "./edit-by-toml";
 import { z } from "zod";
 import { getFormDefinitionForEdit } from "@service/registered-form-definition";
+import { toUUID } from "../_lib/uuid";
 
 const extractIdForEdit = (urlParams: unknown) => {
   const res = z.object({ id_for_edit: z.string() }).safeParse(urlParams);
   if (!res.success) return null;
-  return res.data.id_for_edit;
+  return toUUID(res.data.id_for_edit);
 };
 
 const extractRegisteredFormDefinitionForEdit = async (urlParams: unknown) => {

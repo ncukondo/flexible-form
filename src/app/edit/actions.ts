@@ -17,11 +17,11 @@ export async function registerFormDefinition(schema: FormDefinition) {
   return values;
 }
 
-export async function updateFormDefinition(id: string, schema: FormDefinition) {
+export async function updateFormDefinition(id_for_edit: string, schema: FormDefinition) {
   const title = schema.title;
   const values = await db.formDefinition.update({
     where: {
-      id,
+      id_for_edit,
     },
     data: {
       title,

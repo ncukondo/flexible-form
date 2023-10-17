@@ -3,7 +3,7 @@ import { devtools } from "zustand/middleware";
 import { FormDefinition, safeParse as safeParseFormDefinition } from "./form-definition-schema";
 import { makeDerivedConnection } from "./store-utils";
 import { useTomlDerivedJson } from "./toml-based-definition-store";
-import { RegisteredFormDefinition } from "@service/db";
+import { FormDefinitionForEdit, RegisteredFormDefinition } from "@service/db";
 
 interface FormDefinitionStore {
   source: object | null;
@@ -26,18 +26,16 @@ const useFormDefinition = create<FormDefinitionStore>()(
   }),
 );
 
-interface RegisteredFormDefinitionStore {
-  registeredFormDefinition: RegisteredFormDefinition | null;
-  setRegisteredFormDefinition: (formDefinition: RegisteredFormDefinition | null) => void;
+interface FormDefinitionForEditStore {
+  formDefinitionForEdit: FormDefinitionForEdit | null;
+  setFormDefinitionForEdit: (formDefinition: FormDefinitionForEdit | null) => void;
 }
-const useRegisteredFormDefinition = create<RegisteredFormDefinitionStore>()(
+const useFormDefinitionForEdit = create<FormDefinitionForEditStore>()(
   devtools(set => {
-    const setRegisteredFormDefinition = (
-      registeredFormDefinition: RegisteredFormDefinition | null,
-    ) => {
-      set({ registeredFormDefinition });
+    const setFormDefinitionForEdit = (formDefinitionForEdit: FormDefinitionForEdit | null) => {
+      set({ formDefinitionForEdit });
     };
-    return { registeredFormDefinition: null, setRegisteredFormDefinition };
+    return { formDefinitionForEdit: null, setFormDefinitionForEdit };
   }),
 );
 
@@ -45,4 +43,4 @@ makeDerivedConnection(useTomlDerivedJson, useFormDefinition, (source, listner) =
   listner.setSource(source.jsonObject),
 );
 
-export { useFormDefinition, useRegisteredFormDefinition };
+export { useFormDefinition, useFormDefinitionForEdit };

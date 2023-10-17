@@ -24,5 +24,7 @@
   "[json]": {
     "editor.tabSize": 2,
     "editor.insertSpaces": true
-  }
+  },
+  "WillLuke.nextjs.addTypesOnSave": true,
+  "WillLuke.nextjs.hasPrompted": true
 }
