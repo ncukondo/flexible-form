@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { getFormDefinitionForView } from "@service/registered-form-definition";
 import DefinedFormViewer from "./DefinedFormViewer";
-import { safeParse } from "../edit/form-definition-schema";
+import { safeParseFormDefinitionForView } from "../edit/form-definition-schema";
 import { toUUID } from "@lib/uuid";
 
 const extractIdForView = (urlParams: unknown) => {
@@ -31,7 +31,9 @@ export default async function ViewForm({ searchParams }: { searchParams: SearchP
   const registeredFormDefinitionForEdit =
     await extractRegisteredFormDefinitionForView(searchParams);
   if (!registeredFormDefinitionForEdit) return <FormNotFound />;
-  const formDefinitionRes = safeParse(registeredFormDefinitionForEdit.content);
+  const formDefinitionRes = safeParseFormDefinitionForView(
+    registeredFormDefinitionForEdit.form_definition,
+  );
   if (!formDefinitionRes.success) return <FormNotFound />;
   const formDefinition = formDefinitionRes.data;
   return (
@@ -39,7 +41,7 @@ export default async function ViewForm({ searchParams }: { searchParams: SearchP
       defaultValues={
         extractDefaultValues(searchParams) as { [key: string]: string | string[] | undefined }
       }
-      {...{ formDefinition }}
+      {...{ formDefinition, id_for_view: registeredFormDefinitionForEdit.id_for_view }}
     />
   );
 }

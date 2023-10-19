@@ -12,14 +12,13 @@ export async function POST(request: Request) {
   const cookieStore = cookies();
   const urlRedirectTo = requestUrl.origin + "/auth/callback";
   const supabase = createRouteHandlerClient<Database>({ cookies: () => cookieStore }, supabaseInfo);
-  const { data, error } = await supabase.auth.signInWithOtp({
+  await supabase.auth.signInWithOtp({
     email,
     options: {
       emailRedirectTo: urlRedirectTo,
     },
   });
-  console.log("data", data);
-  console.error("error", error);
+  console.log("redirect to", requestUrl.origin + "/login/prompt-check");
 
-  return NextResponse.redirect(requestUrl.origin + "/login/prompt-check");
+  return NextResponse.redirect(requestUrl.origin + "/login/prompt-check", 301);
 }

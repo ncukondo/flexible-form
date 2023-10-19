@@ -1,9 +1,12 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import { FormDefinition, safeParse as safeParseFormDefinition } from "./form-definition-schema";
+import {
+  FormDefinition,
+  safeParseFormDefinition as safeParseFormDefinition,
+} from "./form-definition-schema";
 import { makeDerivedConnection } from "./store-utils";
 import { useTomlDerivedJson } from "./toml-based-definition-store";
-import { FormDefinitionForEdit, RegisteredFormDefinition } from "@service/db";
+import { FormDefinitionForEdit } from "@service/db";
 
 interface FormDefinitionStore {
   source: object | null;

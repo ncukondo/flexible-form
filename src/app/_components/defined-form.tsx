@@ -12,6 +12,7 @@ import {
   ChoiceItemDefinition,
   ChoiceTableItemDefinition,
   FormDefinition,
+  FormDefinitionForView,
   FormItemDefinition,
 } from "../edit/form-definition-schema";
 import { makeFormItemsValueSchema } from "../edit/form-value-schema";
@@ -133,7 +134,7 @@ export function DefinedForm({
   defaultValues,
 }: {
   onSubmit: ((data: { [x: string]: any }) => void) | undefined;
-  formDefinition: FormDefinition;
+  formDefinition: FormDefinitionForView;
   defaultValues?: { [key: string]: string | string[] | undefined };
 }) {
   defaultValues = {

@@ -6,7 +6,6 @@ import { DefinedForm } from "../_components/defined-form";
 import { FormDefinition } from "./form-definition-schema";
 import { registerFormDefinition, updateFormDefinition } from "./actions";
 import { FormDefinitionForEdit, RegisteredFormDefinition } from "../_service/db";
-import { z } from "zod";
 import { toShortUUID } from "../_lib/uuid";
 
 function useErrorMessage() {
@@ -53,6 +52,24 @@ const registeredDefinitionToUrls = (value: FormDefinitionForEdit) => {
   };
 };
 
+const useRegisterFormDefinition = () => {
+  const [isPending, startTransition] = useTransition();
+  const { formDefinitionForEdit, setFormDefinitionForEdit } = useFormDefinitionForEdit();
+  const registerFormDefinicion = (formDefinition: FormDefinition) => {
+    startTransition(() => {
+      (async () => {
+        const value = formDefinitionForEdit
+          ? await updateFormDefinition(formDefinitionForEdit.id_for_edit, formDefinition)
+          : await registerFormDefinition(formDefinition);
+        setFormDefinitionForEdit(value);
+        const urls = registeredDefinitionToUrls(value);
+        alert(JSON.stringify(urls));
+      })();
+    });
+  };
+  return { isPending, registerFormDefinicion };
+};
+
 type OnSubmit = (data: FormDefinition) => void;
 type EditConfigProps = Omit<
   JSX.IntrinsicElements["textarea"],
@@ -60,24 +77,15 @@ type EditConfigProps = Omit<
 > & { onSubmit?: OnSubmit };
 function EditConfig(props: EditConfigProps) {
   const { toml, setToml } = useTomlText(s => ({ toml: s.toml, setToml: s.setToml }));
-  const [isPending, startTransition] = useTransition();
-  const { formDefinitionForEdit, setFormDefinitionForEdit } = useFormDefinitionForEdit();
+  const { isPending, registerFormDefinicion } = useRegisterFormDefinition();
+  const { formDefinitionForEdit } = useFormDefinitionForEdit();
   const { onSubmit, ...restProps } = props;
   const formDefinition = useFormDefinition(s => s.formDefinition);
   const error = useErrorMessage();
   const handleOnSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (formDefinition) {
-      startTransition(() => {
-        (async () => {
-          const value = formDefinitionForEdit
-            ? await updateFormDefinition(formDefinitionForEdit.id_for_edit, formDefinition)
-            : await registerFormDefinition(formDefinition);
-          setFormDefinitionForEdit(value);
-          const urls = registeredDefinitionToUrls(value);
-          alert(JSON.stringify(urls));
-        })();
-      });
+      registerFormDefinicion(formDefinition);
     }
   };
   const showUrl = (value: FormDefinitionForEdit) => {
