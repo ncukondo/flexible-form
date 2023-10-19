@@ -26,5 +26,6 @@
     "editor.insertSpaces": true
   },
   "WillLuke.nextjs.addTypesOnSave": true,
-  "WillLuke.nextjs.hasPrompted": true
+  "WillLuke.nextjs.hasPrompted": true,
+  "testing.automaticallyOpenPeekView": "never"
 }

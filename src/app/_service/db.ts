@@ -9,7 +9,7 @@ type RegisteredFormDefinition = {
   id_for_edit: string;
   id_for_extend: string;
   id_for_view: string;
-  authorId: number | null;
+  author_uid: string | null;
 };
 type FormDefinitionForEdit = {
   createdAt: Date;

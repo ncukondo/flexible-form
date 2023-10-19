@@ -1,31 +1,24 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema", "postgresqlExtensions"]
+  binaryTargets   = ["native"]
 }
 
 datasource db {
-  provider          = "postgresql"
-  url               = env("DATABASE_URL")
-}
-
-model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  forms FormDefinition[]
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
 }
 
 model FormDefinition {
-  id        String   @id @default(dbgenerated("gen_random_uuid()"))
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title     String
-  content   Json
-  id_for_edit   String  @unique @default(dbgenerated("gen_random_uuid()"))
-  id_for_extend   String @unique  @default(dbgenerated("gen_random_uuid()"))
-  id_for_view   String  @unique @default(dbgenerated("gen_random_uuid()"))
-  author    User?    @relation(fields: [authorId], references: [id])
-  authorId  Int?
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at     DateTime @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime @updatedAt @default(now())
+  title         String
+  actions       String[]
+  form_definition       Json     @db.Json
+  author_uid      String?  @db.Uuid @default(dbgenerated("auth.uid()")) 
+  id_for_edit   String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id_for_view   String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id_for_extend String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
 }
+
