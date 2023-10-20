@@ -37,7 +37,6 @@ const basicFormItem = z.object({
   question: z.string(),
   description: z.string().default(""),
   required: z.boolean().default(false),
-  type: z.string(),
   id: z.string().default(""),
 });
 const inputItem = basicFormItem.extend({
@@ -79,7 +78,7 @@ const constantItem = basicFormItem.extend({
   value: z.string(),
 });
 
-export const formItemSchema = z.union([
+export const formItemSchema = z.discriminatedUnion("type", [
   inputItem,
   textAreaItem,
   choiceItem,

@@ -15,6 +15,7 @@ model FormDefinition {
   updated_at     DateTime @updatedAt @default(now())
   title         String
   actions       String[]
+  source        String   @default("")
   form_definition       Json     @db.Json
   author_uid      String?  @db.Uuid @default(dbgenerated("auth.uid()")) 
   id_for_edit   String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid

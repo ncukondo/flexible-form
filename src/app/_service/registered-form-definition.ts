@@ -15,6 +15,7 @@ const getFormDefinitionForEdit = async (id_for_edit: string) => {
     id_for_extend: formDefinition.id_for_extend,
     id_for_view: formDefinition.id_for_view,
     title: formDefinition.title,
+    source: formDefinition.source,
     updated_at: formDefinition.updated_at,
   };
   return formDefinitionForEdit;

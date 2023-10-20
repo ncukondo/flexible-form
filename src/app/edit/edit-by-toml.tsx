@@ -7,6 +7,7 @@ import { FormDefinition } from "./form-definition-schema";
 import { registerFormDefinition, updateFormDefinition } from "./actions";
 import { FormDefinitionForEdit, RegisteredFormDefinition } from "../_service/db";
 import { toShortUUID } from "../_lib/uuid";
+import { collapseTextChangeRangesAcrossMultipleVersions } from "typescript";
 
 function useErrorMessage() {
   const { error: syntaxError } = useTomlDerivedJson(s => ({ error: s.error }));
@@ -55,13 +56,15 @@ const registeredDefinitionToUrls = (value: FormDefinitionForEdit) => {
 const useRegisterFormDefinition = () => {
   const [isPending, startTransition] = useTransition();
   const { formDefinitionForEdit, setFormDefinitionForEdit } = useFormDefinitionForEdit();
-  const registerFormDefinicion = (formDefinition: FormDefinition) => {
+  const { setTargetId } = useTomlText(s => ({ setTargetId: s.setTargetId }));
+  const registerFormDefinicion = (formDefinition: FormDefinition, source = "") => {
     startTransition(() => {
       (async () => {
         const value = formDefinitionForEdit
-          ? await updateFormDefinition(formDefinitionForEdit.id_for_edit, formDefinition)
-          : await registerFormDefinition(formDefinition);
+          ? await updateFormDefinition(formDefinitionForEdit.id_for_edit, formDefinition, source)
+          : await registerFormDefinition(formDefinition, source);
         setFormDefinitionForEdit(value);
+        setTargetId(value.id_for_edit, source);
         const urls = registeredDefinitionToUrls(value);
         alert(JSON.stringify(urls));
       })();
@@ -85,7 +88,7 @@ function EditConfig(props: EditConfigProps) {
   const handleOnSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (formDefinition) {
-      registerFormDefinicion(formDefinition);
+      registerFormDefinicion(formDefinition, toml);
     }
   };
   const showUrl = (value: FormDefinitionForEdit) => {
@@ -135,7 +138,9 @@ export default function EditByTomlForm({
   const setFormDefinitionForEdit = useFormDefinitionForEdit(s => s.setFormDefinitionForEdit);
   if (formDefinitionForEdit) setFormDefinitionForEdit(formDefinitionForEdit);
   useEffect(() => {
-    initUseTomlText();
+    const id = formDefinitionForEdit?.id_for_edit || "";
+    const toml = formDefinitionForEdit?.source || "";
+    initUseTomlText(id, toml, formDefinitionForEdit?.form_definition as { [key: string]: any });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [useTomlText]);
   const onSubmitDefinedForm = (data: { [key: string]: any }) =>

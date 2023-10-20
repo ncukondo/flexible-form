@@ -1,4 +1,4 @@
-import { string, z } from "zod";
+import { z } from "zod";
 import { formItemSchema, FormItemsDefinition, FormItemTypes } from "./form-definition-schema";
 
 const basicFormItemValueSchema = (item: z.infer<typeof formItemSchema>) => {

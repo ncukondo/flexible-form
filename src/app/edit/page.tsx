@@ -22,14 +22,13 @@ const getUser = async () => {
   const cookieStore = cookies();
   const supabase = createServerComponentClient({ cookies: () => cookieStore }, supabaseInfo);
   const { data, error } = await supabase.auth.getUser();
-  console.log(data);
-  if (error) console.error(error);
   return data.user;
 };
 
 type SearchParams = { [key: string]: string | string[] | undefined };
 export default async function EditForm({ searchParams }: { searchParams: SearchParams }) {
   const formDefinitionForEdit = await extractRegisteredFormDefinitionForEdit(searchParams);
+
   const user = await getUser();
   return (
     <EditByTomlForm defaultValues={searchParams} formDefinitionForEdit={formDefinitionForEdit} />

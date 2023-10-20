@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { FormDefinition } from "./form-definition-schema";
 import { RegisteredFormDefinition, injectUsersToDBInServerActions } from "@service/db";
 
-export async function registerFormDefinition(schema: FormDefinition) {
+export async function registerFormDefinition(schema: FormDefinition, source = "") {
   injectUsersToDBInServerActions();
   const title = schema.title;
   const actions = schema.actions;
@@ -13,6 +13,7 @@ export async function registerFormDefinition(schema: FormDefinition) {
       data: {
         title,
         actions,
+        source,
         form_definition: schema,
       },
     });
@@ -20,7 +21,11 @@ export async function registerFormDefinition(schema: FormDefinition) {
   return values;
 }
 
-export async function updateFormDefinition(id_for_edit: string, schema: FormDefinition) {
+export async function updateFormDefinition(
+  id_for_edit: string,
+  schema: FormDefinition,
+  source = "",
+) {
   const title = schema.title;
   const actions = schema.actions;
   const values = await injectUsersToDBInServerActions().formDefinition.update({
@@ -30,6 +35,7 @@ export async function updateFormDefinition(id_for_edit: string, schema: FormDefi
     data: {
       title,
       actions,
+      source,
       form_definition: schema,
     },
   });

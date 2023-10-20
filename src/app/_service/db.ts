@@ -6,6 +6,7 @@ type RegisteredFormDefinition = {
   created_at: Date;
   updated_at: Date;
   title: string;
+  source: string;
   actions: string[];
   form_definition: Prisma.JsonValue;
   author_uid: string | null;
@@ -17,6 +18,7 @@ type FormDefinitionForEdit = {
   created_at: Date;
   updated_at: Date;
   title: string;
+  source: string;
   form_definition: Prisma.JsonValue;
   id_for_edit: string;
   id_for_extend: string;
