@@ -7,7 +7,6 @@ import { FormDefinition } from "./form-definition-schema";
 import { registerFormDefinition, updateFormDefinition } from "./actions";
 import { FormDefinitionForEdit, RegisteredFormDefinition } from "../_service/db";
 import { toShortUUID } from "../_lib/uuid";
-import { set } from "zod";
 
 function useErrorMessage() {
   const { error: syntaxError } = useTomlDerivedJson(s => ({ error: s.error }));
@@ -69,7 +68,6 @@ const useRegisterFormDefinition = () => {
         setTargetId(value.id_for_edit, source);
         const urls = registeredDefinitionToUrls(value);
         setIsPending(false);
-        alert(JSON.stringify(urls));
       })();
     });
   };
@@ -122,7 +120,14 @@ function EditConfig(props: EditConfigProps) {
           </button>
         )}
         <button className="btn" disabled={!!error && formDefinition !== null && !isPending}>
-          {formDefinitionForEdit ? "update" : "register"}
+          {isPending ? (
+            <span className="flex flex-row items-center gap-4">
+              <span className="loading loading-spinner loading-xs"></span>
+              Saving...
+            </span>
+          ) : (
+            <span>{formDefinitionForEdit ? "update" : "register"}</span>
+          )}
         </button>
       </div>
     </form>

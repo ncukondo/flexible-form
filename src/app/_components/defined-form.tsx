@@ -128,15 +128,19 @@ function FormItem({
     </div>
   );
 }
+
+type DefinedFormProps = {
+  onSubmit: ((data: { [x: string]: any }) => void) | undefined;
+  formDefinition: FormDefinitionForView;
+  defaultValues?: { [key: string]: string | string[] | undefined };
+  isPending?: boolean | undefined;
+};
 export function DefinedForm({
   formDefinition,
   onSubmit,
   defaultValues,
-}: {
-  onSubmit: ((data: { [x: string]: any }) => void) | undefined;
-  formDefinition: FormDefinitionForView;
-  defaultValues?: { [key: string]: string | string[] | undefined };
-}) {
+  isPending,
+}: DefinedFormProps) {
   defaultValues = {
     ...Object.fromEntries(
       formDefinition?.items?.flatMap(item => ("value" in item ? [[item.id, item.value]] : [])),
@@ -148,7 +152,7 @@ export function DefinedForm({
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
     reset,
   } = useForm({ resolver: zodResolver(formItemValidator), mode: "onBlur", defaultValues });
   return (
@@ -166,7 +170,15 @@ export function DefinedForm({
         <button className="btn btn-ghost" onClick={() => reset()}>
           reset
         </button>
-        <button className="btn btn-primary">send</button>
+        <button className="btn btn-primary" disabled={!isValid || isPending}>
+          {isPending ? (
+            <span className="flex flex-row items-center gap-4">
+              <span className="loading loading-spinner loading-xs"></span>Sending...
+            </span>
+          ) : (
+            "send"
+          )}
+        </button>
       </div>
     </form>
   );
