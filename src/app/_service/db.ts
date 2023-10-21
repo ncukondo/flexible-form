@@ -1,5 +1,5 @@
 import { Prisma, PrismaClient } from "@prisma/client";
-import { getUserInServerActions } from "../auth/users";
+import { getUser } from "./user";
 
 type RegisteredFormDefinition = {
   id: string;
@@ -43,9 +43,9 @@ const injectUsersToDBInServerActions = () => {
       $allModels: {
         // Enable the extension for all operations (CREATE, UPDATE, etc.)
         async $allOperations({ args, query }) {
-          const user = await getUserInServerActions();
+          const user = await getUser();
           const [, , result] = await prisma.$transaction([
-            prisma.$executeRawUnsafe(`SET LOCAL request.jwt.claim.sub TO '${user?.id ?? ""}'`),
+            prisma.$executeRawUnsafe(`SET LOCAL request.jwt.claim.sub TO '${user?.sub ?? ""}'`),
             prisma.$executeRawUnsafe(`SET LOCAL request.jwt.claim.email TO '${user?.email ?? ""}'`),
             query(args),
             prisma.$executeRawUnsafe("RESET request.jwt.claim.sub"),

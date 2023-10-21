@@ -11,6 +11,7 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@auth0/nextjs-auth0": "^3.2.0",
     "@corbado/webcomponent": "^1.0.73",
     "@hookform/resolvers": "^3.3.1",
     "@ltd/j-toml": "^1.38.0",

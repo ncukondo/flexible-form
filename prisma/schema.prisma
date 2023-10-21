@@ -17,7 +17,7 @@ model FormDefinition {
   actions       String[]
   source        String   @default("")
   form_definition       Json     @db.Json
-  author_uid      String?  @db.Uuid @default(dbgenerated("auth.uid()")) 
+  author_uid      String?  @default(dbgenerated("auth.uid()")) 
   id_for_edit   String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   id_for_view   String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   id_for_extend String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid

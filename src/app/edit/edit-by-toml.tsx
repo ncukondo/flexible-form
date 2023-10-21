@@ -7,7 +7,7 @@ import { FormDefinition } from "./form-definition-schema";
 import { registerFormDefinition, updateFormDefinition } from "./actions";
 import { FormDefinitionForEdit, RegisteredFormDefinition } from "../_service/db";
 import { toShortUUID } from "../_lib/uuid";
-import { collapseTextChangeRangesAcrossMultipleVersions } from "typescript";
+import { set } from "zod";
 
 function useErrorMessage() {
   const { error: syntaxError } = useTomlDerivedJson(s => ({ error: s.error }));
@@ -54,10 +54,12 @@ const registeredDefinitionToUrls = (value: FormDefinitionForEdit) => {
 };
 
 const useRegisterFormDefinition = () => {
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
   const { formDefinitionForEdit, setFormDefinitionForEdit } = useFormDefinitionForEdit();
   const { setTargetId } = useTomlText(s => ({ setTargetId: s.setTargetId }));
   const registerFormDefinicion = (formDefinition: FormDefinition, source = "") => {
+    setIsPending(true);
     startTransition(() => {
       (async () => {
         const value = formDefinitionForEdit
@@ -66,6 +68,7 @@ const useRegisterFormDefinition = () => {
         setFormDefinitionForEdit(value);
         setTargetId(value.id_for_edit, source);
         const urls = registeredDefinitionToUrls(value);
+        setIsPending(false);
         alert(JSON.stringify(urls));
       })();
     });
