@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { DefinedForm } from "../_components/defined-form";
+import { DefinedForm } from "../_components/features/defined-form";
 import { FormDefinitionForView } from "../edit/form-definition-schema";
 import { submitFormAction } from "./actions";
 

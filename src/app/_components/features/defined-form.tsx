@@ -14,8 +14,8 @@ import {
   FormDefinition,
   FormDefinitionForView,
   FormItemDefinition,
-} from "../edit/form-definition-schema";
-import { makeFormItemsValueSchema } from "../edit/form-value-schema";
+} from "../../edit/form-definition-schema";
+import { makeFormItemsValueSchema } from "../../edit/form-value-schema";
 
 function ChoiceTableFormItem({
   error,

@@ -2,11 +2,16 @@
 import { FormEvent, useEffect, useState, useTransition } from "react";
 import { initUseTomlText, useTomlDerivedJson, useTomlText } from "./toml-based-definition-store";
 import { useFormDefinition, useFormDefinitionForEdit } from "./form-definiton-store";
-import { DefinedForm } from "../_components/defined-form";
+import { DefinedForm } from "../_components/features/defined-form";
 import { FormDefinition } from "./form-definition-schema";
 import { registerFormDefinition, updateFormDefinition } from "./actions";
 import { FormDefinitionForEdit, RegisteredFormDefinition } from "../_service/db";
 import { toShortUUID } from "../_lib/uuid";
+import { toast } from "../_components/toast";
+import { showConfirmDialog } from "../_components/confirm-dialog";
+import Link from "next/link";
+import { CopyButton } from "../_components/copy-button";
+import { useRouter } from "next/navigation";
 
 function useErrorMessage() {
   const { error: syntaxError } = useTomlDerivedJson(s => ({ error: s.error }));
@@ -47,7 +52,6 @@ const registeredDefinitionToUrls = (value: FormDefinitionForEdit) => {
   const urlBase = document.location.origin;
   return {
     edit: `${urlBase}/e/${toShortUUID(value.id_for_edit)}`,
-    extend: `${urlBase}/l/${toShortUUID(value.id_for_extend)}`,
     view: `${urlBase}/v/${toShortUUID(value.id_for_view)}`,
   };
 };
@@ -57,6 +61,7 @@ const useRegisterFormDefinition = () => {
   const [isPending, setIsPending] = useState(false);
   const { formDefinitionForEdit, setFormDefinitionForEdit } = useFormDefinitionForEdit();
   const { setTargetId } = useTomlText(s => ({ setTargetId: s.setTargetId }));
+  const router = useRouter();
   const registerFormDefinicion = (formDefinition: FormDefinition, source = "") => {
     setIsPending(true);
     startTransition(() => {
@@ -66,12 +71,34 @@ const useRegisterFormDefinition = () => {
           : await registerFormDefinition(formDefinition, source);
         setFormDefinitionForEdit(value);
         setTargetId(value.id_for_edit, source);
-        const urls = registeredDefinitionToUrls(value);
         setIsPending(false);
+        const message = formDefinitionForEdit ? "Form was updated." : "Form was registered.";
+        if (!formDefinitionForEdit) router.replace(`/e/${toShortUUID(value.id_for_edit)}`);
+        toast(message);
       })();
     });
   };
   return { isPending, registerFormDefinicion };
+};
+
+const showUrl = async (value: FormDefinitionForEdit) => {
+  const urls = registeredDefinitionToUrls(value);
+  const content = (
+    <div className="grid grid-cols-1 gap-8">
+      {Object.entries(urls).map(([key, url]) => (
+        <div key={key} className="flex flex-col gap-2">
+          <div>Url for {key}: </div>
+          <div className="flex flex-row items-center gap-1">
+            <Link href={url} target="_blank" className="link">
+              {url}
+            </Link>
+            <CopyButton content={url} />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+  await showConfirmDialog({ content });
 };
 
 type OnSubmit = (data: FormDefinition) => void;
@@ -91,10 +118,6 @@ function EditConfig(props: EditConfigProps) {
     if (formDefinition) {
       registerFormDefinicion(formDefinition, toml);
     }
-  };
-  const showUrl = (value: FormDefinitionForEdit) => {
-    const urls = registeredDefinitionToUrls(value);
-    alert(JSON.stringify(urls));
   };
   return (
     <form className="h-full w-full grid grid-rows-[1fr,auto]" onSubmit={handleOnSubmit}>

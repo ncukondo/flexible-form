@@ -8,9 +8,8 @@ export default async function Home() {
         <h1 className="text-3xl">Flexible Form</h1>
         {user && (
           <div>
-            <div>name: {user.name}</div>
-            <div>user email: {user.email}</div>
-            <div>id: {user.sub}</div>
+            <div>You are logged in.</div>
+            <div>Your email: {user.email}</div>
           </div>
         )}
         {user && (
@@ -25,7 +24,7 @@ export default async function Home() {
         ) : (
           <>
             <div>Please Login before making form.</div>
-            <a href="/api/auth/login" className="btn btn-ghost">
+            <a href="/api/auth/login" className="btn btn-primary">
               Login
             </a>
           </>
