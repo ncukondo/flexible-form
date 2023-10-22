@@ -3,18 +3,16 @@
 import { revalidatePath } from "next/cache";
 import { FormDefinition } from "./form-definition-schema";
 import { RegisteredFormDefinition, db } from "@service/db";
-import { getUser } from "@service/user";
+import { getUser } from "../_service/user";
 
 export async function registerFormDefinition(schema: FormDefinition, source = "") {
   const title = schema.title;
   const actions = schema.actions;
-  const author_uid = (await getUser())?.sub ?? null;
   const values: RegisteredFormDefinition = await db.formDefinition.create({
     data: {
       title,
       actions,
       source,
-      author_uid,
       form_definition: schema,
     },
   });
