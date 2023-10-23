@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { FormDefinitionForView } from "../edit/form-definition-schema";
-import { injectUsersToDBInServerActions } from "@service/db";
+import { db } from "@service/db";
 import { makeFormItemsValueSchema } from "../edit/form-value-schema";
 import { sendSystemMessageMail } from "./send-mail";
 import { toShortUUID } from "../_lib/uuid";
@@ -21,8 +21,7 @@ async function submitFormAction(
   formValue: unknown,
   formDefinition: FormDefinitionForView,
 ) {
-  injectUsersToDBInServerActions();
-  const { actions } = await injectUsersToDBInServerActions().formDefinition.findUniqueOrThrow({
+  const { actions } = await db.formDefinition.findUniqueOrThrow({
     where: { id_for_view },
   });
   const { value, details } = parseValue(formValue, formDefinition);
