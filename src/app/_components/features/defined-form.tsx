@@ -156,11 +156,11 @@ type PrefilledUrlButtonProps = {
   id_for_view: string;
 };
 const PrefilledUrlButton = ({ getValues, id_for_view }: PrefilledUrlButtonProps) => {
-  const url = makePrevilledUrl(getValues(), id_for_view);
   return (
     <button
       className="btn"
       onClick={e => {
+        const url = makePrevilledUrl(getValues(), id_for_view);
         showUrl(url);
         e.preventDefault();
       }}
