@@ -11,7 +11,7 @@ type User = {
   sid: string;
 };
 
-const whilteListDomain = ["nagoya-u.ac.jp", "thers.ac.jp"];
+const whilteListDomain = ["nagoya-u.ac.jp", "thers.ac.jp", "sri-net.jp"];
 
 const getUser = async () => {
   const session = await getSession();
