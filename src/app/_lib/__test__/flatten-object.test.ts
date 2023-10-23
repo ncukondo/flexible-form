@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { urlParamToObject, objectToUrlParam } from "../search-param-to-object";
+import { flattenObject, unFlattenObject } from "../flatten-object";
 
 const testData = {
   param1: "value1",
@@ -32,11 +32,11 @@ const reversedData = {
 };
 
 test("urlParamToObject", () => {
-  const res = urlParamToObject(testData);
+  const res = unFlattenObject(testData);
   expect(res).toStrictEqual(parsedData);
 });
 
 test("objectToUrlParam", () => {
-  const res = objectToUrlParam(parsedData);
+  const res = flattenObject(parsedData);
   expect(res).toStrictEqual(reversedData);
 });

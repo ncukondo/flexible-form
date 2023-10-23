@@ -12,6 +12,7 @@ import { showConfirmDialog } from "../_components/confirm-dialog";
 import Link from "next/link";
 import { CopyButton } from "../_components/copy-button";
 import { useRouter } from "next/navigation";
+import { ParamObject } from "../_lib/flatten-object";
 
 function useErrorMessage() {
   const { error: syntaxError } = useTomlDerivedJson(s => ({ error: s.error }));
@@ -157,8 +158,13 @@ function EditConfig(props: EditConfigProps) {
   );
 }
 
+const useIdForView = () => {
+  const formDefinitionForEdit = useFormDefinitionForEdit(s => s.formDefinitionForEdit);
+  return formDefinitionForEdit?.id_for_view ?? "";
+};
+
 type EditByTomlFormProps = {
-  defaultValues?: { [key: string]: string | string[] | undefined };
+  defaultValues?: ParamObject;
   formDefinitionForEdit?: FormDefinitionForEdit | null;
 };
 export default function EditByTomlForm({
@@ -167,6 +173,7 @@ export default function EditByTomlForm({
 }: EditByTomlFormProps) {
   const formDefinition = useFormDefinition(s => s.formDefinition);
   const setFormDefinitionForEdit = useFormDefinitionForEdit(s => s.setFormDefinitionForEdit);
+  const id_for_view = useIdForView();
   if (formDefinitionForEdit) setFormDefinitionForEdit(formDefinitionForEdit);
   useEffect(() => {
     const id = formDefinitionForEdit?.id_for_edit || "";
@@ -187,7 +194,15 @@ export default function EditByTomlForm({
       <div className="w-full h-full p-2  max-h-[100dvh]">
         <div className="p-2  h-full">
           {formDefinition && (
-            <DefinedForm {...{ onSubmit: onSubmitDefinedForm, formDefinition, defaultValues }} />
+            <DefinedForm
+              {...{
+                onSubmit: onSubmitDefinedForm,
+                formDefinition,
+                defaultValues,
+                showPrefilledUrlButton: true,
+                id_for_view,
+              }}
+            />
           )}
         </div>
       </div>

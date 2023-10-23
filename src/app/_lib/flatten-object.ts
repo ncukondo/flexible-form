@@ -65,7 +65,7 @@ const removeUndefinedInArray = (obj: ParamObjectWithUndefined) => {
   return removeUndefined(obj) as ParamObject;
 };
 
-const urlParamToObject = (param: { [key: string]: string | string[] | undefined }) => {
+const unFlattenObject = (param: { [key: string]: string | string[] | undefined }) => {
   const sanitized = sanitizeData(param);
   const merge = (
     obj: ParamObject,
@@ -94,12 +94,13 @@ const urlParamToObject = (param: { [key: string]: string | string[] | undefined 
   );
 };
 
-const objectToUrlParam = (obj: ParamObject) => {
+const flattenObject = (obj: ParamObject) => {
   const flatten = (
     obj: ParamObject | readonly string[] | readonly ParamObject[],
     parentKey: string,
   ): [string, string][] => {
     return Object.entries(obj).flatMap(([k, v]) => {
+      if (!v) return [];
       const key = parentKey ? `${parentKey}.${k}` : k;
       if (typeof v === "string") {
         return [[key, v]];
@@ -110,4 +111,4 @@ const objectToUrlParam = (obj: ParamObject) => {
   return Object.fromEntries(flatten(obj, ""));
 };
 
-export { objectToUrlParam, urlParamToObject };
+export { flattenObject, unFlattenObject, type ParamObject };

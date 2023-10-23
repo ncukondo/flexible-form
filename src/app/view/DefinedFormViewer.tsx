@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { DefinedForm } from "../_components/features/defined-form";
 import { FormDefinitionForView } from "../edit/form-definition-schema";
 import { submitFormAction } from "./actions";
+import { ParamObject } from "../_lib/flatten-object";
 
 const useFormSubmission = (id_for_view: string, formDefinition: FormDefinitionForView) => {
   const [, startTransition] = useTransition();
@@ -23,7 +24,7 @@ const useFormSubmission = (id_for_view: string, formDefinition: FormDefinitionFo
 interface ViewFormProps {
   id_for_view: string;
   formDefinition: FormDefinitionForView;
-  defaultValues?: { [key: string]: string | string[] | undefined };
+  defaultValues?: ParamObject;
 }
 export default function DefinedFormViewer({
   id_for_view,
