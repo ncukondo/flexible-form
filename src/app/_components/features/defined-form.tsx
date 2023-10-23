@@ -7,6 +7,7 @@ import {
   Merge,
   useForm,
   UseFormRegister,
+  UseFormReset,
 } from "react-hook-form";
 import {
   ChoiceItemDefinition,
@@ -151,6 +152,20 @@ const showUrl = async (url: string) => {
   await showConfirmDialog({ content });
 };
 
+const ResetButton = ({ reset }: { reset: UseFormReset<ParamObject> }) => {
+  return (
+    <button
+      className="btn btn-ghost"
+      onClick={e => {
+        reset();
+        e.preventDefault();
+      }}
+    >
+      reset
+    </button>
+  );
+};
+
 type PrefilledUrlButtonProps = {
   getValues: () => ParamObject;
   id_for_view: string;
@@ -213,9 +228,7 @@ export function DefinedForm({
         </div>
       </div>
       <div className="flex justify-end p-2 gap-3">
-        <button className="btn btn-ghost" onClick={() => reset()}>
-          reset
-        </button>
+        <ResetButton reset={reset} />
         {showPrefilledUrlButton && id_for_view && (
           <PrefilledUrlButton getValues={getValues} id_for_view={id_for_view} />
         )}
