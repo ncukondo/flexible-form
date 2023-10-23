@@ -6,6 +6,7 @@ import { db } from "@service/db";
 import { makeFormItemsValueSchema } from "../edit/form-value-schema";
 import { sendSystemMessageMail } from "./send-mail";
 import { toShortUUID } from "../_lib/uuid";
+import { redirect } from "next/navigation";
 
 const parseValue = (formValue: unknown, formDefinition: FormDefinitionForView) => {
   const parsed = makeFormItemsValueSchema(formDefinition.items).parse(formValue);
@@ -50,6 +51,7 @@ async function submitFormAction(
       }),
   );
   revalidatePath("/");
+  redirect("/view/thank-you");
   return true;
 }
 
