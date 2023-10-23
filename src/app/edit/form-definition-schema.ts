@@ -4,7 +4,9 @@ const makeSafeIdValidator = () => {
   const sanitize = (text: string) => {
     const percentEscape = (char: string) => `%${char.charCodeAt(0).toString(16)}`;
     const escapceNumberOnly = (text: string) => (/^\d+$/.test(text) ? `_${text}` : text);
-    return escapceNumberOnly(text).replace(/[ "#$%&'+,./:;<=>\?@\[\\\]^`\{|\}\,]/g, percentEscape);
+    return escapceNumberOnly(text)
+      .replaceAll(" ", "_")
+      .replace(/["#$&'+,./:;<=>\?@\[\\\]^`\{|\}\,]/g, percentEscape);
   };
   const duplicates = new Map<string, number>();
   const ensureSafeId = (item: string): string => {

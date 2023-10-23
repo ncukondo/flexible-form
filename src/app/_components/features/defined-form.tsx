@@ -14,8 +14,13 @@ import {
   FormDefinition,
   FormDefinitionForView,
   FormItemDefinition,
-} from "../edit/form-definition-schema";
-import { makeFormItemsValueSchema } from "../edit/form-value-schema";
+} from "../../edit/form-definition-schema";
+import { makeFormItemsValueSchema } from "../../edit/form-value-schema";
+import { makePrevilledUrl } from "@/app/_service/urls_in_client";
+import { ParamObject } from "@/app/_lib/flatten-object";
+import { showConfirmDialog } from "../confirm-dialog";
+import Link from "next/link";
+import { CopyButton } from "../copy-button";
 
 function ChoiceTableFormItem({
   error,
@@ -33,7 +38,7 @@ function ChoiceTableFormItem({
           <tr>
             <th className="sticky top-0"></th>
             {item.scales.map(scale => (
-              <th key="scale" className="z-10 sticky top-0 font-normal p-2">
+              <th key={scale} className="z-10 sticky top-0 font-normal p-2">
                 <span className="m-auto">{scale}</span>
               </th>
             ))}
@@ -128,15 +133,59 @@ function FormItem({
     </div>
   );
 }
+
+const showUrl = async (url: string) => {
+  const content = (
+    <div className="grid grid-cols-1 gap-8">
+      <div className="flex flex-col gap-2">
+        <div>Prefilled Url</div>
+        <div className="flex flex-row items-center gap-1">
+          <CopyButton content={url} />
+          <Link href={url} target="_blank" className="link">
+            {url}
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+  await showConfirmDialog({ content });
+};
+
+type PrefilledUrlButtonProps = {
+  getValues: () => ParamObject;
+  id_for_view: string;
+};
+const PrefilledUrlButton = ({ getValues, id_for_view }: PrefilledUrlButtonProps) => {
+  const url = makePrevilledUrl(getValues(), id_for_view);
+  return (
+    <button
+      className="btn"
+      onClick={e => {
+        showUrl(url);
+        e.preventDefault();
+      }}
+    >
+      Get prefilled URL
+    </button>
+  );
+};
+
+type DefinedFormProps = {
+  onSubmit: ((data: { [x: string]: any }) => void) | undefined;
+  formDefinition: FormDefinitionForView;
+  defaultValues?: ParamObject;
+  isPending?: boolean | undefined;
+  id_for_view?: string | undefined;
+  showPrefilledUrlButton?: boolean | undefined;
+};
 export function DefinedForm({
   formDefinition,
   onSubmit,
   defaultValues,
-}: {
-  onSubmit: ((data: { [x: string]: any }) => void) | undefined;
-  formDefinition: FormDefinitionForView;
-  defaultValues?: { [key: string]: string | string[] | undefined };
-}) {
+  isPending,
+  id_for_view = "",
+  showPrefilledUrlButton = false,
+}: DefinedFormProps) {
   defaultValues = {
     ...Object.fromEntries(
       formDefinition?.items?.flatMap(item => ("value" in item ? [[item.id, item.value]] : [])),
@@ -148,7 +197,8 @@ export function DefinedForm({
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    getValues,
+    formState: { errors, isValid },
     reset,
   } = useForm({ resolver: zodResolver(formItemValidator), mode: "onBlur", defaultValues });
   return (
@@ -162,11 +212,22 @@ export function DefinedForm({
           ))}
         </div>
       </div>
-      <div className="flex justify-end p-2">
+      <div className="flex justify-end p-2 gap-3">
         <button className="btn btn-ghost" onClick={() => reset()}>
           reset
         </button>
-        <button className="btn btn-primary">send</button>
+        {showPrefilledUrlButton && id_for_view && (
+          <PrefilledUrlButton getValues={getValues} id_for_view={id_for_view} />
+        )}
+        <button className="btn btn-primary" disabled={!isValid || isPending}>
+          {isPending ? (
+            <span className="flex flex-row items-center gap-4">
+              <span className="loading loading-spinner loading-xs"></span>Sending...
+            </span>
+          ) : (
+            "send"
+          )}
+        </button>
       </div>
     </form>
   );

@@ -1,5 +1,5 @@
 import { Prisma, PrismaClient } from "@prisma/client";
-import { getUserInServerActions } from "../auth/users";
+import { getUser } from "./user";
 
 type RegisteredFormDefinition = {
   id: string;
@@ -36,20 +36,19 @@ export const prisma = new PrismaClient({
   log: ["query", "error", "info", "warn"],
 });
 
-const injectUsersToDBInServerActions = () => {
+const injectUsers = (prisma: PrismaClient) => {
   return prisma.$extends({
     query: {
       // Enable the extension for all models
       $allModels: {
         // Enable the extension for all operations (CREATE, UPDATE, etc.)
         async $allOperations({ args, query }) {
-          const user = await getUserInServerActions();
-          const [, , result] = await prisma.$transaction([
-            prisma.$executeRawUnsafe(`SET LOCAL request.jwt.claim.sub TO '${user?.id ?? ""}'`),
-            prisma.$executeRawUnsafe(`SET LOCAL request.jwt.claim.email TO '${user?.email ?? ""}'`),
+          const user = await getUser();
+          const json = user ? JSON.stringify(user) : "";
+          const [, result] = await prisma.$transaction([
+            prisma.$executeRawUnsafe(`
+              SELECT set_config('request.jwt.claim','${json}',true);`),
             query(args),
-            prisma.$executeRawUnsafe("RESET request.jwt.claim.sub"),
-            prisma.$executeRawUnsafe("RESET request.jwt.claim.email"),
           ]);
           return result;
         },
@@ -58,10 +57,11 @@ const injectUsersToDBInServerActions = () => {
   });
 };
 
+const db = injectUsers(prisma);
+
 export {
   type RegisteredFormDefinition,
   type FormDefinitionForEdit,
   type FormDefinitionForView,
-  prisma as db,
-  injectUsersToDBInServerActions,
+  db,
 };

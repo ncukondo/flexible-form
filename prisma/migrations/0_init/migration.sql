@@ -40,6 +40,16 @@ CREATE EXTENSION IF NOT EXISTS "supabase_vault" WITH SCHEMA vault;
 -- Name: email(); Type: FUNCTION; Schema: auth; Owner: -
 --
 
+CREATE FUNCTION auth.jwt() RETURNS jsonb
+    LANGUAGE sql STABLE
+    AS $$
+  select 
+    coalesce(
+        nullif(current_setting('request.jwt.claim', true), ''),
+        nullif(current_setting('request.jwt.claims', true), '')
+    )::jsonb
+$$;
+
 CREATE FUNCTION auth.email() RETURNS text
     LANGUAGE sql STABLE
     AS $$
