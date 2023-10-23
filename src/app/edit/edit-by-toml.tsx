@@ -90,10 +90,10 @@ const showUrl = async (value: FormDefinitionForEdit) => {
         <div key={key} className="flex flex-col gap-2">
           <div>Url for {key}: </div>
           <div className="flex flex-row items-center gap-1">
+            <CopyButton content={url} />
             <Link href={url} target="_blank" className="link">
               {url}
             </Link>
-            <CopyButton content={url} />
           </div>
         </div>
       ))}
