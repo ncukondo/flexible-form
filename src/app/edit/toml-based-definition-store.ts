@@ -1,46 +1,77 @@
-import { create } from "zustand";
+import { create, createStore } from "zustand";
 import { persist, devtools } from "zustand/middleware";
 import type {} from "@redux-devtools/extension"; // required for devtools typing
 import TOML from "@ltd/j-toml";
 import { makeDerivedConnection } from "./store-utils";
 import { sampleTomlDefinition } from "./sample-toml-definition";
 
-interface TomlTextState {
-  toml: string;
+const tomlTextDictKey = "toml-text-dict";
+interface TomlTextDictState {
+  tomlDict: { [key: string]: string };
   targetId: string;
-  setToml: (text: string) => void;
-  setTargetId: (targetId: string, tomlForId?: string) => void;
+  currentInitialToml: string;
+  setTargetId: (targetId: string) => void;
+  setCurrentInitialToml: (toml: string | { [key: string]: any }) => void;
+  reset: () => void;
+  setToml: (toml: string) => void;
+  getToml: () => string;
 }
-const useTomlText = create<TomlTextState>()(
+const keyPrefix = "toml-text-";
+
+const useTomlTextDict = create<TomlTextDictState>()(
   devtools(
     persist(
-      (set, get) => ({
-        setToml: (toml: string) => set({ toml }),
-        setTargetId: (targetId: string, tomlForId = "") => {
-          if (get().targetId === targetId) return;
-          set({ targetId });
-          if (tomlForId) {
-            set({ toml: tomlForId });
-          } else if (!tomlForId) {
-            set({ toml: sampleTomlDefinition }); // set sample toml if toml is empty
-          }
-        },
-        targetId: "",
-        toml: sampleTomlDefinition,
-      }),
-      { name: "tomlText", skipHydration: true },
+      (set, get) => {
+        const key = () => keyPrefix + get().targetId;
+        return {
+          setTargetId: (targetId: string) => set({ targetId }),
+          setCurrentInitialToml: (toml: string | { [key: string]: any }) => {
+            const currentInitialToml =
+              typeof toml === "string" ? toml : TOML.stringify(toml, { newline: "\n" });
+            set({ currentInitialToml });
+          },
+          getToml: () => {
+            const tomlDict = get().tomlDict;
+            return Object.hasOwn(tomlDict, key()) ? tomlDict[key()] : get().currentInitialToml;
+          },
+          setToml: (toml: string) => {
+            const tomlDict = get().tomlDict;
+            set({ tomlDict: { ...tomlDict, [key()]: toml } });
+          },
+          reset: () => {
+            const tomlDict = get().tomlDict;
+            delete tomlDict[key()];
+            set({ tomlDict });
+          },
+          currentInitialToml: "",
+          targetId: "",
+          tomlDict: {},
+        };
+      },
+      {
+        name: tomlTextDictKey,
+        skipHydration: true,
+        partialize: state => ({ tomlDict: state.tomlDict }),
+      },
     ),
   ),
 );
-const initUseTomlText = (
-  targetId = "",
-  tomlForId = "",
-  tomlAsObject: null | { [key: string]: any } = null,
+const initTomlTextDict = (
+  targetId: string,
+  inititialTomlForId: string | { [key: string]: any },
 ) => {
-  const toml =
-    tomlForId || (tomlAsObject !== null ? TOML.stringify(tomlAsObject, { newline: "\n" }) : "");
-  useTomlText.persist.rehydrate();
-  useTomlText.getState().setTargetId(targetId, toml);
+  useTomlTextDict.persist.rehydrate();
+  useTomlTextDict.getState().setTargetId(targetId);
+  useTomlTextDict.getState().setCurrentInitialToml(inititialTomlForId);
+};
+
+const resetTomlTextDict = (
+  targetId: string,
+  inititialTomlForId: string | { [key: string]: any },
+) => {
+  useTomlTextDict.getState().reset();
+  useTomlTextDict.getState().setTargetId(targetId);
+  useTomlTextDict.getState().setCurrentInitialToml(inititialTomlForId);
 };
 
 interface TomlDerivedJsonState {
@@ -67,8 +98,13 @@ const useTomlDerivedJson = create<TomlDerivedJsonState>()(set => {
   };
 });
 
-makeDerivedConnection(useTomlText, useTomlDerivedJson, (source, listner) =>
-  listner.setToml(source.toml),
+makeDerivedConnection(useTomlTextDict, useTomlDerivedJson, (source, listner) =>
+  listner.setToml(source.getToml()),
 );
 
-export { useTomlText, initUseTomlText, useTomlDerivedJson };
+export {
+  useTomlTextDict as useTomlText,
+  initTomlTextDict as initTomlText,
+  resetTomlTextDict as resetTomlText,
+  useTomlDerivedJson,
+};

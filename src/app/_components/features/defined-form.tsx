@@ -17,8 +17,9 @@ import {
   FormItemDefinition,
 } from "../../edit/form-definition-schema";
 import { makeFormItemsValueSchema } from "../../edit/form-value-schema";
-import { makePrevilledUrl } from "@/app/_service/urls_in_client";
-import { ParamObject } from "@/app/_lib/flatten-object";
+import "@service/url/init-client-url";
+import { makePrevilledUrl } from "@service/url";
+import { ParamObject } from "@lib/flatten-object";
 import { showConfirmDialog } from "../confirm-dialog";
 import Link from "next/link";
 import { CopyButton } from "../copy-button";
