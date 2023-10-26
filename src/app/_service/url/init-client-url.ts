@@ -1,5 +1,5 @@
-import { initCurrentUrl } from ".";
+import { setCurrentUrlGetter } from ".";
 
 const url = typeof window !== "undefined" ? window.location.href : "";
 
-initCurrentUrl(url);
+setCurrentUrlGetter(() => new URL(typeof window !== "undefined" ? window.location.href : ""));

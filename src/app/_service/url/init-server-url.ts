@@ -1,10 +1,4 @@
 import { headers } from "next/headers";
-import { initCurrentUrl } from ".";
+import { setCurrentUrlGetter } from ".";
 
-const url =
-  typeof window !== "undefined"
-    ? window.location.href
-    : // set x-url header in middleware.ts
-      headers().get("x-url") || "";
-
-initCurrentUrl(url);
+setCurrentUrlGetter(() => new URL(headers().get("x-url") || ""));

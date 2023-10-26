@@ -2,17 +2,18 @@ import { ParamObject, flattenObject } from "@lib/flatten-object";
 import { toShortUUID } from "@lib/uuid";
 
 let url: null | string = null;
+let currentUrlGetter: (() => URL) | null = null;
 
-const initCurrentUrl = (url_: string) => {
-  url = url_;
+const setCurrentUrlGetter = (getter: () => URL) => {
+  currentUrlGetter = getter;
 };
 
 const currentUrl = () => {
-  if (url === null)
+  if (currentUrlGetter === null)
     throw new Error(
-      "url is not initialized. Please call initCurrentUrl(url) in url/server.ts or url/client.ts",
+      `url is not initialized. Please call import @service/url/init-client-url or @service/url/init-server-url`,
     );
-  return new URL(url);
+  return currentUrlGetter();
 };
 
 const loginUrl = () => {
@@ -38,4 +39,4 @@ const makePrevilledUrl = (values: ParamObject, id_for_view: string) => {
   return `${origin}/v/${toShortUUID(id_for_view)}?${search}`;
 };
 
-export { currentUrl, makePrevilledUrl, initCurrentUrl, loginUrl, logoutUrl };
+export { currentUrl, makePrevilledUrl, setCurrentUrlGetter, loginUrl, logoutUrl };
