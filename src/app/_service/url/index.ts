@@ -1,5 +1,4 @@
 import { ParamObject, flattenObject } from "@lib/flatten-object";
-import { toShortUUID } from "@lib/uuid";
 
 let url: null | string = null;
 let currentUrlGetter: (() => URL) | null = null;
@@ -36,7 +35,7 @@ const makePrevilledUrl = (values: ParamObject, id_for_view: string) => {
     ),
   );
   const search = new URLSearchParams(params).toString();
-  return `${origin}/v/${toShortUUID(id_for_view)}?${search}`;
+  return `${origin}/v/${id_for_view}?${search}`;
 };
 
 export { currentUrl, makePrevilledUrl, setCurrentUrlGetter, loginUrl, logoutUrl };

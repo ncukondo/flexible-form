@@ -12,7 +12,6 @@ type ModalContentMaker<T> = (
   closeWithResponse: (response: T) => void,
   colseWithoutResponse: () => void,
 ) => React.ReactNode;
-const store = createStore();
 
 type ModalProps = {
   children: React.ReactNode;

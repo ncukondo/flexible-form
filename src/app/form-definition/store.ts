@@ -1,12 +1,7 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import {
-  FormDefinition,
-  safeParseFormDefinition as safeParseFormDefinition,
-} from "./form-definition-schema";
-import { makeDerivedConnection } from "./store-utils";
-import { useTomlDerivedJson } from "./toml-based-definition-store";
-import { FormDefinitionForEdit } from "@service/db";
+import { FormDefinition, safeParseFormDefinition as safeParseFormDefinition } from "./schema";
+import { FormDefinitionForEdit } from "./server/types";
 
 interface FormDefinitionStore {
   source: object | null;
@@ -40,10 +35,6 @@ const useFormDefinitionForEdit = create<FormDefinitionForEditStore>()(
     };
     return { formDefinitionForEdit: null, setFormDefinitionForEdit };
   }),
-);
-
-makeDerivedConnection(useTomlDerivedJson, useFormDefinition, (source, listner) =>
-  listner.setSource(source.jsonObject),
 );
 
 export { useFormDefinition, useFormDefinitionForEdit };

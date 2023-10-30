@@ -24,5 +24,19 @@ model FormDefinition {
   // In supabase auth, the user id is uuid, but in other IdP like auth0, it is string.
   // auth.uid() may cause an error if it is not uuid, so use jwt()->>'sub' instead
   author_uid      String?  @default(dbgenerated("auth.jwt()->>'sub'")) 
+  permisions      FormPermission[]
 }
 
+enum FormAccessRole {
+  ADMIN
+  EDITOR
+  VIEWER
+}
+
+model FormPermission {
+  id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  FormDefinition     FormDefinition @relation(fields: [form_id], references: [id])
+  form_id            String   @db.Uuid
+  email              String
+  role               FormAccessRole
+}

@@ -23,7 +23,7 @@ const makeSafeIdValidator = () => {
   return ensureSafeId;
 };
 
-const makeNonDuplicatedSafeIds = (idSources: readonly string[]) => {
+const makeNonDuplicatedSafeIds = (idSources: readonly string[]): string[] => {
   const ensureSafeId = makeSafeIdValidator();
   return idSources.map(ensureSafeId);
 };

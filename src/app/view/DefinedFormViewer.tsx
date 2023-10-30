@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { DefinedForm } from "../_components/features/defined-form";
-import { FormDefinitionForView } from "../edit/form-definition-schema";
+import { FormDefinitionForView } from "../form-definition/schema";
 import { submitFormAction } from "./actions";
 import { ParamObject } from "../_lib/flatten-object";
 
