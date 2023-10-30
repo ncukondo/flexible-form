@@ -1,7 +1,6 @@
 import { ParamObject, flattenObject } from "@lib/flatten-object";
 import { toShortUUID } from "@lib/uuid";
 
-let url: null | string = null;
 let currentUrlGetter: (() => URL) | null = null;
 
 const setCurrentUrlGetter = (getter: () => URL) => {
