@@ -1,6 +1,11 @@
 "use client";
 import { FormEvent, useEffect, useState, useTransition } from "react";
-import { initUseTomlText, useTomlDerivedJson, useTomlText } from "./toml-based-definition-store";
+import {
+  initTomlText,
+  useTomlDerivedJson,
+  useTomlText,
+  resetTomlText,
+} from "./toml-based-definition-store";
 import { useFormDefinition, useFormDefinitionForEdit } from "./form-definiton-store";
 import { DefinedForm } from "../_components/features/defined-form";
 import { FormDefinition } from "./form-definition-schema";
@@ -13,6 +18,7 @@ import Link from "next/link";
 import { CopyButton } from "../_components/copy-button";
 import { useRouter } from "next/navigation";
 import { ParamObject } from "../_lib/flatten-object";
+import { sampleTomlDefinition } from "./sample-toml-definition";
 
 function useErrorMessage() {
   const { error: syntaxError } = useTomlDerivedJson(s => ({ error: s.error }));
@@ -61,7 +67,6 @@ const useRegisterFormDefinition = () => {
   const [, startTransition] = useTransition();
   const [isPending, setIsPending] = useState(false);
   const { formDefinitionForEdit, setFormDefinitionForEdit } = useFormDefinitionForEdit();
-  const { setTargetId } = useTomlText(s => ({ setTargetId: s.setTargetId }));
   const router = useRouter();
   const registerFormDefinicion = (formDefinition: FormDefinition, source = "") => {
     setIsPending(true);
@@ -71,7 +76,7 @@ const useRegisterFormDefinition = () => {
           ? await updateFormDefinition(formDefinitionForEdit.id_for_edit, formDefinition, source)
           : await registerFormDefinition(formDefinition, source);
         setFormDefinitionForEdit(value);
-        setTargetId(value.id_for_edit, source);
+        resetTomlText(value.id_for_edit, source);
         setIsPending(false);
         const message = formDefinitionForEdit ? "Form was updated." : "Form was registered.";
         if (!formDefinitionForEdit) router.replace(`/e/${toShortUUID(value.id_for_edit)}`);
@@ -108,7 +113,7 @@ type EditConfigProps = Omit<
   "value" | "onChange" | "onSubmit"
 > & { onSubmit?: OnSubmit };
 function EditConfig(props: EditConfigProps) {
-  const { toml, setToml } = useTomlText(s => ({ toml: s.toml, setToml: s.setToml }));
+  const { getToml, setToml } = useTomlText();
   const { isPending, registerFormDefinicion } = useRegisterFormDefinition();
   const { formDefinitionForEdit } = useFormDefinitionForEdit();
   const { onSubmit, ...restProps } = props;
@@ -117,7 +122,7 @@ function EditConfig(props: EditConfigProps) {
   const handleOnSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (formDefinition) {
-      registerFormDefinicion(formDefinition, toml);
+      registerFormDefinicion(formDefinition, getToml());
     }
   };
   return (
@@ -126,7 +131,7 @@ function EditConfig(props: EditConfigProps) {
         <textarea
           className="w-full h-full textarea font-mono"
           {...restProps}
-          value={toml}
+          value={getToml()}
           onChange={e => setToml?.(e.target.value)}
         />
         <ErrorDisplay />
@@ -177,8 +182,9 @@ export default function EditByTomlForm({
   if (formDefinitionForEdit) setFormDefinitionForEdit(formDefinitionForEdit);
   useEffect(() => {
     const id = formDefinitionForEdit?.id_for_edit || "";
-    const toml = formDefinitionForEdit?.source || "";
-    initUseTomlText(id, toml, formDefinitionForEdit?.form_definition as { [key: string]: any });
+    const toml = formDefinitionForEdit ? formDefinitionForEdit.source || "" : sampleTomlDefinition;
+    const tomlAsObject = (formDefinitionForEdit?.form_definition as { [key: string]: any }) ?? "";
+    initTomlText(id, toml || tomlAsObject);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [useTomlText]);
   const onSubmitDefinedForm = (data: { [key: string]: any }) =>

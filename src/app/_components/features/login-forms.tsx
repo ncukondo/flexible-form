@@ -1,5 +1,5 @@
 import { User, isUserInWhileListForEdit, whilteListDomain } from "@service/user";
-import { loginUrl, logoutUrl } from "@service/urls";
+import { loginUrl, logoutUrl } from "@service/url";
 
 const CautionMessage = () => {
   const cautionMessage = `Only verified emails ends with ${whilteListDomain.join(
