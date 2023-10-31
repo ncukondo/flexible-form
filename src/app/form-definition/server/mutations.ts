@@ -8,7 +8,7 @@ import { getUser } from "../../_service/user";
 import { convertToClient, convertToServerId } from "./utils";
 import { getFormEditorCondition } from "./utils";
 
-export async function registerFormDefinition(schema: FormDefinition, source = "") {
+async function registerFormDefinition(schema: FormDefinition, source = "") {
   const title = schema.title;
   const { actions, ...form_definition } = schema;
   const user = await getUser();
@@ -25,7 +25,7 @@ export async function registerFormDefinition(schema: FormDefinition, source = ""
   return convertToClient(values, ["id", "id_for_edit", "id_for_view", "id_for_extend"] as const);
 }
 
-export async function updateFormDefinition(idForEdit: string, schema: FormDefinition, source = "") {
+async function updateFormDefinition(idForEdit: string, schema: FormDefinition, source = "") {
   const id_for_edit = convertToServerId(idForEdit);
   const title = schema.title;
   const { actions, ...form_definition } = schema;
@@ -44,7 +44,7 @@ export async function updateFormDefinition(idForEdit: string, schema: FormDefini
   return values;
 }
 
-export async function updateFormDefinitionEditors(idForEdit: string, editorEmails: string[]) {
+async function updateFormDefinitionEditors(idForEdit: string, editorEmails: string[]) {
   const id_for_edit = convertToServerId(idForEdit);
   const user = await getUser();
   if (!user) throw new Error("User not found");
@@ -90,4 +90,9 @@ export async function updateFormDefinitionEditors(idForEdit: string, editorEmail
   return values;
 }
 
-export type { RegisteredFormDefinition };
+export {
+  type RegisteredFormDefinition,
+  updateFormDefinitionEditors,
+  updateFormDefinition,
+  registerFormDefinition,
+};

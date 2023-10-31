@@ -1,5 +1,5 @@
+"use server";
 import { db } from "./db";
-import { FormDefinitionForEdit, FormDefinitionForView } from "./types";
 import { safeParseFormDefinitionForView } from "../schema";
 import { getUser } from "@/app/_service/user";
 import { convertToClient, convertToServerId, excludeFields, getFormEditorCondition } from "./utils";
@@ -32,6 +32,49 @@ const getFormAction = async (idForView: string) => {
   return actions;
 };
 
+const getFormUsers = async (idForEdit: string) => {
+  const id_for_edit = convertToServerId(idForEdit);
+  const user = await getUser();
+  if (!user) throw new Error("User not found");
+  const formDefinition = await db.formDefinition.findUnique({
+    ...getFormEditorCondition(id_for_edit, user.email),
+    select: {
+      permisions: {
+        select: {
+          email: true,
+          role: true,
+        },
+      },
+    },
+  });
+  if (!formDefinition) throw new Error("Form definition not found");
+  return formDefinition.permisions;
+};
+
+const getUserForms = async () => {
+  const user = await getUser();
+  if (!user) throw new Error("User not found");
+  const formDefinitions = await db.formDefinition.findMany({
+    where: {
+      permisions: {
+        some: {
+          email: user.email,
+        },
+      },
+    },
+    select: {
+      id_for_view: true,
+      id_for_edit: true,
+      title: true,
+      created_at: true,
+      updated_at: true,
+    },
+  });
+  return formDefinitions.map(formDefinition =>
+    convertToClient(formDefinition, ["id_for_view", "id_for_edit"] as const),
+  );
+};
+
 const getFormDefinitionForView = async (idForView: string) => {
   const id_for_view = convertToServerId(idForView);
   const formDefinition = await db.formDefinition.findUniqueOrThrow({
@@ -45,4 +88,10 @@ const getFormDefinitionForView = async (idForView: string) => {
   return convertToClient(formDefinition, ["id_for_view"] as const);
 };
 
-export { getFormDefinitionForEdit, getFormDefinitionForView, getFormAction };
+export {
+  getFormDefinitionForEdit,
+  getFormDefinitionForView,
+  getFormAction,
+  getFormUsers,
+  getUserForms,
+};

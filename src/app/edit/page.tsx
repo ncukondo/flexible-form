@@ -1,6 +1,6 @@
 import EditByTomlForm from "../form-definition/toml/edit-by-toml";
 import { z } from "zod";
-import { getFormDefinitionForEdit } from "@/app/form-definition/server/get";
+import { getFormDefinitionForEdit } from "@/app/form-definition/server";
 import { getUser, isUserInWhileListForEdit } from "../_service/user";
 import { LogInPage } from "../_components/features/login-forms";
 import { makeDefaultValues } from "../_service/utils";

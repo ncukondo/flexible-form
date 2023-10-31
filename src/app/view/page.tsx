@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { getFormDefinitionForView } from "@/app/form-definition/server/get";
+import { getFormDefinitionForView } from "@/app/form-definition/server";
 import DefinedFormViewer from "./DefinedFormViewer";
 import { safeParseFormDefinitionForView } from "../form-definition/schema";
 import { makeDefaultValues } from "../_service/utils";
