@@ -2,7 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { UserProvider } from "@auth0/nextjs-auth0/client";
 import { ToastProvider } from "@components/toast";
-import { ModalProvider } from "@components/modal-dialog";
+import { ModalProvider } from "@/app/_components/modal";
 import { Suspense } from "react";
 import "@service/url/init-server-url";
 

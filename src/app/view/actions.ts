@@ -4,7 +4,6 @@ import { revalidatePath } from "next/cache";
 import { FormDefinitionForView } from "../form-definition/schema";
 import { makeFormItemsValueSchema } from "../edit/form-value-schema";
 import { sendSystemMessageMail } from "./send-mail";
-import { toShortUUID } from "../form-definition/server/uuid";
 import { redirect } from "next/navigation";
 import { getFormAction } from "../form-definition/server/get";
 
