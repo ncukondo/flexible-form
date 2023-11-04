@@ -1,6 +1,6 @@
 import { Fragment, ReactNode } from "react";
 import { CloseIcon } from "./icons";
-import { showModal } from "./modal-dialog";
+import { showModal } from "./modal";
 
 type Props = {
   content: string | ReactNode;
@@ -28,7 +28,7 @@ const ConfirmDialog = ({
   primary = "",
 }: Props & { onClose: (res: string) => void }) => {
   return (
-    <>
+    <div className="modal-box">
       <Title title={title} cancel={() => onClose("")} />
       <div className="mt-2">{content}</div>
 
@@ -51,7 +51,7 @@ const ConfirmDialog = ({
           );
         })}
       </div>
-    </>
+    </div>
   );
 };
 

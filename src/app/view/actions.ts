@@ -1,12 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { FormDefinitionForView } from "../edit/form-definition-schema";
-import { db } from "@service/db";
+import { FormDefinitionForView } from "../form-definition/schema";
 import { makeFormItemsValueSchema } from "../edit/form-value-schema";
 import { sendSystemMessageMail } from "./send-mail";
-import { toShortUUID } from "../_lib/uuid";
 import { redirect } from "next/navigation";
+import { getFormAction } from "../form-definition/server/get";
 
 const parseValue = (formValue: unknown, formDefinition: FormDefinitionForView) => {
   const parsed = makeFormItemsValueSchema(formDefinition.items).parse(formValue);
@@ -18,16 +17,14 @@ const parseValue = (formValue: unknown, formDefinition: FormDefinitionForView) =
 };
 
 async function submitFormAction(
-  id_for_view: string,
+  idForView: string,
   formValue: unknown,
   formDefinition: FormDefinitionForView,
 ) {
-  const { actions } = await db.formDefinition.findUniqueOrThrow({
-    where: { id_for_view },
-  });
+  const actions = await getFormAction(idForView);
   const { value, details } = parseValue(formValue, formDefinition);
   const payload = {
-    form: toShortUUID(id_for_view),
+    form: idForView,
     title: formDefinition.title,
     description: formDefinition.description,
     value,

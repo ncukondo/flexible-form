@@ -2,8 +2,9 @@ import { create, createStore } from "zustand";
 import { persist, devtools } from "zustand/middleware";
 import type {} from "@redux-devtools/extension"; // required for devtools typing
 import TOML from "@ltd/j-toml";
-import { makeDerivedConnection } from "./store-utils";
-import { sampleTomlDefinition } from "./sample-toml-definition";
+import { makeDerivedConnection } from "../store-utils";
+import { sampleTomlDefinition } from "./sample-toml";
+import { useFormDefinition } from "../store";
 
 const tomlTextDictKey = "toml-text-dict";
 interface TomlTextDictState {
@@ -100,6 +101,10 @@ const useTomlDerivedJson = create<TomlDerivedJsonState>()(set => {
 
 makeDerivedConnection(useTomlTextDict, useTomlDerivedJson, (source, listner) =>
   listner.setToml(source.getToml()),
+);
+
+makeDerivedConnection(useTomlDerivedJson, useFormDefinition, (source, listner) =>
+  listner.setSource(source.jsonObject),
 );
 
 export {

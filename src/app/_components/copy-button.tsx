@@ -1,19 +1,33 @@
-import { toast } from "@components/toast";
-import { CopyIcon } from "./icons";
+import { CheckIcon, CopyIcon } from "./icons";
+import { useState } from "react";
 
 const copyToClip = async (text: string) => {
   await navigator.clipboard.writeText(text);
 };
 
+const wait = async (ms: number) => {
+  return new Promise(resolve => setTimeout(resolve, ms));
+};
+
 const CopyButton = ({ content, className }: { content: string; className?: string }) => {
+  const [showTooltip, setShowTooltip] = useState(false);
+
   const onClick = async () => {
     await copyToClip(content);
-    toast("Copied to clipboard");
+    setShowTooltip(true);
+    await wait(1000);
+    setShowTooltip(false);
   };
   return (
-    <button title="Copy to Clipboard" {...{ onClick, className }}>
-      <CopyIcon />
-    </button>
+    <span className={showTooltip ? "tooltip tooltip-open tooltip-info" : ""} data-tip="Copied!">
+      {showTooltip ? (
+        <CheckIcon />
+      ) : (
+        <button title="Copy to Clipboard" {...{ onClick, className }}>
+          <CopyIcon />
+        </button>
+      )}
+    </span>
   );
 };
 

@@ -1,65 +1,27 @@
 "use client";
+import "@service/url/init-client-url";
 import { FormEvent, useEffect, useState, useTransition } from "react";
-import {
-  initTomlText,
-  useTomlDerivedJson,
-  useTomlText,
-  resetTomlText,
-} from "./toml-based-definition-store";
-import { useFormDefinition, useFormDefinitionForEdit } from "./form-definiton-store";
-import { DefinedForm } from "../_components/features/defined-form";
-import { FormDefinition } from "./form-definition-schema";
-import { registerFormDefinition, updateFormDefinition } from "./actions";
-import { FormDefinitionForEdit, RegisteredFormDefinition } from "../_service/db";
-import { toShortUUID } from "../_lib/uuid";
-import { toast } from "../_components/toast";
-import { showConfirmDialog } from "../_components/confirm-dialog";
+import { initTomlText, useTomlText, resetTomlText } from "./store";
+import { useFormDefinition, useFormDefinitionForEdit } from "../store";
+import { DefinedForm } from "../../_components/features/defined-form";
+import { FormDefinition } from "../schema";
+import { registerFormDefinition, updateFormDefinition } from "../server";
+import { FormDefinitionForEdit } from "../server";
+import { toast } from "../../_components/toast";
+import { showConfirmDialog } from "../../_components/confirm-dialog";
 import Link from "next/link";
-import { CopyButton } from "../_components/copy-button";
+import { CopyButton } from "../../_components/copy-button";
 import { useRouter } from "next/navigation";
-import { ParamObject } from "../_lib/flatten-object";
-import { sampleTomlDefinition } from "./sample-toml-definition";
-
-function useErrorMessage() {
-  const { error: syntaxError } = useTomlDerivedJson(s => ({ error: s.error }));
-  const schemaError = useFormDefinition(s => s.error);
-  return (
-    (syntaxError ? "SyntaxError: " + syntaxError : "") ||
-    (schemaError ? "SchemaError: " + schemaError : "")
-  );
-}
-
-function ErrorDisplay() {
-  const error = useErrorMessage();
-  return (
-    <>
-      {error && (
-        <div className="alert alert-error shadow-lg m-2 w-[calc(100%-0.5rem)] max-h-32 overflow-auto">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="stroke-current shrink-0 h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          {error}
-        </div>
-      )}
-    </>
-  );
-}
+import { ParamObject } from "../../_lib/flatten-object";
+import { sampleTomlDefinition } from "./sample-toml";
+import { ErrorDisplay, useErrorMessage } from "./error-display";
+import { getEditUrl, getViewUrl } from "@/app/_service/url";
+import { EditPermissionButton } from "../edit-permission";
 
 const registeredDefinitionToUrls = (value: FormDefinitionForEdit) => {
-  const urlBase = document.location.origin;
   return {
-    edit: `${urlBase}/e/${toShortUUID(value.id_for_edit)}`,
-    view: `${urlBase}/v/${toShortUUID(value.id_for_view)}`,
+    edit: getEditUrl(value.id_for_edit),
+    view: getViewUrl(value.id_for_view),
   };
 };
 
@@ -79,7 +41,7 @@ const useRegisterFormDefinition = () => {
         resetTomlText(value.id_for_edit, source);
         setIsPending(false);
         const message = formDefinitionForEdit ? "Form was updated." : "Form was registered.";
-        if (!formDefinitionForEdit) router.replace(`/e/${toShortUUID(value.id_for_edit)}`);
+        if (!formDefinitionForEdit) router.replace(`/e/${value.id_for_edit}`);
         toast(message);
       })();
     });
@@ -107,16 +69,11 @@ const showUrl = async (value: FormDefinitionForEdit) => {
   await showConfirmDialog({ content });
 };
 
-type OnSubmit = (data: FormDefinition) => void;
-type EditConfigProps = Omit<
-  JSX.IntrinsicElements["textarea"],
-  "value" | "onChange" | "onSubmit"
-> & { onSubmit?: OnSubmit };
+type EditConfigProps = Omit<JSX.IntrinsicElements["textarea"], "value" | "onChange" | "onSubmit">;
 function EditConfig(props: EditConfigProps) {
   const { getToml, setToml } = useTomlText();
   const { isPending, registerFormDefinicion } = useRegisterFormDefinition();
   const { formDefinitionForEdit } = useFormDefinitionForEdit();
-  const { onSubmit, ...restProps } = props;
   const formDefinition = useFormDefinition(s => s.formDefinition);
   const error = useErrorMessage();
   const handleOnSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -130,7 +87,7 @@ function EditConfig(props: EditConfigProps) {
       <div className="h-full w-full grid grid-rows-[1fr,auto]">
         <textarea
           className="w-full h-full textarea font-mono"
-          {...restProps}
+          {...props}
           value={getToml()}
           onChange={e => setToml?.(e.target.value)}
         />
@@ -138,15 +95,18 @@ function EditConfig(props: EditConfigProps) {
       </div>
       <div className="p-2 grid justify-items-end grid-flow-col grid-cols-1 gap-4">
         {formDefinitionForEdit && (
-          <button
-            onClick={e => {
-              e.preventDefault();
-              showUrl(formDefinitionForEdit);
-            }}
-            className="btn"
-          >
-            show URLs
-          </button>
+          <>
+            <EditPermissionButton id_for_edit={formDefinitionForEdit.id_for_edit} />
+            <button
+              onClick={e => {
+                e.preventDefault();
+                showUrl(formDefinitionForEdit);
+              }}
+              className="btn"
+            >
+              show URLs
+            </button>
+          </>
         )}
         <button className="btn" disabled={!!error && formDefinition !== null && !isPending}>
           {isPending ? (
@@ -168,6 +128,19 @@ const useIdForView = () => {
   return formDefinitionForEdit?.id_for_view ?? "";
 };
 
+function handleSubmitDefinedForm(data: { [key: string]: any }) {
+  alert(JSON.stringify(data, null, 2));
+}
+
+function initTomlStore(formDefinitionForEdit: FormDefinitionForEdit | null | undefined) {
+  useEffect(() => {
+    const id = formDefinitionForEdit?.id_for_edit || "";
+    const toml = formDefinitionForEdit ? formDefinitionForEdit.source || "" : sampleTomlDefinition;
+    const tomlAsObject = (formDefinitionForEdit?.form_definition as { [key: string]: any }) ?? "";
+    initTomlText(id, toml || tomlAsObject);
+  }, [formDefinitionForEdit]);
+}
+
 type EditByTomlFormProps = {
   defaultValues?: ParamObject;
   formDefinitionForEdit?: FormDefinitionForEdit | null;
@@ -180,29 +153,18 @@ export default function EditByTomlForm({
   const setFormDefinitionForEdit = useFormDefinitionForEdit(s => s.setFormDefinitionForEdit);
   const id_for_view = useIdForView();
   if (formDefinitionForEdit) setFormDefinitionForEdit(formDefinitionForEdit);
-  useEffect(() => {
-    const id = formDefinitionForEdit?.id_for_edit || "";
-    const toml = formDefinitionForEdit ? formDefinitionForEdit.source || "" : sampleTomlDefinition;
-    const tomlAsObject = (formDefinitionForEdit?.form_definition as { [key: string]: any }) ?? "";
-    initTomlText(id, toml || tomlAsObject);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [useTomlText]);
-  const onSubmitDefinedForm = (data: { [key: string]: any }) =>
-    alert(JSON.stringify(data, null, 2));
-  const onSubmitSchemeForm = async (data: FormDefinition) => {
-    alert(JSON.stringify(data, null, 2));
-  };
+  initTomlStore(formDefinitionForEdit);
   return (
     <main className="min-h-[100dvh] grid-cols-[repeat(auto-fit,minmax(300px,1fr))] grid">
       <div className="bg-yellow-100 w-full h-full relative p-2 min-h-[50dvh]">
-        <EditConfig {...{ onSubmit: onSubmitSchemeForm }} />
+        <EditConfig />
       </div>
       <div className="w-full h-full p-2  max-h-[100dvh]">
         <div className="p-2  h-full">
           {formDefinition && (
             <DefinedForm
               {...{
-                onSubmit: onSubmitDefinedForm,
+                onSubmit: handleSubmitDefinedForm,
                 formDefinition,
                 defaultValues,
                 showPrefilledUrlButton: true,

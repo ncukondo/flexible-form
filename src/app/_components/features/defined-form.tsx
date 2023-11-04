@@ -15,7 +15,7 @@ import {
   FormDefinition,
   FormDefinitionForView,
   FormItemDefinition,
-} from "../../edit/form-definition-schema";
+} from "../../form-definition/schema";
 import { makeFormItemsValueSchema } from "../../edit/form-value-schema";
 import "@service/url/init-client-url";
 import { makePrevilledUrl } from "@service/url";

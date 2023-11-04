@@ -3,6 +3,30 @@ import { createStore } from "zustand/vanilla";
 import { useStore } from "zustand";
 import React, { useRef } from "react";
 
+type ModalProps = {
+  children: React.ReactNode;
+  isOpen: boolean;
+  onClose?: (event: React.SyntheticEvent<HTMLDialogElement, Event>) => void;
+  onCancel?: (event: React.SyntheticEvent<HTMLDialogElement, Event>) => void;
+};
+
+const Modal = ({ children, isOpen, onClose, onCancel }: ModalProps) => {
+  const ref = useRef<HTMLDialogElement>(null);
+  if (isOpen && !ref.current?.open) ref.current?.showModal();
+  if (!isOpen && ref.current?.open) ref.current?.close();
+  return (
+    <dialog
+      ref={ref}
+      className="modal [&::backdrop]:backdrop-blur-sm"
+      onClose={onClose}
+      onCancel={onCancel}
+      onClick={() => ref.current?.close()}
+    >
+      <div onClick={e => e.stopPropagation()}>{children}</div>
+    </dialog>
+  );
+};
+
 type ModalResponse<T> = { hasResponse: false } | { hasResponse: true; response: T };
 type EventProps = {
   onClose: () => void;
@@ -12,30 +36,6 @@ type ModalContentMaker<T> = (
   closeWithResponse: (response: T) => void,
   colseWithoutResponse: () => void,
 ) => React.ReactNode;
-const store = createStore();
-
-type ModalProps = {
-  children: React.ReactNode;
-  isOpen: boolean;
-  onClose?: (event: React.SyntheticEvent<HTMLDialogElement, Event>) => void;
-  onCancel?: (event: React.SyntheticEvent<HTMLDialogElement, Event>) => void;
-};
-const Modal = ({ children, isOpen, onClose, onCancel }: ModalProps) => {
-  const ref = useRef<HTMLDialogElement>(null);
-  if (isOpen && ref.current && !ref.current.open) ref.current.showModal();
-  if (!isOpen && ref.current && ref.current.open) ref.current.close();
-  return (
-    // eslint-disable-next-line tailwindcss/no-custom-classname
-    <dialog ref={ref} className="modal" onClose={onClose} onCancel={onCancel}>
-      <div className="modal-box" onClick={e => e.stopPropagation()}>
-        {children}
-      </div>
-      <form method="dialog" className="modal-backdrop">
-        <button>close</button>
-      </form>
-    </dialog>
-  );
-};
 
 type IsOpenStore = {
   isOpen: boolean;
@@ -73,10 +73,9 @@ const propsStore = createStore<PropsStore>(set => ({
 }));
 
 const ModalDialog = () => {
-  const isOpen = useStore(isOpenStore).isOpen;
-  // @ts-ignore
-  const content = useStore(contentStore).content;
-  const props = useStore(propsStore).props;
+  const isOpen = useStore(isOpenStore, s => s.isOpen);
+  const content = useStore(contentStore, s => s.content);
+  const props = useStore(propsStore, s => s.props);
   return (
     <Modal isOpen={isOpen} {...props}>
       {content}

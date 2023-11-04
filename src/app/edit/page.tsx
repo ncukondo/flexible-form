@@ -1,7 +1,6 @@
-import EditByTomlForm from "./edit-by-toml";
+import EditByTomlForm from "../form-definition/toml/edit-by-toml";
 import { z } from "zod";
-import { getFormDefinitionForEdit } from "@service/registered-form-definition";
-import { toUUID } from "@lib/uuid";
+import { getFormDefinitionForEdit } from "@/app/form-definition/server";
 import { getUser, isUserInWhileListForEdit } from "../_service/user";
 import { LogInPage } from "../_components/features/login-forms";
 import { makeDefaultValues } from "../_service/utils";
@@ -9,7 +8,7 @@ import { makeDefaultValues } from "../_service/utils";
 const extractIdForEdit = (urlParams: unknown) => {
   const res = z.object({ id_for_edit: z.string() }).safeParse(urlParams);
   if (!res.success) return null;
-  return toUUID(res.data.id_for_edit);
+  return res.data.id_for_edit;
 };
 
 const extractRegisteredFormDefinitionForEdit = async (urlParams: unknown) => {
