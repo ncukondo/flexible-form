@@ -16,7 +16,7 @@ import { ParamObject } from "../../_lib/flatten-object";
 import { sampleTomlDefinition } from "./sample-toml";
 import { ErrorDisplay, useErrorMessage } from "./error-display";
 import { getEditUrl, getViewUrl } from "@/app/_service/url";
-import { EditPermissionButton } from "../share-config";
+import { EditPermissionButton } from "../edit-permission";
 
 const registeredDefinitionToUrls = (value: FormDefinitionForEdit) => {
   return {
