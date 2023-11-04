@@ -1,6 +1,5 @@
 import { ParamObject, flattenObject } from "@lib/flatten-object";
 
-let url: null | string = null;
 let currentUrlGetter: (() => URL) | null = null;
 
 const setCurrentUrlGetter = (getter: () => URL) => {
@@ -25,17 +24,33 @@ const logoutUrl = () => {
   return currentUrl().origin + "/api/auth/logout";
 };
 
-const makePrevilledUrl = (values: ParamObject, id_for_view: string) => {
+const getEditUrl = (id_for_edit: string) => {
   const origin = currentUrl().origin;
-  console.log(values);
+  return `${origin}/form-definition/${id_for_edit}`;
+};
+
+const getViewUrl = (id_for_view: string) => {
+  const origin = currentUrl().origin;
+  return `${origin}/v/${id_for_view}`;
+};
+
+const makePrevilledUrl = (values: ParamObject, id_for_view: string) => {
   const flatten = flattenObject({ data: values as any });
   const params = Object.fromEntries(
     Object.entries(flatten).filter(
-      ([k, v]) => v !== undefined || v !== null || v !== "" || v !== false,
+      ([, v]) => v !== undefined || v !== null || v !== "" || v !== false,
     ),
   );
   const search = new URLSearchParams(params).toString();
-  return `${origin}/v/${id_for_view}?${search}`;
+  return `${getViewUrl(id_for_view)}?${search}`;
 };
 
-export { currentUrl, makePrevilledUrl, setCurrentUrlGetter, loginUrl, logoutUrl };
+export {
+  currentUrl,
+  makePrevilledUrl,
+  setCurrentUrlGetter,
+  loginUrl,
+  logoutUrl,
+  getEditUrl,
+  getViewUrl,
+};

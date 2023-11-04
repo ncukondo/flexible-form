@@ -1,4 +1,5 @@
 "use client";
+import "@service/url/init-client-url";
 import { FormEvent, useEffect, useState, useTransition } from "react";
 import { initTomlText, useTomlText, resetTomlText } from "./store";
 import { useFormDefinition, useFormDefinitionForEdit } from "../store";
@@ -14,12 +15,14 @@ import { useRouter } from "next/navigation";
 import { ParamObject } from "../../_lib/flatten-object";
 import { sampleTomlDefinition } from "./sample-toml";
 import { ErrorDisplay, useErrorMessage } from "./error-display";
+import { getEditUrl, getViewUrl } from "@/app/_service/url";
+import { LoaderIcon } from "react-hot-toast";
+import { ShareConfigButton } from "../share-config";
 
 const registeredDefinitionToUrls = (value: FormDefinitionForEdit) => {
-  const urlBase = document.location.origin;
   return {
-    edit: `${urlBase}/e/${value.id_for_edit}`,
-    view: `${urlBase}/v/${value.id_for_view}`,
+    edit: getEditUrl(value.id_for_edit),
+    view: getViewUrl(value.id_for_view),
   };
 };
 
@@ -93,15 +96,18 @@ function EditConfig(props: EditConfigProps) {
       </div>
       <div className="p-2 grid justify-items-end grid-flow-col grid-cols-1 gap-4">
         {formDefinitionForEdit && (
-          <button
-            onClick={e => {
-              e.preventDefault();
-              showUrl(formDefinitionForEdit);
-            }}
-            className="btn"
-          >
-            show URLs
-          </button>
+          <>
+            <ShareConfigButton id_for_edit={formDefinitionForEdit.id_for_edit} />
+            <button
+              onClick={e => {
+                e.preventDefault();
+                showUrl(formDefinitionForEdit);
+              }}
+              className="btn"
+            >
+              show URLs
+            </button>
+          </>
         )}
         <button className="btn" disabled={!!error && formDefinition !== null && !isPending}>
           {isPending ? (
@@ -133,8 +139,7 @@ function initTomlStore(formDefinitionForEdit: FormDefinitionForEdit | null | und
     const toml = formDefinitionForEdit ? formDefinitionForEdit.source || "" : sampleTomlDefinition;
     const tomlAsObject = (formDefinitionForEdit?.form_definition as { [key: string]: any }) ?? "";
     initTomlText(id, toml || tomlAsObject);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [useTomlText]);
+  }, [formDefinitionForEdit]);
 }
 
 type EditByTomlFormProps = {
