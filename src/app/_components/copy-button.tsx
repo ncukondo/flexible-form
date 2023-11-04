@@ -1,4 +1,4 @@
-import { CopyIcon } from "./icons";
+import { CheckIcon, CopyIcon } from "./icons";
 import { useState } from "react";
 
 const copyToClip = async (text: string) => {
@@ -20,9 +20,13 @@ const CopyButton = ({ content, className }: { content: string; className?: strin
   };
   return (
     <span className={showTooltip ? "tooltip tooltip-open tooltip-info" : ""} data-tip="Copied!">
-      <button title="Copy to Clipboard" {...{ onClick, className }}>
-        <CopyIcon />
-      </button>
+      {showTooltip ? (
+        <CheckIcon />
+      ) : (
+        <button title="Copy to Clipboard" {...{ onClick, className }}>
+          <CopyIcon />
+        </button>
+      )}
     </span>
   );
 };

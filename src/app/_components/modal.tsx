@@ -17,7 +17,7 @@ const Modal = ({ children, isOpen, onClose, onCancel }: ModalProps) => {
   return (
     <dialog
       ref={ref}
-      className="modal"
+      className="modal [&::backdrop]:backdrop-blur-sm"
       onClose={onClose}
       onCancel={onCancel}
       onClick={() => ref.current?.close()}
