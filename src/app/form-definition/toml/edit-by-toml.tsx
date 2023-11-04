@@ -16,8 +16,7 @@ import { ParamObject } from "../../_lib/flatten-object";
 import { sampleTomlDefinition } from "./sample-toml";
 import { ErrorDisplay, useErrorMessage } from "./error-display";
 import { getEditUrl, getViewUrl } from "@/app/_service/url";
-import { LoaderIcon } from "react-hot-toast";
-import { ShareConfigButton } from "../share-config";
+import { EditPermissionButton } from "../share-config";
 
 const registeredDefinitionToUrls = (value: FormDefinitionForEdit) => {
   return {
@@ -97,7 +96,7 @@ function EditConfig(props: EditConfigProps) {
       <div className="p-2 grid justify-items-end grid-flow-col grid-cols-1 gap-4">
         {formDefinitionForEdit && (
           <>
-            <ShareConfigButton id_for_edit={formDefinitionForEdit.id_for_edit} />
+            <EditPermissionButton id_for_edit={formDefinitionForEdit.id_for_edit} />
             <button
               onClick={e => {
                 e.preventDefault();

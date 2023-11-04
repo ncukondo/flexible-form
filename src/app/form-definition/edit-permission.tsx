@@ -5,7 +5,7 @@ import { useState } from "react";
 import { toast } from "@components/toast";
 import { getFormUsers, updateFormDefinitionEditors } from "./server";
 
-type ShareConfigDialogProps = {
+type EditPermissionDialogProps = {
   userEmails: string[];
   id_for_edit: string;
   onClose: () => void;
@@ -20,7 +20,7 @@ const isValidEmails = (emails: string) => {
     .every(email => re.test(email));
 };
 
-const ShareConfigDialog = ({ userEmails, id_for_edit, onClose }: ShareConfigDialogProps) => {
+const EditPermissionDialog = ({ userEmails, id_for_edit, onClose }: EditPermissionDialogProps) => {
   const [editors, setEditors] = useState(userEmails.join("\n"));
   const [isPending, setIsPending] = useState(false);
   const isValid = isValidEmails(editors);
@@ -69,17 +69,17 @@ const ShareConfigDialog = ({ userEmails, id_for_edit, onClose }: ShareConfigDial
   );
 };
 
-const showShareConfigDialog = async (id_for_edit: string) => {
+const showPermissionEditDialog = async (id_for_edit: string) => {
   const users = await getFormUsers(id_for_edit);
   const userEmails = users
     .filter(user => user.role === FormAccessRole.EDITOR)
     .map(user => user.email);
   return await showModal<void>(ok => {
-    return <ShareConfigDialog userEmails={userEmails} id_for_edit={id_for_edit} onClose={ok} />;
+    return <EditPermissionDialog userEmails={userEmails} id_for_edit={id_for_edit} onClose={ok} />;
   });
 };
 
-const ShareConfigButton = ({ id_for_edit }: { id_for_edit: string }) => {
+const EditPermissionButton = ({ id_for_edit }: { id_for_edit: string }) => {
   const [isPending, setIsPending] = useState(false);
   return isPending ? (
     <span className="flex flex-row items-center gap-4">Editing...</span>
@@ -90,7 +90,7 @@ const ShareConfigButton = ({ id_for_edit }: { id_for_edit: string }) => {
         e.preventDefault();
         setIsPending(true);
         try {
-          await showShareConfigDialog(id_for_edit);
+          await showPermissionEditDialog(id_for_edit);
         } finally {
           setIsPending(false);
         }
@@ -102,4 +102,4 @@ const ShareConfigButton = ({ id_for_edit }: { id_for_edit: string }) => {
   );
 };
 
-export { ShareConfigButton };
+export { EditPermissionButton };
