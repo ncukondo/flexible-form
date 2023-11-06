@@ -41,7 +41,7 @@ const actions = z
   .pipe(z.string().array().min(1));
 
 const basicFormItem = z.object({
-  question: z.string(),
+  title: z.string(),
   description: z.string().default(""),
   required: z.boolean().default(false),
   id: z.string().default(""),
@@ -95,7 +95,7 @@ export const formItemSchema = z.discriminatedUnion("type", [
 const formItemsSchema = formItemSchema.array().transform(items => {
   const ensureSafeId = makeSafeIdValidator();
   return items.map(item => {
-    const id = ensureSafeId(item.id || item.question);
+    const id = ensureSafeId(item.id || item.title);
     return { ...item, id };
   });
 });
