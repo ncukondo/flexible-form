@@ -1,7 +1,7 @@
 import { PrismaClient, FormAccessRole } from "@prisma/client";
 import { getUser } from "../../_service/user";
 
-export const prisma = new PrismaClient({
+const prisma = new PrismaClient({
   log: ["query", "error", "info", "warn"],
 });
 
@@ -28,4 +28,4 @@ const injectUsers = (prisma: PrismaClient) => {
 
 const db = injectUsers(prisma);
 
-export { db, FormAccessRole };
+export { db, FormAccessRole, prisma };
