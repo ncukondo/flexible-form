@@ -111,7 +111,7 @@ function FormItem({
   if (item.type === "constant") {
     return (
       <div className="text-base mt-10">
-        {item.question}: <input disabled={true} {...register(item.id)} className="bg-transparent" />
+        {item.title}: <input disabled={true} {...register(item.id)} className="bg-transparent" />
       </div>
     );
   }
@@ -119,7 +119,7 @@ function FormItem({
   return (
     <div>
       <div className="text-base mt-10">
-        {item.question}
+        {item.title}
         <span className="text-error">{item.required && "*"}</span>
       </div>
       <div className="text-sm my-4">{item.description}</div>

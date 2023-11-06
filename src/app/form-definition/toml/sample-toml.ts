@@ -29,24 +29,24 @@ message="Thank you for your submission."
 # - choice_table: Single choice or multiple choice table.
 [[items]]
 type="constant" # type of item. This is required.
-question="constant_sample" # question of item. This is required.
+title="constant_sample" # title of item. This is required.
 id="constant_test" # id of item. This is optional. You can use this id to get the value of this item in actions.
 value="value" # value of item. This is required only in constant type.
 
 [[items]]
 id="id_sample"
-question="Short Text"
+title="Short Text"
 required=true # This item is required. This is optional. It is false by default.
 description="description for question" # description of item. This is optional.
 type="short_text"
 
 [[items]]
-question="Long Text"
+title="Long Text"
 description="description for question"
 type="long_text"
 
 [[items]]
-question="Single Choice"
+title="Single Choice"
 description="description for question"
 type="choice"
 
@@ -59,7 +59,7 @@ items=[
 ]
 
 [[items]]
-question="Multiple Choice"
+title="Multiple Choice"
 description="description for question"
 multiple=true # This item is multiple choice. This is optional. It is false by default.
 type="choice"
@@ -71,7 +71,7 @@ items=[
 ]
 
 [[items]]
-question="Choice Table"
+title="Choice Table"
 description="description for question"
 type="choice_table"
 
@@ -102,10 +102,10 @@ scales=[
 ]
 
 [[items]]
-question="Multiple Choice Table"
+type="choice_table"
+title="Multiple Choice Table"
 multiple=true # This item is multiple choice. This is optional. It is false by default.
 description="description for question"
-type="choice_table"
 items=[
   "option1",
   "option2",

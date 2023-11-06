@@ -44,7 +44,7 @@ const EditPermissionDialog = ({ userEmails, id_for_edit, onClose }: EditPermissi
       </div>
       {isValid ? null : <div className="text-sm text-error">Invalid email address</div>}
       <textarea
-        className="textarea min-h-[10rem] min-w-[20rem]"
+        className="textarea textarea-bordered min-h-[10rem] min-w-[20rem]"
         value={editors}
         onChange={e => {
           setEditors(e.target.value);
@@ -82,7 +82,10 @@ const showPermissionEditDialog = async (id_for_edit: string) => {
 const EditPermissionButton = ({ id_for_edit }: { id_for_edit: string }) => {
   const [isPending, setIsPending] = useState(false);
   return isPending ? (
-    <span className="flex flex-row items-center gap-4">Editing...</span>
+    <span className="flex flex-row items-center gap-4">
+      <SpinnerIcon size="small" />
+      Loading...
+    </span>
   ) : (
     <button
       className="btn"
@@ -97,7 +100,7 @@ const EditPermissionButton = ({ id_for_edit }: { id_for_edit: string }) => {
         setIsPending(false);
       }}
     >
-      Share Config
+      Share
     </button>
   );
 };
