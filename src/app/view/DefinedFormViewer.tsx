@@ -5,6 +5,7 @@ import { DefinedForm } from "../_components/features/defined-form";
 import { FormDefinitionForView } from "../form-definition/schema";
 import { submitFormAction } from "./actions";
 import { ParamObject } from "../_lib/flatten-object";
+import toast from "react-hot-toast";
 
 const useFormSubmission = (id_for_view: string, formDefinition: FormDefinitionForView) => {
   const [, startTransition] = useTransition();
@@ -13,8 +14,14 @@ const useFormSubmission = (id_for_view: string, formDefinition: FormDefinitionFo
     setIsPending(true);
     startTransition(() => {
       (async () => {
-        await submitFormAction(id_for_view, formValue, formDefinition);
-        setIsPending(false);
+        try {
+          await submitFormAction(id_for_view, formValue, formDefinition);
+        } catch (e) {
+          toast.error("Error submitting form");
+          console.error(e);
+        } finally {
+          setIsPending(false);
+        }
       })();
     });
   };
