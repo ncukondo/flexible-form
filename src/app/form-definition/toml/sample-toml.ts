@@ -14,6 +14,11 @@ description="desctiption of form"  # description of form. This is optional.
 # - https: Send the form data to the specified URL via POST method.(e.g. https://example.com)
 actions="log:" 
 
+# Define actions to be executed after the form is submitted. This is optional.
+[post_submit]
+# message is the message to be displayed after the form is submitted.
+message="Thank you for your submission."
+
 
 # Define form items as array of items.
 # Available types are:
