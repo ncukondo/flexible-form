@@ -34,9 +34,9 @@ async function submitFormAction(
     actions
       .map(action => {
         const [tag, target] = action.split(":").map(s => s.trim());
-        return { tag: tag.toLowerCase(), target };
+        return { tag: tag.trim().toLowerCase(), target, action };
       })
-      .map(async ({ tag, target }) => {
+      .map(async ({ tag, target, action }) => {
         if (tag === "mailto")
           return await sendSystemMessageMail(
             target,
@@ -44,7 +44,11 @@ async function submitFormAction(
             `System Mail from THERS Form Name: ${formDefinition.title}`,
           );
         if (tag === "log") return console.log(JSON.stringify(payload, null, 2));
-        return await fetch(target, { method: "POST", body: JSON.stringify(payload) });
+        if (tag === "https") {
+          console.log("https");
+          return await fetch(action, { method: "POST", body: JSON.stringify(payload) });
+        }
+        throw new Error(`Unknown action tag: ${tag}`);
       }),
   );
   revalidatePath("/");
