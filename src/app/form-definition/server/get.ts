@@ -32,6 +32,19 @@ const getFormAction = async (idForView: string) => {
   return actions;
 };
 
+const getPostSubmit = async (idForView: string) => {
+  const id_for_view = convertToServerId(idForView);
+  const { form_definition } = await db.formDefinition.findUniqueOrThrow({
+    where: {
+      id_for_view,
+    },
+    select: {
+      form_definition: true,
+    },
+  });
+  return ((form_definition as any).post_submit as { message?: string }) ?? null;
+};
+
 const getFormUsers = async (idForEdit: string) => {
   const id_for_edit = convertToServerId(idForEdit);
   const user = await getUser();
@@ -94,4 +107,5 @@ export {
   getFormAction,
   getFormUsers,
   getUserForms,
+  getPostSubmit,
 };

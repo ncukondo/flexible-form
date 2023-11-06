@@ -30,6 +30,11 @@ const makeNonDuplicatedSafeIds = (idSources: readonly string[]): string[] => {
 
 const title = z.string().min(2).default("Untitled Form");
 const description = z.string().default("");
+const postSubmit = z
+  .object({
+    message: z.string().default(""),
+  })
+  .optional();
 const actions = z
   .union([z.string(), z.string().array()])
   .transform(x => (Array.isArray(x) ? x : [x]))
@@ -99,6 +104,7 @@ const formDefinitionSchema = z.object({
   title,
   description,
   actions,
+  post_submit: postSubmit,
   items: formItemsSchema.default([]),
 });
 const formDefinitionForViewSchema = formDefinitionSchema.omit({ actions: true });

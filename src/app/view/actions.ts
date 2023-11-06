@@ -51,7 +51,7 @@ async function submitFormAction(
       }),
   );
   revalidatePath("/");
-  redirect("/view/thank-you");
+  redirect("/view/thank-you?id_for_view=" + idForView);
   return true;
 }
 
