@@ -1,5 +1,5 @@
-import { getUser } from "@service/user";
-import { LogInPage } from "@components/features/login-forms";
+import { getUser } from "./_user/user";
+import { LogInPage } from "./_user/login-forms";
 
 export default async function Home() {
   const buttonToEditForm = true;

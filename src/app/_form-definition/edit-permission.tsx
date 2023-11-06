@@ -1,8 +1,8 @@
-import { SpinnerIcon } from "@/app/_components/icons";
-import { showModal } from "@/app/_components/modal";
+import { SpinnerIcon } from "@/app/_ui/icons";
+import { showModal } from "@/app/_ui/modal";
 import { FormAccessRole } from "@prisma/client";
 import { useState } from "react";
-import { toast } from "@components/toast";
+import { toast } from "@/app/_ui/toast";
 import { getFormUsers, updateFormDefinitionEditors } from "./server";
 
 type EditPermissionDialogProps = {

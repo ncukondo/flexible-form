@@ -16,14 +16,14 @@ import {
   ConstantItemDefinition,
   FormDefinitionForView,
   FormItemDefinition,
-} from "../form-definition/schema";
+} from "../_form-definition/schema";
 import { makeFormItemsValueSchema } from "./form-value-schema";
-import "@service/url/init-client-url";
-import { makePrevilledUrl } from "@service/url";
+import "@/app/_url/init-client-url";
+import { makePrevilledUrl } from "../_url";
 import { ParamObject } from "@lib/flatten-object";
-import { showConfirmDialog } from "../_components/confirm-dialog";
+import { showConfirmDialog } from "../_ui/confirm-dialog";
 import Link from "next/link";
-import { CopyButton } from "../_components/copy-button";
+import { CopyButton } from "../_ui/copy-button";
 import { useEffect } from "react";
 
 function ChoiceTableFormItem({

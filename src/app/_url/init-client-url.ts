@@ -1,4 +1,4 @@
-import { setCurrentUrlGetter } from ".";
+import { setCurrentUrlGetter } from "./";
 
 const url = typeof window !== "undefined" ? window.location.href : "";
 

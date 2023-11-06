@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { getFormDefinitionForView } from "@/app/form-definition/server";
-import DefinedFormViewer from "../defined-form/DefinedFormViewer";
-import { safeParseFormDefinitionForView } from "../form-definition/schema";
-import { makeDefaultValues } from "../_service/utils";
+import { getFormDefinitionForView } from "@/app/_form-definition/server";
+import DefinedFormViewer from "../_defined-form/DefinedFormViewer";
+import { safeParseFormDefinitionForView } from "../_form-definition/schema";
+import { makeDefaultValues, SearchParams } from "../_url";
 
 const extractIdForView = (urlParams: unknown) => {
   const res = z.object({ id_for_view: z.string() }).safeParse(urlParams);
@@ -20,7 +20,6 @@ function FormNotFound() {
   return <div>not found</div>;
 }
 
-type SearchParams = { [key: string]: string | string[] | undefined };
 export default async function ViewForm({ searchParams }: { searchParams: SearchParams }) {
   const registeredFormDefinitionForEdit =
     await extractRegisteredFormDefinitionForView(searchParams);

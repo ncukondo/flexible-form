@@ -1,9 +1,9 @@
-import EditByTomlForm from "../form-definition/toml/edit-by-toml";
+import EditByTomlForm from "../_form-definition/toml/edit-by-toml";
 import { z } from "zod";
-import { getFormDefinitionForEdit } from "@/app/form-definition/server";
-import { getUser, isUserInWhileListForEdit } from "../_service/user";
-import { LogInPage } from "../_components/features/login-forms";
-import { makeDefaultValues } from "../_service/utils";
+import { getFormDefinitionForEdit } from "@/app/_form-definition/server";
+import { getUser, isUserInWhileListForEdit } from "../_user/user";
+import { LogInPage } from "../_user/login-forms";
+import { makeDefaultValues, SearchParams } from "../_url";
 
 const extractIdForEdit = (urlParams: unknown) => {
   const res = z.object({ id_for_edit: z.string() }).safeParse(urlParams);
@@ -17,7 +17,6 @@ const extractRegisteredFormDefinitionForEdit = async (urlParams: unknown) => {
   return await getFormDefinitionForEdit(id_for_edit);
 };
 
-export type SearchParams = { [key: string]: string | string[] | undefined };
 export default async function EditForm({ searchParams }: { searchParams: SearchParams }) {
   const formDefinitionForEdit = await extractRegisteredFormDefinitionForEdit(searchParams);
   const defaultValues = makeDefaultValues(searchParams);

@@ -1,7 +1,7 @@
 "use server";
 import { db } from "./db";
 import { safeParseFormDefinitionForView } from "../schema";
-import { getUser } from "@/app/_service/user";
+import { getUser } from "../../_user/user";
 import { convertToClient, convertToServerId, excludeFields, getFormEditorCondition } from "./utils";
 
 const getFormDefinitionForEdit = async (idForEdit: string) => {

@@ -1,11 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { FormDefinitionForView } from "../form-definition/schema";
+import { FormDefinitionForView } from "../_form-definition/schema";
 import { makeFormItemsValueSchema } from "./form-value-schema";
 import { sendSystemMessageMail } from "./send-mail";
 import { redirect } from "next/navigation";
-import { getFormAction } from "../form-definition/server/get";
+import { getFormAction } from "../_form-definition/server/get";
 
 const parseValue = (formValue: unknown, formDefinition: FormDefinitionForView) => {
   const parsed = makeFormItemsValueSchema(formDefinition.items).parse(formValue);

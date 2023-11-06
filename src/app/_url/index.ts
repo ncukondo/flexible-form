@@ -1,4 +1,4 @@
-import { ParamObject, flattenObject } from "@lib/flatten-object";
+import { ParamObject, flattenObject, unFlattenObject } from "@lib/flatten-object";
 
 let currentUrlGetter: (() => URL) | null = null;
 
@@ -45,6 +45,15 @@ const makePrevilledUrl = (values: ParamObject, id_for_view: string) => {
   return `${getViewUrl(id_for_view)}?${search}`;
 };
 
+const makeDefaultValues = (urlParams: SearchParams) => {
+  if (!urlParams) return {};
+  if (typeof urlParams === "string") return {};
+  const { data } = unFlattenObject(urlParams);
+  return (data as ParamObject) ?? {};
+};
+
+type SearchParams = { [key: string]: string | string[] | undefined };
+
 export {
   currentUrl,
   makePrevilledUrl,
@@ -53,4 +62,6 @@ export {
   logoutUrl,
   getEditUrl,
   getViewUrl,
+  makeDefaultValues,
+  type SearchParams,
 };

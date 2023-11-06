@@ -1,10 +1,10 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { UserProvider } from "@auth0/nextjs-auth0/client";
-import { ToastProvider } from "@components/toast";
-import { ModalProvider } from "@/app/_components/modal";
+import { ToastProvider } from "@/app/_ui/toast";
+import { ModalProvider } from "@/app/_ui/modal";
 import { Suspense } from "react";
-import "@service/url/init-server-url";
+import "@/app/_url/init-server-url";
 
 export const metadata: Metadata = {
   title: "Flexible Form",

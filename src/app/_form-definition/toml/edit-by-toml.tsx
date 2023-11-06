@@ -1,21 +1,21 @@
 "use client";
-import "@service/url/init-client-url";
+import "@/app/_url/init-client-url";
 import { FormEvent, useEffect, useState, useTransition } from "react";
 import { initTomlText, useTomlText, resetTomlText } from "./store";
 import { useFormDefinition, useFormDefinitionForEdit } from "../store";
-import { DefinedForm } from "../../defined-form/defined-form";
+import { DefinedForm } from "../../_defined-form/defined-form";
 import { FormDefinition } from "../schema";
 import { registerFormDefinition, updateFormDefinition } from "../server";
 import { FormDefinitionForEdit } from "../server";
-import { toast } from "../../_components/toast";
-import { showConfirmDialog } from "../../_components/confirm-dialog";
+import { toast } from "../../_ui/toast";
+import { showConfirmDialog } from "../../_ui/confirm-dialog";
 import Link from "next/link";
-import { CopyButton } from "../../_components/copy-button";
+import { CopyButton } from "../../_ui/copy-button";
 import { useRouter } from "next/navigation";
 import { ParamObject } from "../../_lib/flatten-object";
 import sampleTomlDefinition from "./sample.toml";
 import { ErrorDisplay, useErrorMessage } from "./error-display";
-import { getEditUrl, getViewUrl } from "@/app/_service/url";
+import { getEditUrl, getViewUrl } from "../../_url";
 import { EditPermissionButton } from "../edit-permission";
 
 const registeredDefinitionToUrls = (value: FormDefinitionForEdit) => {

@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { FormDefinition } from "../schema";
 import { db, FormAccessRole } from "./db";
 import { RegisteredFormDefinition } from "./types";
-import { getUser } from "../../_service/user";
+import { getUser } from "../../_user/user";
 import { convertToClient, convertToServerId } from "./utils";
 import { getFormEditorCondition } from "./utils";
 

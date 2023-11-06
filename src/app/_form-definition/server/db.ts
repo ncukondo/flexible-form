@@ -1,5 +1,5 @@
 import { PrismaClient, FormAccessRole } from "@prisma/client";
-import { getUser } from "../../_service/user";
+import { getUser } from "../../_user/user";
 
 export const prisma = new PrismaClient({
   log: ["query", "error", "info", "warn"],
