@@ -26,7 +26,7 @@ const logoutUrl = () => {
 
 const getEditUrl = (id_for_edit: string) => {
   const origin = currentUrl().origin;
-  return `${origin}/form-definition/${id_for_edit}`;
+  return `${origin}/e/${id_for_edit}`;
 };
 
 const getViewUrl = (id_for_view: string) => {
