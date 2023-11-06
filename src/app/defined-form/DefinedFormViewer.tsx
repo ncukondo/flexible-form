@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { DefinedForm } from "../_components/features/defined-form";
+import { DefinedForm } from "./defined-form";
 import { FormDefinitionForView } from "../form-definition/schema";
 import { submitFormAction } from "./actions";
 import { ParamObject } from "../_lib/flatten-object";

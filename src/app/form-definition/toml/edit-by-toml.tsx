@@ -3,7 +3,7 @@ import "@service/url/init-client-url";
 import { FormEvent, useEffect, useState, useTransition } from "react";
 import { initTomlText, useTomlText, resetTomlText } from "./store";
 import { useFormDefinition, useFormDefinitionForEdit } from "../store";
-import { DefinedForm } from "../../_components/features/defined-form";
+import { DefinedForm } from "../../defined-form/defined-form";
 import { FormDefinition } from "../schema";
 import { registerFormDefinition, updateFormDefinition } from "../server";
 import { FormDefinitionForEdit } from "../server";
