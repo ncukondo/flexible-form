@@ -13,7 +13,7 @@ import Link from "next/link";
 import { CopyButton } from "../../_components/copy-button";
 import { useRouter } from "next/navigation";
 import { ParamObject } from "../../_lib/flatten-object";
-import { sampleTomlDefinition } from "./sample-toml";
+import sampleTomlDefinition from "./sample.toml";
 import { ErrorDisplay, useErrorMessage } from "./error-display";
 import { getEditUrl, getViewUrl } from "@/app/_service/url";
 import { EditPermissionButton } from "../edit-permission";
@@ -69,11 +69,21 @@ const showUrl = async (value: FormDefinitionForEdit) => {
   await showConfirmDialog({ content });
 };
 
+function initTomlStore(formDefinitionForEdit: FormDefinitionForEdit | null | undefined) {
+  useEffect(() => {
+    const id = formDefinitionForEdit?.id_for_edit || "";
+    const toml = formDefinitionForEdit ? formDefinitionForEdit.source || "" : sampleTomlDefinition;
+    const tomlAsObject = (formDefinitionForEdit?.form_definition as { [key: string]: any }) ?? "";
+    initTomlText(id, toml || tomlAsObject);
+  }, [formDefinitionForEdit]);
+}
+
 type EditConfigProps = Omit<JSX.IntrinsicElements["textarea"], "value" | "onChange" | "onSubmit">;
 function EditConfig(props: EditConfigProps) {
   const { getToml, setToml } = useTomlText();
   const { isPending, registerFormDefinicion } = useRegisterFormDefinition();
   const { formDefinitionForEdit } = useFormDefinitionForEdit();
+  initTomlStore(formDefinitionForEdit);
   const formDefinition = useFormDefinition(s => s.formDefinition);
   const error = useErrorMessage();
   const handleOnSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -89,6 +99,7 @@ function EditConfig(props: EditConfigProps) {
           className="w-full h-full textarea font-mono"
           {...props}
           value={getToml()}
+          name="toml"
           onChange={e => setToml?.(e.target.value)}
         />
         <ErrorDisplay />
@@ -132,15 +143,6 @@ function handleSubmitDefinedForm(data: { [key: string]: any }) {
   alert(JSON.stringify(data, null, 2));
 }
 
-function initTomlStore(formDefinitionForEdit: FormDefinitionForEdit | null | undefined) {
-  useEffect(() => {
-    const id = formDefinitionForEdit?.id_for_edit || "";
-    const toml = formDefinitionForEdit ? formDefinitionForEdit.source || "" : sampleTomlDefinition;
-    const tomlAsObject = (formDefinitionForEdit?.form_definition as { [key: string]: any }) ?? "";
-    initTomlText(id, toml || tomlAsObject);
-  }, [formDefinitionForEdit]);
-}
-
 type EditByTomlFormProps = {
   defaultValues?: ParamObject;
   formDefinitionForEdit?: FormDefinitionForEdit | null;
@@ -152,8 +154,9 @@ export default function EditByTomlForm({
   const formDefinition = useFormDefinition(s => s.formDefinition);
   const setFormDefinitionForEdit = useFormDefinitionForEdit(s => s.setFormDefinitionForEdit);
   const id_for_view = useIdForView();
-  if (formDefinitionForEdit) setFormDefinitionForEdit(formDefinitionForEdit);
-  initTomlStore(formDefinitionForEdit);
+  useEffect(() => {
+    if (formDefinitionForEdit) setFormDefinitionForEdit(formDefinitionForEdit);
+  }, [formDefinitionForEdit]);
   return (
     <main className="min-h-[100dvh] grid-cols-[repeat(auto-fit,minmax(300px,1fr))] grid">
       <div className="bg-yellow-100 w-full h-full relative p-2 min-h-[50dvh]">

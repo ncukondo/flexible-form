@@ -1,3 +1,4 @@
+"use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   FieldError,
@@ -12,7 +13,7 @@ import {
 import {
   ChoiceItemDefinition,
   ChoiceTableItemDefinition,
-  FormDefinition,
+  ConstantItemDefinition,
   FormDefinitionForView,
   FormItemDefinition,
 } from "../../form-definition/schema";
@@ -23,6 +24,7 @@ import { ParamObject } from "@lib/flatten-object";
 import { showConfirmDialog } from "../confirm-dialog";
 import Link from "next/link";
 import { CopyButton } from "../copy-button";
+import { useEffect } from "react";
 
 function ChoiceTableFormItem({
   error,
@@ -91,7 +93,7 @@ function ChoiceFormItem({
           className={item.multiple ? "checkbox" : "radio"}
           {...register(item.id)}
           value={choice}
-          id={item.id}
+          id={item.id + "." + choice}
         />
         <span className="label-text">{choice}</span>
       </label>
@@ -99,23 +101,28 @@ function ChoiceFormItem({
   ));
 }
 
-function FormItem({
-  errors,
-  item,
-  register,
-}: {
+type ConstantItemProps = {
+  item: ConstantItemDefinition;
+  register: UseFormRegister<any>;
+};
+function ConstantItem({ item, register }: ConstantItemProps) {
+  return (
+    <div className="text-base mt-10">
+      {item.title}:{" "}
+      <input {...register(item.id, { value: item.value })} className={`bg-transparent`} />
+    </div>
+  );
+}
+
+type FormItemProps = {
   item: FormItemDefinition;
   register: UseFormRegister<any>;
   errors: FieldErrors<FieldValues>;
-}) {
-  if (item.type === "constant") {
-    return (
-      <div className="text-base mt-10">
-        {item.title}: <input disabled={true} {...register(item.id)} className="bg-transparent" />
-      </div>
-    );
-  }
+};
+function FormItem({ errors, item, register }: FormItemProps) {
+  if (item.type === "constant") return <ConstantItem {...{ item, register }} />;
   const error = (item.id in errors && errors[item.id as keyof typeof errors]) || undefined;
+
   return (
     <div>
       <div className="text-base mt-10">
@@ -170,13 +177,27 @@ const ResetButton = ({ reset }: { reset: UseFormReset<ParamObject> }) => {
 type PrefilledUrlButtonProps = {
   getValues: () => ParamObject;
   id_for_view: string;
+  formDefinition?: FormDefinitionForView;
 };
-const PrefilledUrlButton = ({ getValues, id_for_view }: PrefilledUrlButtonProps) => {
+const PrefilledUrlButton = ({
+  formDefinition,
+  getValues,
+  id_for_view,
+}: PrefilledUrlButtonProps) => {
+  const isConstant = (key: string, value: any) => {
+    if (typeof value !== "string") return false;
+    const item = formDefinition?.items?.find(item => item.id === key);
+    if (!item) return false;
+    return item.type === "constant" && item.value === value;
+  };
   return (
     <button
       className="btn"
       onClick={e => {
-        const url = makePrevilledUrl(getValues(), id_for_view);
+        const values = Object.fromEntries(
+          Object.entries(getValues()).filter(([key, value]) => !isConstant(key, value)),
+        );
+        const url = makePrevilledUrl(values, id_for_view);
         showUrl(url);
         e.preventDefault();
       }}
@@ -208,15 +229,26 @@ export function DefinedForm({
     ),
     ...defaultValues,
   };
+  const urlMakingMode = Boolean(showPrefilledUrlButton && id_for_view);
   const formItemsDefinition = formDefinition?.items;
   const formItemValidator = makeFormItemsValueSchema(formItemsDefinition);
   const {
     register,
     handleSubmit,
     getValues,
+    setValue,
     formState: { errors, isValid },
     reset,
   } = useForm({ resolver: zodResolver(formItemValidator), mode: "onBlur", defaultValues });
+  useEffect(() => {
+    formDefinition?.items
+      ?.flatMap(item =>
+        item.type === "constant" && "value" in item ? [[item.id, item.value]] : [],
+      )
+      .forEach(([id, value]) => {
+        setValue(id, value);
+      });
+  }, [formDefinition]);
   return (
     <form onSubmit={handleSubmit(data => onSubmit?.(data))} className="h-full overflow-auto">
       <div>
@@ -224,15 +256,13 @@ export function DefinedForm({
         <div>{formDefinition.description}</div>
         <div>
           {formDefinition.items.map(item => (
-            <FormItem register={register} errors={errors} key={item.id} item={item} />
+            <FormItem {...{ register, errors, item }} key={item.id} />
           ))}
         </div>
       </div>
       <div className="flex justify-end p-2 gap-3">
         <ResetButton reset={reset} />
-        {showPrefilledUrlButton && id_for_view && (
-          <PrefilledUrlButton getValues={getValues} id_for_view={id_for_view} />
-        )}
+        {urlMakingMode && <PrefilledUrlButton {...{ getValues, id_for_view, formDefinition }} />}
         <button className="btn btn-primary" disabled={!isValid || isPending}>
           {isPending ? (
             <span className="flex flex-row items-center gap-4">

@@ -16,6 +16,15 @@ const nextConfig = {
       },
     ]
   },
+  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+    config.module.rules.push(
+      {
+        test: /\.toml$/,
+        type: 'asset/source',
+      }
+    )
+    return config
+  },
 }
 
 module.exports = nextConfig

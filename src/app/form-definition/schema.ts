@@ -113,6 +113,7 @@ type FormDefinition = z.infer<typeof formDefinitionSchema>;
 type FormDefinitionForView = z.infer<typeof formDefinitionForViewSchema>;
 type ChoiceTableItemDefinition = z.infer<typeof choiceTableItem>;
 type ChoiceItemDefinition = z.infer<typeof choiceItem>;
+type ConstantItemDefinition = z.infer<typeof constantItem>;
 
 const safeParseFormDefinition = (x: unknown) => formDefinitionSchema.safeParse(x);
 const safeParseFormDefinitionForView = (x: unknown) => formDefinitionForViewSchema.safeParse(x);
@@ -125,4 +126,5 @@ export {
   type FormItemDefinition,
   type ChoiceTableItemDefinition,
   type ChoiceItemDefinition,
+  type ConstantItemDefinition,
 };
