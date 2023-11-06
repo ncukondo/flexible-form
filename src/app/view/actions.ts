@@ -34,7 +34,7 @@ async function submitFormAction(
     actions
       .map(action => {
         const [tag, target] = action.split(":").map(s => s.trim());
-        return { tag: tag.trim().toLowerCase(), target, action };
+        return { tag: tag.toLowerCase(), target, action };
       })
       .map(async ({ tag, target, action }) => {
         if (tag === "mailto")
@@ -45,7 +45,6 @@ async function submitFormAction(
           );
         if (tag === "log") return console.log(JSON.stringify(payload, null, 2));
         if (tag === "https") {
-          console.log("https");
           return await fetch(action, { method: "POST", body: JSON.stringify(payload) });
         }
         throw new Error(`Unknown action tag: ${tag}`);
