@@ -1,5 +1,7 @@
 import { User, isUserInWhileListForEdit, whilteListDomain } from "./user";
 import { loginUrl, logoutUrl } from "../_url";
+import { Suspense } from "react";
+import FormList from "../_form-list/form-list";
 
 const CautionMessage = () => {
   const cautionMessage = `Only verified emails ends with ${whilteListDomain.join(
@@ -77,6 +79,13 @@ export const LogInPage = async ({
         <h1 className="text-3xl">Flexible Form</h1>
         {user ? <UserStatus {...{ user, buttonToEditForm }} /> : <Login />}
       </div>
+      {user && isUserInWhileListForEdit(user) && (
+        <div className="my-10">
+          <Suspense fallback="Loading...">
+            <FormList />
+          </Suspense>
+        </div>
+      )}
     </div>
   );
 };

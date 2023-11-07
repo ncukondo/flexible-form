@@ -1,7 +1,7 @@
 "use server";
 import { db } from "./db";
 import { safeParseFormDefinitionForView } from "../schema";
-import { getUser } from "../../_user/user";
+import { User, getUser } from "../../_user/user";
 import { convertToClient, convertToServerId, excludeFields, getFormEditorCondition } from "./utils";
 
 const getFormDefinitionForEdit = async (idForEdit: string) => {
@@ -64,9 +64,7 @@ const getFormUsers = async (idForEdit: string) => {
   return formDefinition.permisions;
 };
 
-const getUserForms = async () => {
-  const user = await getUser();
-  if (!user) throw new Error("User not found");
+const getUserForms = async (user: User) => {
   const formDefinitions = await db.formDefinition.findMany({
     where: {
       permisions: {
@@ -75,17 +73,34 @@ const getUserForms = async () => {
         },
       },
     },
+    orderBy: {
+      updated_at: "desc",
+    },
     select: {
       id_for_view: true,
       id_for_edit: true,
       title: true,
       created_at: true,
       updated_at: true,
+      form_definition: true,
     },
   });
-  return formDefinitions.map(formDefinition =>
-    convertToClient(formDefinition, ["id_for_view", "id_for_edit"] as const),
-  );
+  return formDefinitions
+    .map(formDefinitions => {
+      const { form_definition, ...rest } = formDefinitions;
+      const description =
+        ((form_definition &&
+          typeof form_definition === "object" &&
+          "description" in form_definition &&
+          form_definition.description) as string) ?? "";
+      return {
+        ...rest,
+        description,
+      };
+    })
+    .map(formDefinition =>
+      convertToClient(formDefinition, ["id_for_view", "id_for_edit"] as const),
+    );
 };
 
 const getFormDefinitionForView = async (idForView: string) => {
