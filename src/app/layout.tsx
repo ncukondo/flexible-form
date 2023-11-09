@@ -15,7 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html>
       <UserProvider>
-        <body className="m-0 p-0 min-h-[100dvh] min-w-[100dvh]">
+        <body className="m-0 p-0 min-h-[100dvh]">
           <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
           <ModalProvider />
           <ToastProvider />
