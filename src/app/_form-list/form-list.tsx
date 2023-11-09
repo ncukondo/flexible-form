@@ -25,11 +25,11 @@ const formatDateTime = (date: Date) => {
 const FormRow = ({ title, description, id_for_edit, created_at, updated_at }: FormInfo) => {
   return (
     <tr>
-      <td>
+      <th>
         <Link className="link" href={getEditUrl(id_for_edit)}>
           {title}
         </Link>
-      </td>
+      </th>
       <td>{description}</td>
       <td>{formatDateTime(updated_at)}</td>
       <td>{formatDateTime(created_at)}</td>
@@ -53,7 +53,7 @@ const FormList = async () => {
   if (!user) return <div></div>;
   const formList = await getUserForms(user);
   return (
-    <div>
+    <div className="overflow-x-auto">
       <table className="table">
         <thead>
           <FormHeader />

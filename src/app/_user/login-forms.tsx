@@ -51,18 +51,20 @@ const UserStatus = ({
         <div>Email: {user.email}</div>
         <div>Email verified: {user.email_verified ? "ok" : "Please verify email."}</div>
       </div>
-      {isUserInWhileListForEdit(user) ? (
-        buttonToEditForm && (
-          <a href="/edit" className="btn btn-primary">
-            Make new form.
-          </a>
-        )
-      ) : (
-        <CautionMessage />
-      )}
-      <a href={logoutUrl()} className="btn">
-        Logout
-      </a>
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-5">
+        {isUserInWhileListForEdit(user) ? (
+          buttonToEditForm && (
+            <a href="/edit" className="btn btn-primary">
+              Make new form.
+            </a>
+          )
+        ) : (
+          <CautionMessage />
+        )}
+        <a href={logoutUrl()} className="btn">
+          Logout
+        </a>
+      </div>
     </div>
   );
 };
@@ -74,7 +76,7 @@ export const LogInPage = async ({
   buttonToEditForm?: boolean;
 }) => {
   return (
-    <div className="grid justify-center items-center min-h-[100dvh] p-4">
+    <div className="grid justify-center items-center min-h-[100dvh] p-5">
       <div className="flex flex-col gap-5">
         <h1 className="text-3xl">Flexible Form</h1>
         {user ? <UserStatus {...{ user, buttonToEditForm }} /> : <Login />}
