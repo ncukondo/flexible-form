@@ -32,10 +32,17 @@ const postSubmit = z
     message: z.string().default(""),
   })
   .optional();
+const action = z
+  .union([
+    z.string().startsWith("https://"),
+    z.string().startsWith("mailto:"),
+    z.string().startsWith("log:"),
+  ])
+  .describe("URL or mailto: or log:");
 const actions = z
-  .union([z.string(), z.string().array()])
+  .union([action, action.array()])
   .transform(x => (Array.isArray(x) ? x : [x]))
-  .pipe(z.string().array().min(1));
+  .pipe(action.array().min(1));
 
 const basicFormItem = z.object({
   title: z.string().default(`Set title here`),
