@@ -1,5 +1,5 @@
-import { CheckIcon, CopyIcon } from "./icons";
 import { useState } from "react";
+import { CheckIcon, CopyIcon } from "./icons";
 
 const copyToClip = async (text: string) => {
   await navigator.clipboard.writeText(text);

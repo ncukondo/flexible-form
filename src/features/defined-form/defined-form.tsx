@@ -1,5 +1,7 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
+import { useEffect } from "react";
 import {
   FieldError,
   FieldErrors,
@@ -10,21 +12,19 @@ import {
   UseFormRegister,
   UseFormReset,
 } from "react-hook-form";
+import { ParamObject } from "@/common/flatten-object";
+import { makePrevilledUrl } from "@/common/url";
+import { makeFormItemsValueSchema } from "./form-value-schema";
 import {
   ChoiceItemDefinition,
   ChoiceTableItemDefinition,
   ConstantItemDefinition,
   FormDefinitionForView,
   FormItemDefinition,
-} from "../_form-definition/schema";
-import { makeFormItemsValueSchema } from "./form-value-schema";
-import "@/app/_url/init-client-url";
-import { makePrevilledUrl } from "../_url";
-import { ParamObject } from "@lib/flatten-object";
-import { showConfirmDialog } from "../_ui/confirm-dialog";
-import Link from "next/link";
-import { CopyButton } from "../_ui/copy-button";
-import { useEffect } from "react";
+} from "../../features/form-definition/schema";
+import "@/common/url/init-client-url";
+import { showConfirmDialog } from "../../ui/confirm-dialog";
+import { CopyButton } from "../../ui/copy-button";
 
 function ChoiceTableFormItem({
   error,
@@ -248,7 +248,7 @@ export function DefinedForm({
       .forEach(([id, value]) => {
         setValue(id, value);
       });
-  }, [formDefinition]);
+  }, [formDefinition, setValue]);
   return (
     <form onSubmit={handleSubmit(data => onSubmit?.(data))} className="h-full overflow-auto">
       <div>

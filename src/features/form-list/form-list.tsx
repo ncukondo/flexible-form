@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { getUserForms } from "../_form-definition/server";
-import { getUser } from "../_user/user";
-import { getEditUrl } from "../_url";
+import { getEditUrl } from "@/common/url";
+import { getUserForms } from "../form-definition/server";
+import { getUser } from "../user/user";
 
 type FormInfo = {
   description: string;

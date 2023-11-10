@@ -1,9 +1,11 @@
 /**
  * UrlSearchParams cannot store nested objects and may contain undefined values.
- * This library makes it possible to store nested objects without undefined values in UrlSearchParams.
+ * This library makes it possible to store nested objects without
+ * undefined values in UrlSearchParams.
  *
  * This library uses "." as a delimiter to store nested objects.
- * Arrays are delimited by index (e.g. {key:["value1","value2"]} is stored as key.1=value1&key.2=value).
+ * Arrays are delimited by index (e.g. {key:["value1","value2"]} is stored as
+ * key.1=value1&key.2=value).
  *
  */
 

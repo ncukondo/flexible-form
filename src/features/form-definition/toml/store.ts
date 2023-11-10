@@ -1,9 +1,9 @@
-import { create, createStore } from "zustand";
+import TOML from "@ltd/j-toml";
+import { create } from "zustand";
 import { persist, devtools } from "zustand/middleware";
 import type {} from "@redux-devtools/extension"; // required for devtools typing
-import TOML from "@ltd/j-toml";
-import { makeDerivedConnection } from "../store-utils";
 import { useFormDefinition } from "../store";
+import { makeDerivedConnection } from "../store-utils";
 
 const tomlTextDictKey = "toml-text-dict";
 interface TomlTextDictState {

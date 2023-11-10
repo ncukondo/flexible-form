@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { getFormDefinitionForView } from "@/app/_form-definition/server";
-import DefinedFormViewer from "../_defined-form/DefinedFormViewer";
-import { safeParseFormDefinitionForView } from "../_form-definition/schema";
-import { makeDefaultValues, SearchParams } from "../_url";
+import { makeDefaultValues, SearchParams } from "@/common/url";
+import DefinedFormViewer from "@/features/defined-form/DefinedFormViewer";
+import { getFormDefinitionForView } from "@/features/form-definition/server";
+import { safeParseFormDefinitionForView } from "../../features/form-definition/schema";
 
 const extractIdForView = (urlParams: unknown) => {
   const res = z.object({ id_for_view: z.string() }).safeParse(urlParams);

@@ -1,22 +1,21 @@
 "use client";
-import "@/app/_url/init-client-url";
-import { FormEvent, useEffect, useState, useTransition } from "react";
-import { initTomlText, useTomlText, resetTomlText } from "./store";
-import { useFormDefinition, useFormDefinitionForEdit } from "../store";
-import { DefinedForm } from "../../_defined-form/defined-form";
-import { FormDefinition } from "../schema";
-import { registerFormDefinition, updateFormDefinition } from "../server";
-import { FormDefinitionForEdit } from "../server";
-import { toast } from "../../_ui/toast";
-import { showConfirmDialog } from "../../_ui/confirm-dialog";
+import "@/common/url/init-client-url";
 import Link from "next/link";
-import { CopyButton } from "../../_ui/copy-button";
 import { useRouter } from "next/navigation";
-import { ParamObject } from "../../_lib/flatten-object";
-import sampleTomlDefinition from "./sample.toml";
+import { FormEvent, useEffect, useState, useTransition } from "react";
+import { getEditUrl, getViewUrl } from "@/common/url";
 import { ErrorDisplay, useErrorMessage } from "./error-display";
-import { getEditUrl, getViewUrl } from "../../_url";
+import sampleTomlDefinition from "./sample.toml";
+import { initTomlText, useTomlText, resetTomlText } from "./store";
+import { ParamObject } from "../../../common/flatten-object";
+import { showConfirmDialog } from "../../../ui/confirm-dialog";
+import { CopyButton } from "../../../ui/copy-button";
+import { toast } from "../../../ui/toast";
+import { DefinedForm } from "../../defined-form/defined-form";
 import { EditPermissionButton } from "../edit-permission";
+import { FormDefinition } from "../schema";
+import { FormDefinitionForEdit, registerFormDefinition, updateFormDefinition } from "../server";
+import { useFormDefinition, useFormDefinitionForEdit } from "../store";
 
 const registeredDefinitionToUrls = (value: FormDefinitionForEdit) => {
   return {
@@ -69,7 +68,7 @@ const showUrl = async (value: FormDefinitionForEdit) => {
   await showConfirmDialog({ content });
 };
 
-function initTomlStore(formDefinitionForEdit: FormDefinitionForEdit | null | undefined) {
+function useInitTomlStore(formDefinitionForEdit: FormDefinitionForEdit | null | undefined) {
   useEffect(() => {
     const id = formDefinitionForEdit?.id_for_edit || "";
     const toml = formDefinitionForEdit ? formDefinitionForEdit.source || "" : sampleTomlDefinition;
@@ -83,7 +82,7 @@ function EditConfig(props: EditConfigProps) {
   const { getToml, setToml } = useTomlText();
   const { isPending, registerFormDefinicion } = useRegisterFormDefinition();
   const { formDefinitionForEdit } = useFormDefinitionForEdit();
-  initTomlStore(formDefinitionForEdit);
+  useInitTomlStore(formDefinitionForEdit);
   const formDefinition = useFormDefinition(s => s.formDefinition);
   const error = useErrorMessage();
   const handleOnSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -156,7 +155,7 @@ export default function EditByTomlForm({
   const id_for_view = useIdForView();
   useEffect(() => {
     if (formDefinitionForEdit) setFormDefinitionForEdit(formDefinitionForEdit);
-  }, [formDefinitionForEdit]);
+  }, [formDefinitionForEdit, setFormDefinitionForEdit]);
   return (
     <main className="min-h-[100dvh] grid-cols-[repeat(auto-fit,minmax(300px,1fr))] grid">
       <div className="bg-yellow-100 w-full h-full relative p-2 min-h-[50dvh]">

@@ -1,5 +1,5 @@
-import { useFormDefinition } from "../store";
 import { useTomlDerivedJson } from "./store";
+import { useFormDefinition } from "../store";
 
 export function useErrorMessage() {
   const { error: syntaxError } = useTomlDerivedJson(s => ({ error: s.error }));
@@ -15,7 +15,10 @@ export function ErrorDisplay() {
   return (
     <>
       {error && (
-        <div className="alert alert-error shadow-lg m-2 w-[calc(100%-0.5rem)] max-h-32 overflow-auto">
+        <div
+          className="alert alert-error shadow-lg 
+        m-2 w-[calc(100%-0.5rem)] max-h-32 overflow-auto"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="stroke-current shrink-0 h-6 w-6"

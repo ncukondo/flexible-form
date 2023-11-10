@@ -1,7 +1,7 @@
 "use client";
-import { createStore } from "zustand/vanilla";
-import { useStore } from "zustand";
 import React, { useRef } from "react";
+import { useStore } from "zustand";
+import { createStore } from "zustand/vanilla";
 
 type ModalProps = {
   children: React.ReactNode;
