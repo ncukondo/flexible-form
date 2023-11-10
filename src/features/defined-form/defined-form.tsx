@@ -42,30 +42,30 @@ function ChoiceTableFormItem({
           <tr>
             <th className="sticky top-0"></th>
             {item.scales.map(scale => (
-              <th key={scale} className="z-10 sticky top-0 font-normal p-2">
-                <span className="m-auto">{scale}</span>
+              <th key={scale.title} className="z-10 sticky top-0 font-normal p-2">
+                <span className="m-auto">{scale.title}</span>
               </th>
             ))}
           </tr>
         </thead>
         <tbody className="overflow-auto">
-          {item.items.map(subItemId => (
-            <tr key={subItemId} id={`${item.id}.${subItemId}`}>
+          {item.items.map(subItem => (
+            <tr key={subItem.id} id={`${subItem.id}`}>
               <th
                 className={`left-0 sticky font-normal text-sm ${
-                  error && subItemId in error && "text-error"
+                  error && subItem.id in error && "text-error"
                 }`}
               >
-                {subItemId}
+                {subItem.title}
               </th>
               {item.scales.map(scale => (
-                <td key={scale} className="p-2">
+                <td key={scale.value} className="p-2">
                   <div className="flex justify-center items-center">
                     <input
                       type={item.multiple ? "checkbox" : "radio"}
                       className={item.multiple ? "checkbox" : "radio"}
-                      {...register(`${item.id}.${subItemId}`)}
-                      value={scale}
+                      {...register(`${subItem.id}`)}
+                      value={scale.value}
                     />
                   </div>
                 </td>
@@ -86,16 +86,16 @@ function ChoiceFormItem({
   register: UseFormRegister<any>;
 }) {
   return item.items.map(choice => (
-    <div key={choice}>
+    <div key={choice.value}>
       <label className="label cursor-pointer justify-start gap-x-3">
         <input
           type={item.multiple ? "checkbox" : "radio"}
           className={item.multiple ? "checkbox" : "radio"}
           {...register(item.id)}
-          value={choice}
-          id={item.id + "." + choice}
+          value={choice.value}
+          id={item.id + "." + choice.value}
         />
-        <span className="label-text">{choice}</span>
+        <span className="label-text">{choice.title}</span>
       </label>
     </div>
   ));

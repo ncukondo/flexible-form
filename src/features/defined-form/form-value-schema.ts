@@ -9,12 +9,12 @@ const basicFormItemValueSchema = (item: z.infer<typeof formItemSchema>) => {
   const value = item.required ? z.string().min(1) : z.string().default("");
   return value;
 };
-const makeChoiceOptionSchema = <T extends readonly string[]>(
+const makeChoiceOptionSchema = <T extends readonly { title: string; value: string }[]>(
   choices: [...T],
   multiple: boolean,
   required: boolean,
 ) => {
-  const [firstChoice, secondChoice, ...restChoices] = choices.map(text => z.literal(text));
+  const [firstChoice, secondChoice, ...restChoices] = choices.map(({ value }) => z.literal(value));
   if (!firstChoice) return z.never();
   const choiceItem = secondChoice
     ? z.union([firstChoice, secondChoice, ...restChoices])

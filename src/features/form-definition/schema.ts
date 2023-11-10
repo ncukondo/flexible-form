@@ -49,33 +49,77 @@ const inputItem = basicFormItem.extend({
 const textAreaItem = basicFormItem.extend({
   type: z.literal("long_text"),
 });
+const choiceOption = z.union([
+  z
+    .string()
+    .transform(value => ({ title: value, value }))
+    .pipe(z.object({ title: z.string(), value: z.string() })),
+  z.object({ title: z.string(), value: z.string() }),
+]);
+const itemOption = z.union([
+  z
+    .string()
+    .transform(value => ({ title: value, id: "" }))
+    .pipe(z.object({ title: z.string(), id: z.string() })),
+  z.object({ title: z.string(), id: z.string() }),
+]);
+const hasDuplicatedValue = <T extends { [key: string]: string }>(items: readonly T[]) => {
+  const valuesMap = new Map<string, string[]>();
+  items.forEach(item => {
+    Object.entries(item).forEach(([key, value]) => {
+      const values = valuesMap.get(key) ?? [];
+      valuesMap.set(key, [...values, value]);
+    });
+  });
+  const res = Array.from(valuesMap.values()).some(values => new Set(values).size !== values.length);
+  return res;
+};
+
 const choiceItem = basicFormItem.extend({
   type: z.literal("choice"),
   multiple: z.boolean().default(false),
-  items: z
-    .string()
+  items: choiceOption
     .array()
-    .refine(items => new Set(items).size === items.length, {
+    .refine(items => !hasDuplicatedValue(items), {
       message: "Must be an array of unique strings",
     })
-    .pipe(z.string().array().min(1)),
+    .pipe(choiceOption.array().min(1)),
 });
 
-const choiceTableItem = basicFormItem.extend({
-  type: z.literal("choice_table"),
-  multiple: z.boolean().default(false),
-  items: z
-    .string()
-    .min(1)
-    .array()
-    .refine(items => new Set(items).size === items.length)
-    .pipe(z.string().array().min(1).transform(makeNonDuplicatedSafeIds)),
-  scales: z
-    .string()
-    .array()
-    .refine(items => new Set(items).size === items.length)
-    .pipe(z.string().array().min(1)),
-});
+const choiceTableItem = basicFormItem
+  .extend({
+    type: z.literal("choice_table"),
+    multiple: z.boolean().default(false),
+    items: itemOption.array(),
+    scales: choiceOption
+      .array()
+      .refine(items => !hasDuplicatedValue(items), {
+        message: "Must be an array of unique strings",
+      })
+      .pipe(choiceOption.array().min(1)),
+  })
+  .transform((item, ctx) => {
+    const parentId = item.id || item.title;
+    const items = item.items.map(({ title, id }) => {
+      id = id || parentId + "/" + title;
+      return { title, id };
+    });
+    if (hasDuplicatedValue(items))
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["items"],
+        message: "Must be an array of unique strings",
+      });
+    return { ...item, items, id: parentId };
+  })
+  .pipe(
+    basicFormItem.extend({
+      type: z.literal("choice_table"),
+      multiple: z.boolean(),
+      items: itemOption.array().min(1),
+      scales: choiceOption.array().min(1),
+    }),
+  );
 
 const constantItem = basicFormItem.extend({
   type: z.literal("constant"),
@@ -83,7 +127,8 @@ const constantItem = basicFormItem.extend({
 });
 
 export const formItemSchema = z
-  .discriminatedUnion("type", [inputItem, textAreaItem, choiceItem, constantItem, choiceTableItem])
+  .discriminatedUnion("type", [inputItem, textAreaItem, choiceItem, constantItem])
+  .or(choiceTableItem)
   .or(inputItem);
 const formItemsSchema = formItemSchema.array().transform(items => {
   const ensureSafeId = makeSafeIdValidator();
