@@ -14,7 +14,7 @@ const makeSafeIdValidator = () => {
       return text;
     } else {
       const count = duplicates.get(text) ?? 0;
-      return ensureSafeId(text + (count + 1).toString());
+      return ensureSafeId(text + `(${count + 1})`.toString());
     }
   };
   return ensureSafeId;
@@ -137,10 +137,29 @@ export const formItemSchema = z
   .discriminatedUnion("type", [inputItem, textAreaItem, choiceItem, constantItem])
   .or(choiceTableItem)
   .or(inputItem);
-const formItemsSchema = formItemSchema.array().transform(items => {
+const formItemsSchema = formItemSchema.array().transform((items, ctx) => {
   const ensureSafeId = makeSafeIdValidator();
+  const prevIds = new Set<string>();
   return items.map(item => {
+    if (prevIds.has(item.id || item.title))
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: [item.id],
+        message: "Must be unique",
+      });
+    prevIds.add(item.id || item.title);
     const id = ensureSafeId(item.id || item.title);
+    if (item.type === "choice_table") {
+      item.items.forEach(subItem => {
+        if (prevIds.has(subItem.id))
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: [item.id, subItem.id],
+            message: "Must be unique",
+          });
+        prevIds.add(subItem.id);
+      });
+    }
     return { ...item, id };
   });
 });
