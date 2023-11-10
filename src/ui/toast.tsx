@@ -1,3 +1,4 @@
+/* eslint-disable tailwindcss/no-custom-classname */
 import toast, { Toaster } from "react-hot-toast";
 
 type ToastProps = {

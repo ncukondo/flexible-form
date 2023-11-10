@@ -1,4 +1,4 @@
-import { ParamObject, flattenObject, unFlattenObject } from "@lib/flatten-object";
+import { ParamObject, flattenObject, unFlattenObject } from "@/common/flatten-object";
 
 let currentUrlGetter: (() => URL) | null = null;
 
@@ -9,6 +9,7 @@ const setCurrentUrlGetter = (getter: () => URL) => {
 const currentUrl = () => {
   if (currentUrlGetter === null)
     throw new Error(
+      // eslint-disable-next-line max-len
       `url is not initialized. Please call import @service/url/init-client-url or @service/url/init-server-url`,
     );
   return currentUrlGetter();

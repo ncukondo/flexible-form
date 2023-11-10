@@ -1,7 +1,7 @@
-import { User, isUserInWhileListForEdit, whilteListDomain } from "./user";
-import { loginUrl, logoutUrl } from "../_url";
 import { Suspense } from "react";
-import FormList from "../_form-list/form-list";
+import { loginUrl, logoutUrl } from "@/common/url";
+import { User, isUserInWhileListForEdit, whilteListDomain } from "./user";
+import FormList from "../form-list/form-list";
 
 const CautionMessage = () => {
   const cautionMessage = `Only verified emails ends with ${whilteListDomain.join(

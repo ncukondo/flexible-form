@@ -1,4 +1,4 @@
-import { FormAccessRole, Prisma } from "@prisma/client";
+import { FormAccessRole } from "@prisma/client";
 import { toShortUUID, toUUID } from "./uuid";
 
 const convertFormat = <

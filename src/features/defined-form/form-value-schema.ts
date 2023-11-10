@@ -1,5 +1,9 @@
 import { z } from "zod";
-import { formItemSchema, FormItemsDefinition, FormItemTypes } from "../_form-definition/schema";
+import {
+  formItemSchema,
+  FormItemsDefinition,
+  FormItemTypes,
+} from "../../features/form-definition/schema";
 
 const basicFormItemValueSchema = (item: z.infer<typeof formItemSchema>) => {
   const value = item.required ? z.string().min(1) : z.string().default("");

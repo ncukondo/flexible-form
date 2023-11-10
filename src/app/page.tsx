@@ -1,7 +1,5 @@
-import { getUser } from "./_user/user";
-import { LogInPage } from "./_user/login-forms";
-import FormList from "./_form-list/form-list";
-import { Suspense } from "react";
+import { LogInPage } from "../features/user/login-forms";
+import { getUser } from "../features/user/user";
 
 export default async function Home() {
   const buttonToEditForm = true;

@@ -1,4 +1,4 @@
-import { Fragment, ReactNode } from "react";
+import { ReactNode } from "react";
 import { CloseIcon } from "./icons";
 import { showModal } from "./modal";
 

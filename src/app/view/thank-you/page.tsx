@@ -1,5 +1,5 @@
-import { getPostSubmit } from "@/app/_form-definition/server/get";
 import { z } from "zod";
+import { getPostSubmit } from "@/features/form-definition/server/get";
 
 type SearchParams = { [key: string]: string | string[] | undefined };
 

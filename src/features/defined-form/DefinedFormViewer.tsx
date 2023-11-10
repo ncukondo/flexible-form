@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { DefinedForm } from "./defined-form";
-import { FormDefinitionForView } from "../_form-definition/schema";
-import { submitFormAction } from "./actions";
-import { ParamObject } from "../_lib/flatten-object";
 import toast from "react-hot-toast";
+import { submitFormAction } from "./actions";
+import { DefinedForm } from "./defined-form";
+import { ParamObject } from "../../common/flatten-object";
+import { FormDefinitionForView } from "../../features/form-definition/schema";
 
 const useFormSubmission = (id_for_view: string, formDefinition: FormDefinitionForView) => {
   const [, startTransition] = useTransition();

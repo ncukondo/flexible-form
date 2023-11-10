@@ -1,9 +1,9 @@
-import EditByTomlForm from "../_form-definition/toml/edit-by-toml";
 import { z } from "zod";
-import { getFormDefinitionForEdit } from "@/app/_form-definition/server";
-import { getUser, isUserInWhileListForEdit } from "../_user/user";
-import { LogInPage } from "../_user/login-forms";
-import { makeDefaultValues, SearchParams } from "../_url";
+import { makeDefaultValues, SearchParams } from "@/common/url";
+import { getFormDefinitionForEdit } from "@/features/form-definition/server";
+import EditByTomlForm from "../../features/form-definition/toml/edit-by-toml";
+import { LogInPage } from "../../features/user/login-forms";
+import { getUser, isUserInWhileListForEdit } from "../../features/user/user";
 
 const extractIdForEdit = (urlParams: unknown) => {
   const res = z.object({ id_for_edit: z.string() }).safeParse(urlParams);
