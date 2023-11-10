@@ -38,13 +38,13 @@ const actions = z
   .pipe(z.string().array().min(1));
 
 const basicFormItem = z.object({
-  title: z.string(),
+  title: z.string().default(`Set title here`),
   description: z.string().default(""),
   required: z.boolean().default(false),
   id: z.string().default(""),
 });
 const inputItem = basicFormItem.extend({
-  type: z.literal("short_text"),
+  type: z.literal("short_text").default("short_text"),
 });
 const textAreaItem = basicFormItem.extend({
   type: z.literal("long_text"),
@@ -82,13 +82,9 @@ const constantItem = basicFormItem.extend({
   value: z.string(),
 });
 
-export const formItemSchema = z.discriminatedUnion("type", [
-  inputItem,
-  textAreaItem,
-  choiceItem,
-  constantItem,
-  choiceTableItem,
-]);
+export const formItemSchema = z
+  .discriminatedUnion("type", [inputItem, textAreaItem, choiceItem, constantItem, choiceTableItem])
+  .or(inputItem);
 const formItemsSchema = formItemSchema.array().transform(items => {
   const ensureSafeId = makeSafeIdValidator();
   return items.map(item => {

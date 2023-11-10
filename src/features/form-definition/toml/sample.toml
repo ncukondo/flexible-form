@@ -26,6 +26,7 @@ message="Thank you for your submission."
 # - long_text: Long text input.
 # - choice: Single choice or multiple choice.
 # - choice_table: Single choice or multiple choice table.
+# If you do not specify the type, it will be treated as a short_text.
 [[items]]
 type="constant" # type of item. This is required.
 title="constant_sample" # title of item. This is required.

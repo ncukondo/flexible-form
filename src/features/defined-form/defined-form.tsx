@@ -104,12 +104,17 @@ function ChoiceFormItem({
 type ConstantItemProps = {
   item: ConstantItemDefinition;
   register: UseFormRegister<any>;
+  urlMakingMode?: boolean;
 };
-function ConstantItem({ item, register }: ConstantItemProps) {
+function ConstantItem({ urlMakingMode, item, register }: ConstantItemProps) {
   return (
     <div className="text-base mt-10">
       {item.title}:{" "}
-      <input {...register(item.id, { value: item.value })} className={`bg-transparent`} />
+      <input
+        disabled={!Boolean(urlMakingMode)}
+        {...register(item.id, { value: item.value })}
+        className={`bg-transparent`}
+      />
     </div>
   );
 }
@@ -118,9 +123,10 @@ type FormItemProps = {
   item: FormItemDefinition;
   register: UseFormRegister<any>;
   errors: FieldErrors<FieldValues>;
+  urlMakingMode?: boolean;
 };
-function FormItem({ errors, item, register }: FormItemProps) {
-  if (item.type === "constant") return <ConstantItem {...{ item, register }} />;
+function FormItem({ errors, item, register, urlMakingMode }: FormItemProps) {
+  if (item.type === "constant") return <ConstantItem {...{ item, register, urlMakingMode }} />;
   const error = (item.id in errors && errors[item.id as keyof typeof errors]) || undefined;
 
   return (
@@ -256,7 +262,7 @@ export function DefinedForm({
         <div>{formDefinition.description}</div>
         <div>
           {formDefinition.items.map(item => (
-            <FormItem {...{ register, errors, item }} key={item.id} />
+            <FormItem {...{ register, errors, item, urlMakingMode }} key={item.id} />
           ))}
         </div>
       </div>
