@@ -48,8 +48,8 @@ title="Long Text"
 type="choice"
 title="Single Choice"
 
-# items is array of choice items.
-items=[
+# choices is array of choice items.
+choices=[
   "option1",
   "option2",
   "option3",
@@ -60,18 +60,18 @@ items=[
 type="choice"
 title="Multiple Choice"
 multiple=true # This item is multiple choice. This is optional. It is false by default.
-items=[
+choices=[
   "option1",
   "option2",
   "option3",
-  "option4",
+  {title="option4", value="value4"}, # You can specify the value of the choice item.
 ]
 
 [[items]]
 type="choice_table"
 title="Choice Table"
 
-# items is array of choice items. This is required. This represents the columnss of the table.
+# items is array of choice items. This is required. This represents the column header of the table.
 items=[
   "option1",
   "option2",
@@ -80,11 +80,11 @@ items=[
   "option5",
   "option6",
   "option7",
-  "option8",
+  {title="option8",id="global_unique_id8"}, # You can specify the id of the choice item. The id must be unique in the form.
 ]
 
-# scales is array of choice items. This is required. This represents the rows of the table.
-scales=[
+# choices is array of choice items. This is required. This represents the row header of the table.
+choices=[
   "scale1",
   "scale2",
   "scale3",
@@ -107,7 +107,7 @@ items=[
   "option3",
   "option4",
 ]
-scales=[
+choices=[
   "scale1",
   "scale2",
   "scale3",

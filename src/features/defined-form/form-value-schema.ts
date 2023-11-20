@@ -45,13 +45,12 @@ const makeChoiceOptionSchema = <T extends readonly { title: string; value: strin
 };
 const choiceItemValueSchema = (item: z.infer<typeof formItemSchema>) => {
   if (item.type !== "choice") return z.never();
-  return makeChoiceOptionSchema(item.items, item.multiple, item.required);
+  return makeChoiceOptionSchema(item.choices, item.multiple, item.required);
 };
 const choiceTableItemValueSchema = (item: z.infer<typeof formItemSchema>) => {
   if (item.type !== "choice_table") return z.never();
-  const values = makeChoiceOptionSchema(item.scales, item.multiple, item.required);
-  const object = Object.fromEntries(item.items.map(key => [key, values] as const));
-  return z.object(object);
+  const values = makeChoiceOptionSchema(item.choices, item.multiple, item.required);
+  return item.items.map(({ id }) => [id, values] as const);
 };
 const makeFormItemsValueSchema = (formItemsDefinition: FormItemsDefinition | undefined) => {
   if (!formItemsDefinition) return z.object({});
@@ -65,9 +64,10 @@ const makeFormItemsValueSchema = (formItemsDefinition: FormItemsDefinition | und
     [K in FormItemTypes]: unknown;
   };
   const entries = Object.fromEntries(
-    formItemsDefinition.map(item => {
+    formItemsDefinition.flatMap(item => {
       const valueItem = functionDict[item.type](item);
-      return [item.id, valueItem] as const;
+      if (Array.isArray(valueItem)) return valueItem;
+      return [[item.id, valueItem]] as const;
     }),
   );
   return z.object(entries);

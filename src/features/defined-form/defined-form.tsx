@@ -41,9 +41,9 @@ function ChoiceTableFormItem({
         <thead className="text-sm">
           <tr>
             <th className="sticky top-0"></th>
-            {item.scales.map(scale => (
-              <th key={scale.title} className="z-10 sticky top-0 font-normal p-2">
-                <span className="m-auto">{scale.title}</span>
+            {item.choices.map(choice => (
+              <th key={choice.title} className="z-10 sticky top-0 font-normal p-2">
+                <span className="m-auto">{choice.title}</span>
               </th>
             ))}
           </tr>
@@ -58,14 +58,14 @@ function ChoiceTableFormItem({
               >
                 {subItem.title}
               </th>
-              {item.scales.map(scale => (
-                <td key={scale.value} className="p-2">
+              {item.choices.map(choice => (
+                <td key={choice.value} className="p-2">
                   <div className="flex justify-center items-center">
                     <input
                       type={item.multiple ? "checkbox" : "radio"}
                       className={item.multiple ? "checkbox" : "radio"}
                       {...register(`${subItem.id}`)}
-                      value={scale.value}
+                      value={choice.value}
                     />
                   </div>
                 </td>
@@ -85,7 +85,7 @@ function ChoiceFormItem({
   item: ChoiceItemDefinition;
   register: UseFormRegister<any>;
 }) {
-  return item.items.map(choice => (
+  return item.choices.map(choice => (
     <div key={choice.value}>
       <label className="label cursor-pointer justify-start gap-x-3">
         <input
@@ -246,6 +246,7 @@ export function DefinedForm({
     formState: { errors, isValid },
     reset,
   } = useForm({ resolver: zodResolver(formItemValidator), mode: "onBlur", defaultValues });
+  console.log("isValid", isValid, JSON.stringify(Object.keys(errors)));
   useEffect(() => {
     formDefinition?.items
       ?.flatMap(item =>
