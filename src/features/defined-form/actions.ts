@@ -2,18 +2,16 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { makeFormItemsValueSchema } from "./form-value-schema";
+import { makeFormItemsValueSchema, makeFormItemsValueSchemaKeys } from "./form-value-schema";
 import { sendSystemMessageMail } from "./send-mail";
 import { FormDefinitionForView } from "../../features/form-definition/schema";
 import { getFormAction } from "../../features/form-definition/server/get";
 
 const parseValue = (formValue: unknown, formDefinition: FormDefinitionForView) => {
   const parsed = makeFormItemsValueSchema(formDefinition.items).parse(formValue);
-  const details = formDefinition.items.map(item => {
-    const value = parsed[item.id as keyof typeof parsed];
-    return { ...item, value };
-  });
-  return { value: parsed, details };
+  const keys = makeFormItemsValueSchemaKeys(formDefinition.items);
+  const schema = formDefinition.items;
+  return { value: parsed, keys, schema };
 };
 
 async function submitFormAction(
@@ -22,13 +20,14 @@ async function submitFormAction(
   formDefinition: FormDefinitionForView,
 ) {
   const actions = await getFormAction(idForView);
-  const { value, details } = parseValue(formValue, formDefinition);
+  const { value, keys, schema } = parseValue(formValue, formDefinition);
   const payload = {
     form: idForView,
     title: formDefinition.title,
     description: formDefinition.description,
     value,
-    details,
+    keys,
+    schema,
   };
   await Promise.all(
     actions

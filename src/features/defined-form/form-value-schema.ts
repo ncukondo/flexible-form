@@ -52,8 +52,9 @@ const choiceTableItemValueSchema = (item: z.infer<typeof formItemSchema>) => {
   const values = makeChoiceOptionSchema(item.choices, item.multiple, item.required);
   return item.items.map(({ id }) => [id, values] as const);
 };
-const makeFormItemsValueSchema = (formItemsDefinition: FormItemsDefinition | undefined) => {
-  if (!formItemsDefinition) return z.object({});
+
+const processFormItemsDefinition = (formItemsDefinition: FormItemsDefinition | undefined) => {
+  if (!formItemsDefinition) return { keys: [], scheme: z.object({}) } as const;
   const functionDict = {
     short_text: basicFormItemValueSchema,
     long_text: basicFormItemValueSchema,
@@ -63,14 +64,23 @@ const makeFormItemsValueSchema = (formItemsDefinition: FormItemsDefinition | und
   } as const satisfies {
     [K in FormItemTypes]: unknown;
   };
-  const entries = Object.fromEntries(
-    formItemsDefinition.flatMap(item => {
-      const valueItem = functionDict[item.type](item);
-      if (Array.isArray(valueItem)) return valueItem;
-      return [[item.id, valueItem]] as const;
-    }),
-  );
-  return z.object(entries);
+  const entries = formItemsDefinition.flatMap(item => {
+    const valueItem = functionDict[item.type](item);
+    if (Array.isArray(valueItem)) return valueItem;
+    return [[item.id, valueItem]] as const;
+  });
+  const keys = entries.map(([key]) => key);
+  return { keys, scheme: z.object(Object.fromEntries(entries)) } as const;
 };
 
-export { makeFormItemsValueSchema };
+const makeFormItemsValueSchema = (formItemsDefinition: FormItemsDefinition | undefined) => {
+  const { scheme } = processFormItemsDefinition(formItemsDefinition);
+  return scheme;
+};
+
+const makeFormItemsValueSchemaKeys = (formItemsDefinition: FormItemsDefinition | undefined) => {
+  const { keys } = processFormItemsDefinition(formItemsDefinition);
+  return keys;
+};
+
+export { makeFormItemsValueSchema, makeFormItemsValueSchemaKeys };
