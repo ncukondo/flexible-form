@@ -8,7 +8,6 @@ type RegisteredFormDefinition = {
   source: string;
   actions: string[];
   form_definition: Prisma.JsonValue;
-  author_uid: string | null;
   id_for_edit: string;
   id_for_view: string;
   id_for_extend: string;
