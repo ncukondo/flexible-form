@@ -1,20 +1,8 @@
 import type { NextAuthConfig } from "next-auth"
-import Email from "next-auth/providers/email"
 
 export default {
-  providers: [
-    Email({
-      server: {
-        host: process.env.SMTP_HOST,
-        port: Number(process.env.SMTP_PORT),
-        auth: {
-          user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASSWORD,
-        },
-      },
-      from: process.env.EMAIL_FROM,
-    }),
-  ],
+  providers: [],
+  session: { strategy: "jwt" },
   callbacks: {
     async redirect({ url, baseUrl }) {
       // Allows relative callback URLs
@@ -22,6 +10,20 @@ export default {
       // Allows callback URLs on the same origin
       else if (new URL(url).origin === baseUrl) return url;
       return baseUrl
+    },
+    jwt({ token, user }) {
+      if (user) {
+        token.sub = user.sub
+        token.email_verified = user.email_verified
+      }
+      return token
+    },
+    session({ session, token }) {
+      if (session.user) {
+        session.user.sub = token.jti as string
+        session.user.email_verified = new Date(token.iat as number * 1000).toISOString()
+      }
+      return session
     }
   }
 } satisfies NextAuthConfig

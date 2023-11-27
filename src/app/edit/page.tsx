@@ -2,7 +2,7 @@ import { z } from "zod";
 import { makeDefaultValues, SearchParams } from "@/common/url";
 import { getFormDefinitionForEdit } from "@/features/form-definition/server";
 import EditByTomlForm from "../../features/form-definition/toml/edit-by-toml";
-import { LogInPage } from "../../features/user/login-forms";
+import { LogInPanel } from "../../features/user/login-forms";
 import { getUser, isUserInWhileListForEdit } from "../../features/user/user";
 
 const extractIdForEdit = (urlParams: unknown) => {
@@ -22,7 +22,7 @@ export default async function EditForm({ searchParams }: { searchParams: SearchP
   const defaultValues = makeDefaultValues(searchParams);
   const user = await getUser();
   if (!user || !isUserInWhileListForEdit(user))
-    return <LogInPage {...{ user, buttonToEditForm: false }} />;
+    return <LogInPanel {...{ user, buttonToEditForm: false }} />;
 
   return <EditByTomlForm {...{ defaultValues, formDefinitionForEdit }} />;
 }
