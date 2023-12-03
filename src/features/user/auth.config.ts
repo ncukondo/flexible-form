@@ -3,6 +3,7 @@ import type { NextAuthConfig } from "next-auth"
 export default {
   providers: [],
   session: { strategy: "jwt" },
+  secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async redirect({ url, baseUrl }) {
       // Allows relative callback URLs
