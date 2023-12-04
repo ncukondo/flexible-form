@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { loginUrl, logoutUrl } from "@/common/url";
+import { signIn,signOut } from "./auth";
 import { User, isUserInWhileListForEdit, whilteListDomain } from "./user";
 import FormList from "../form-list/form-list";
 
@@ -26,14 +26,45 @@ const CautionMessage = () => {
     </div>
   );
 };
+
+function LogoutButton() {
+  return (
+    <form
+      action={async () => {
+        "use server";
+        await signOut();
+      }}
+    >
+      <button className="btn btn-ghost">
+        Logout
+      </button>
+    </form>
+  );
+}
+
+function LoginButton() {
+  return (
+    <form
+      action={async (data:FormData) => {
+        "use server";
+        await signIn("email",{email:data.get("email")});
+      }}
+    ><input name="email" className="input" placeholder="Email Address"></input>
+      <button className="btn btn-primary">
+        Login
+      </button>
+    </form>
+  );
+}
+
+
+
 const Login = () => {
   return (
     <>
       <div>Please Login before making form.</div>
       <CautionMessage />
-      <a href={loginUrl()} className="btn btn-primary">
-        Login
-      </a>
+      <LoginButton />
     </>
   );
 };
@@ -61,14 +92,12 @@ const UserStatus = ({
         ) : (
           <CautionMessage />
         )}
-        <a href={logoutUrl()} className="btn">
-          Logout
-        </a>
+        <LogoutButton />
       </div>
     </div>
   );
 };
-export const LogInPage = async ({
+export const LogInPanel = async ({
   buttonToEditForm = true,
   user,
 }: {

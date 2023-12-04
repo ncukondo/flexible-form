@@ -1,21 +1,18 @@
-import { getSession } from "@auth0/nextjs-auth0";
+import { auth } from "./auth";
+
 
 type User = {
-  nickname: string;
   name: string;
-  picture: string;
-  updated_at: string;
   email: string;
-  email_verified: boolean;
+  email_verified: string;
   sub: string;
-  sid: string;
 };
 
 const whilteListDomain = ["nagoya-u.ac.jp", "thers.ac.jp", "sri-net.jp"];
 
 const getUser = async () => {
-  const session = await getSession();
-  if (!session) {
+  const session = await auth();
+  if (!session?.user) {
     return null;
   }
   return session.user as User;

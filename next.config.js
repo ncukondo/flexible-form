@@ -23,6 +23,7 @@ const nextConfig = {
         type: 'asset/source',
       }
     )
+
     return config
   },
 }

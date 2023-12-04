@@ -13,6 +13,7 @@ type FormInfo = {
 };
 
 const formatDateTime = (date: Date) => {
+  date.setTime(date.getTime() + 1000*60*60*9);// convert to JST
   const year = date.getFullYear().toString();
   const month = (date.getMonth() + 1).toString().padStart(2, "0");
   const day = date.getDate().toString().padStart(2, "0");
