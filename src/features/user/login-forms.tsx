@@ -39,7 +39,7 @@ function LogoutButton() {
         Logout
       </button>
     </form>
-  );t
+  );
 }
 
 function LoginButton() {
