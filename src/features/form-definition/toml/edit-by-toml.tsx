@@ -78,8 +78,9 @@ function useInitTomlStore(formDefinitionForEdit: FormDefinitionForEdit | null | 
 }
 
 type EditConfigProps = Omit<JSX.IntrinsicElements["textarea"], "value" | "onChange" | "onSubmit">;
+
 function EditConfig(props: EditConfigProps) {
-  const { getToml, setToml } = useTomlText();
+  const { getToml, setToml, reset } = useTomlText();
   const { isPending, registerFormDefinicion } = useRegisterFormDefinition();
   const { formDefinitionForEdit } = useFormDefinitionForEdit();
   useInitTomlStore(formDefinitionForEdit);
@@ -104,6 +105,15 @@ function EditConfig(props: EditConfigProps) {
         <ErrorDisplay />
       </div>
       <div className="p-2 grid justify-items-end grid-flow-col grid-cols-1 gap-4">
+        <button
+          className="btn btn-ghost"
+          onClick={e => {
+            e.preventDefault();
+            reset();
+          }}
+        >
+          <span>reset</span>
+        </button>
         {formDefinitionForEdit && (
           <>
             <EditPermissionButton id_for_edit={formDefinitionForEdit.id_for_edit} />
