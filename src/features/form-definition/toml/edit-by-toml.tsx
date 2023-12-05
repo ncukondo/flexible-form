@@ -128,7 +128,11 @@ function EditConfig(props: EditConfigProps) {
             </button>
           </>
         )}
-        <button className="btn" disabled={!!error && formDefinition !== null && !isPending}>
+        <button
+          className="btn"
+          disabled={!!error && formDefinition !== null && !isPending}
+          type="submit"
+        >
           {isPending ? (
             <span className="flex flex-row items-center gap-4">
               <span className="loading loading-spinner loading-xs"></span>
