@@ -41,7 +41,7 @@ export default function DefinedFormViewer({
   const { isPending, submitForm } = useFormSubmission(id_for_view, formDefinition);
   const onSubmit = (data: { [key: string]: any }) => submitForm(data);
   return (
-    <div className="mx-auto max-w-3xl py-12 my-0">
+    <div className="mx-auto max-w-3xl py-12 my-0 px-4">
       <DefinedForm {...{ formDefinition, onSubmit, defaultValues, isPending }} />
     </div>
   );
