@@ -1,34 +1,69 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Flexible Form
+
+Welcome to `Flexible Form` - a dynamic form builder application built with Next.js, leveraging the power of Vercel and Vercel Postgres. This application allows users to define forms using Toml, enabling the publication and management of these forms with ease.
+
+## Features
+
+- **Form Definition with Toml**: Define the structure and elements of your forms using the Toml language.
+- **Easy Publishing**: Once defined, forms can be easily published and made available online.
+- **Built with Next.js**: Utilizing the robust features of Next.js for a seamless user experience.
+- **Backend Powered by Vercel and Vercel Postgres**: Reliable and scalable backend solutions.
+
+## Live Application
+
+Visit the live application here: [Flexible Form](https://flexible-form.vercel.app/)
+
+## Repository
+
+GitHub Repository: [ncukondo/flexible-form](https://github.com/ncukondo/flexible-form)
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+- Node.js
+- NPM/Yarn
+- Vercel Account (for deployment)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Installation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Clone the repository:
+   ```
+   git clone https://github.com/ncukondo/flexible-form.git
+   ```
+2. Navigate to the project directory:
+   ```
+   cd flexible-form
+   ```
+3. Install dependencies:
+   ```
+   npm install
+   ```
+   or
+   ```
+   yarn install
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### Running Locally
 
-## Learn More
+1. Start the development server:
+   ```
+   npm run dev
+   ```
+   or
+   ```
+   yarn dev
+   ```
+2. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-To learn more about Next.js, take a look at the following resources:
+## Deployment
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This application is ready to be deployed on Vercel. Follow the [Vercel Deployment Guide](https://vercel.com/docs) for detailed instructions.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Contributing
 
-## Deploy on Vercel
+Contributions are always welcome! Please read our [Contribution Guidelines](CONTRIBUTING.md) for more information on how you can contribute.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## License
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
