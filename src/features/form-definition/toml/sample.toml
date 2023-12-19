@@ -4,7 +4,11 @@
 
 
 title="Test Form" # title of form
-description="desctiption of form"  # description of form. This is optional.
+description="""
+Desctiption of form
+You can use multiple line text
+URLs are auto linked -> https://sample.com/
+"""  # description of form. This is optional.  # description of form. This is optional.
 
 # Define actions to be executed when the form is submitted. This can be string or array of string.
 # Available actions are:

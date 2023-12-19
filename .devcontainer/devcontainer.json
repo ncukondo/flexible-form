@@ -18,7 +18,12 @@
       "version": "latest"
     }
   },
-  "postCreateCommand": "sudo chmod -R 777 node_modules"
+  "postCreateCommand": "sudo chmod -R 777 node_modules",
+  "customizations": {
+    "vscode": {
+      "extensions": ["GitHub.copilot-chat"]
+    }
+  }
   // Features to add to the dev container. More info: https://containers.dev/features.
   // "features": {},
   // Use 'forwardPorts' to make a list of ports inside the container available locally.

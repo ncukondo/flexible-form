@@ -28,7 +28,7 @@ const ConfirmDialog = ({
   primary = "",
 }: Props & { onClose: (res: string) => void }) => {
   return (
-    <div className="modal-box">
+    <div className="modal-box backdrop-blur  bg-base-100/80">
       <Title title={title} cancel={() => onClose("")} />
       <div className="mt-2">{content}</div>
 

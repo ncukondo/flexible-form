@@ -15,6 +15,7 @@ import {
 import { ParamObject } from "@/common/flatten-object";
 import { makePrevilledUrl } from "@/common/url";
 import { makeFormItemsValueSchema } from "./form-value-schema";
+import { styledText } from "./styled-text";
 import {
   ChoiceItemDefinition,
   ChoiceTableItemDefinition,
@@ -132,10 +133,10 @@ function FormItem({ errors, item, register, urlMakingMode }: FormItemProps) {
   return (
     <div>
       <div className="text-base mt-10">
-        {item.title}
+        {styledText(item.title)}
         <span className="text-error">{item.required && "*"}</span>
       </div>
-      <div className="text-sm my-4">{item.description}</div>
+      <div className="text-sm my-4">{styledText(item.description)}</div>
       <div className="text-error">{error?.message?.toString()}</div>
       {item.type === "short_text" && (
         <input {...register(item.id)} className="input input-bordered  w-full" />
@@ -246,7 +247,6 @@ export function DefinedForm({
     formState: { errors, isValid },
     reset,
   } = useForm({ resolver: zodResolver(formItemValidator), mode: "onBlur", defaultValues });
-  console.log("isValid", isValid, JSON.stringify(Object.keys(errors)));
   useEffect(() => {
     formDefinition?.items
       ?.flatMap(item =>
@@ -260,7 +260,7 @@ export function DefinedForm({
     <form onSubmit={handleSubmit(data => onSubmit?.(data))} className="h-full overflow-auto">
       <div>
         <div className="text-4xl">{formDefinition.title}</div>
-        <div>{formDefinition.description}</div>
+        <div>{styledText(formDefinition.description)}</div>
         <div>
           {formDefinition.items.map(item => (
             <FormItem {...{ register, errors, item, urlMakingMode }} key={item.id} />
