@@ -4,10 +4,9 @@ Welcome to `Flexible Form` - a dynamic form builder application built with Next.
 
 ## Features
 
-- **Form Definition with Toml**: Define the structure and elements of your forms using the Toml language.
-- **Easy Publishing**: Once defined, forms can be easily published and made available online.
-- **Built with Next.js**: Utilizing the robust features of Next.js for a seamless user experience.
-- **Backend Powered by Vercel and Vercel Postgres**: Reliable and scalable backend solutions.
+- **Form Definition with TOML**: Define your forms easily in TOML, making them highly configurable and easy to manage.
+- **Vercel Postgres Backend**: Leverages the power of Vercel's serverless infrastructure along with a robust Postgres database.
+- **Email Integration**: Integrated with SendGrid for form email functionalities.
 
 ## Live Application
 
@@ -19,11 +18,12 @@ GitHub Repository: [ncukondo/flexible-form](https://github.com/ncukondo/flexible
 
 ## Getting Started
 
+To get a local copy up and running, follow these simple steps.
+
 ### Prerequisites
 
-- Node.js
-- NPM/Yarn
-- Vercel Account (for deployment)
+- Vercel account for deployment
+- Vercel Postgres and SendGrid accounts for backend services
 
 ### Installation
 
@@ -35,35 +35,33 @@ GitHub Repository: [ncukondo/flexible-form](https://github.com/ncukondo/flexible
    ```
    cd flexible-form
    ```
-3. Install dependencies:
+3. Install NPM packages:
    ```
    npm install
    ```
-   or
-   ```
-   yarn install
-   ```
+4. Duplicate `.env.sample` and rename to `.env`. Fill in the necessary Vercel Postgres and SendGrid credentials.
 
-### Running Locally
+## Usage
 
-1. Start the development server:
+After setting up your `.env` file with the necessary credentials:
+
+1. Run the development server:
    ```
    npm run dev
    ```
-   or
-   ```
-   yarn dev
-   ```
-2. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-## Deployment
-
-This application is ready to be deployed on Vercel. Follow the [Vercel Deployment Guide](https://vercel.com/docs) for detailed instructions.
+2. Open [http://localhost:3000](http://localhost:3030) with your browser to see the result.
 
 ## Contributing
 
-Contributions are always welcome! Please read our [Contribution Guidelines](CONTRIBUTING.md) for more information on how you can contribute.
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Distributed under the MIT License. See `LICENSE` for more information.
+
