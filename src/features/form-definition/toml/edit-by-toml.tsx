@@ -1,5 +1,6 @@
 "use client";
 import "@/common/url/init-client-url";
+import crypto from "crypto";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState, useTransition } from "react";
@@ -156,6 +157,8 @@ function handleSubmitDefinedForm(data: { [key: string]: any }) {
   alert(JSON.stringify(data, null, 2));
 }
 
+const makeHash = (value: string) => crypto.createHash("md5").update(value).digest("hex");
+
 type EditByTomlFormProps = {
   defaultValues?: ParamObject;
   formDefinitionForEdit?: FormDefinitionForEdit | null;
@@ -165,6 +168,8 @@ export default function EditByTomlForm({
   formDefinitionForEdit,
 }: EditByTomlFormProps) {
   const formDefinition = useFormDefinition(s => s.formDefinition);
+  const definitionHash = makeHash(JSON.stringify(formDefinition));
+
   const setFormDefinitionForEdit = useFormDefinitionForEdit(s => s.setFormDefinitionForEdit);
   const id_for_view = useIdForView();
   useEffect(() => {
@@ -179,6 +184,7 @@ export default function EditByTomlForm({
         <div className="p-2  h-full">
           {formDefinition && (
             <DefinedForm
+              key={definitionHash}
               {...{
                 onSubmit: handleSubmitDefinedForm,
                 formDefinition,

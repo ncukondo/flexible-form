@@ -1,7 +1,7 @@
 import TOML from "@ltd/j-toml";
 import { create } from "zustand";
 import { persist, devtools } from "zustand/middleware";
-import type {} from "@redux-devtools/extension"; // required for devtools typing
+import type { } from "@redux-devtools/extension"; // required for devtools typing
 import { useFormDefinition } from "../store";
 import { makeDerivedConnection } from "../store-utils";
 
@@ -102,9 +102,9 @@ makeDerivedConnection(useTomlTextDict, useTomlDerivedJson, (source, listner) =>
   listner.setToml(source.getToml()),
 );
 
-makeDerivedConnection(useTomlDerivedJson, useFormDefinition, (source, listner) =>
-  listner.setSource(source.jsonObject),
-);
+makeDerivedConnection(useTomlDerivedJson, useFormDefinition, (source, listner) => {
+  listner.setSource(source.jsonObject);
+});
 
 export {
   useTomlTextDict as useTomlText,

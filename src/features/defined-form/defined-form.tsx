@@ -1,7 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { useEffect } from "react";
 import {
   FieldError,
   FieldErrors,
@@ -114,7 +113,7 @@ function ConstantItem({ urlMakingMode, item, register }: ConstantItemProps) {
       <input
         disabled={!Boolean(urlMakingMode)}
         {...register(item.id, { value: item.value })}
-        className={`bg-transparent`}
+        className={`bg-transparent ${urlMakingMode ? "input input-bordered" : ""}`}
       />
     </div>
   );
@@ -243,19 +242,9 @@ export function DefinedForm({
     register,
     handleSubmit,
     getValues,
-    setValue,
     formState: { errors, isValid },
     reset,
   } = useForm({ resolver: zodResolver(formItemValidator), mode: "onBlur", defaultValues });
-  useEffect(() => {
-    formDefinition?.items
-      ?.flatMap(item =>
-        item.type === "constant" && "value" in item ? [[item.id, item.value]] : [],
-      )
-      .forEach(([id, value]) => {
-        setValue(id, value);
-      });
-  }, [formDefinition, setValue]);
   return (
     <form onSubmit={handleSubmit(data => onSubmit?.(data))} className="h-full overflow-auto">
       <div>
