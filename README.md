@@ -49,7 +49,7 @@ After setting up your `.env` file with the necessary credentials:
    ```
    npm run dev
    ```
-2. Open [http://localhost:3000](http://localhost:3030) with your browser to see the result.
+2. Open [http://localhost:3030](http://localhost:3030) with your browser to see the result.
 
 ## Contributing
 
