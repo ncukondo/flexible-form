@@ -221,6 +221,7 @@ type DefinedFormProps = {
   id_for_view?: string | undefined;
   showPrefilledUrlButton?: boolean | undefined;
 };
+
 export function DefinedForm({
   formDefinition,
   onSubmit,
