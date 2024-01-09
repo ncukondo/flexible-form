@@ -14,14 +14,15 @@ type ParamObject = {
 };
 type ParamObjectWithUndefined = {
   [key: string]:
-    | string
-    | readonly (string | undefined)[]
-    | ParamObjectWithUndefined
-    | readonly (ParamObjectWithUndefined | undefined)[];
+  | string
+  | readonly (string | undefined)[]
+  | ParamObjectWithUndefined
+  | readonly (ParamObjectWithUndefined | undefined)[];
 };
 type ParamObjectWithUndefinedValue = ParamObjectWithUndefined[keyof ParamObjectWithUndefined];
 
 const splitter = ".";
+
 const sanitizeData = (data: { [key: string]: string | string[] | undefined }) => {
   const filterUndefinedEntry = (
     entry: [string, string | string[] | undefined],
@@ -103,7 +104,7 @@ const flattenObject = (obj: ParamObject) => {
   ): [string, string][] => {
     return Object.entries(obj).flatMap(([k, v]) => {
       if (!v) return [];
-      const key = parentKey ? `${parentKey}.${k}` : k;
+      const key = parentKey ? `${parentKey}${splitter}${k}` : k;
       if (typeof v === "string") {
         return [[key, v]];
       }

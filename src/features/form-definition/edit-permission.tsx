@@ -11,19 +11,24 @@ type EditPermissionDialogProps = {
   onClose: () => void;
 };
 
-const isValidEmails = (emails: string) => {
+const isValidEmail = (email: string) => {
   const re = /\S+@\S+\.\S+/;
+  return re.test(email);
+}
+
+const isValidEmails = (emails: string) => {
   return emails
     .split("\n")
     .map(email => email.trim())
     .filter(email => email !== "")
-    .every(email => re.test(email));
+    .every(isValidEmail);
 };
 
 const EditPermissionDialog = ({ userEmails, id_for_edit, onClose }: EditPermissionDialogProps) => {
   const [editors, setEditors] = useState(userEmails.join("\n"));
   const [isPending, setIsPending] = useState(false);
   const isValid = isValidEmails(editors);
+
   const onSave = async () => {
     const emails = editors.split("\n").filter(email => email !== "");
     setIsPending(true);
@@ -35,6 +40,7 @@ const EditPermissionDialog = ({ userEmails, id_for_edit, onClose }: EditPermissi
     }
     onClose();
   };
+  
   return (
     <div className="p-4 bg-base-100 rounded-2xl grid grid-cols-1 gap-8">
       <h2 className="text-lg font-bold">Share Config</h2>

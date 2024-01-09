@@ -10,7 +10,7 @@ const getDuplicated = (array: string[]): string[] => {
   return [...new Set(array.filter((item, index, self) => self.indexOf(item) !== index))];
 };
 
-const hasDuplicatedValue = <T extends { [key: string]: string }>(items: readonly T[]) => {
+const hasDuplicatedValue = <T extends { [key: string]: string }>(items: readonly T[]): boolean => {
   const valuesMap = new Map<string, string[]>();
   items.forEach(item => {
     Object.entries(item).forEach(([key, value]) => {

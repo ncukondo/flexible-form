@@ -50,9 +50,9 @@ function ChoiceTableFormItem({
         </thead>
         <tbody className="overflow-auto">
           {item.items.map(subItem => (
-            <tr key={subItem.id} id={`${subItem.id}`}>
+            <tr key={subItem.id} id={`${subItem.id}`} className="border-y-[1px] border-base-200">
               <th
-                className={`left-0 sticky font-normal text-sm ${
+                className={`text-left left-0 sticky font-normal text-sm ${
                   error && subItem.id in error && "text-error"
                 }`}
               >
@@ -108,12 +108,12 @@ type ConstantItemProps = {
 };
 function ConstantItem({ urlMakingMode, item, register }: ConstantItemProps) {
   return (
-    <div className="text-base mt-10">
+    <div className="text-base mt-10 w-full">
       {item.title}:{" "}
       <input
         disabled={!Boolean(urlMakingMode)}
         {...register(item.id, { value: item.value })}
-        className={`bg-transparent ${urlMakingMode ? "input input-bordered" : ""}`}
+        className={`w-full bg-transparent ${urlMakingMode ? "input input-bordered" : ""}`}
       />
     </div>
   );
@@ -125,26 +125,29 @@ type FormItemProps = {
   errors: FieldErrors<FieldValues>;
   urlMakingMode?: boolean;
 };
+
 function FormItem({ errors, item, register, urlMakingMode }: FormItemProps) {
   if (item.type === "constant") return <ConstantItem {...{ item, register, urlMakingMode }} />;
   const error = (item.id in errors && errors[item.id as keyof typeof errors]) || undefined;
 
   return (
     <div>
-      <div className="text-base mt-10">
+      <div className="mt-16 text-lg font-bold text-base-content/75">
         {styledText(item.title)}
         <span className="text-error">{item.required && "*"}</span>
       </div>
-      <div className="text-sm my-4">{styledText(item.description)}</div>
-      <div className="text-error">{error?.message?.toString()}</div>
-      {item.type === "short_text" && (
-        <input {...register(item.id)} className="input input-bordered  w-full" />
-      )}
-      {item.type === "long_text" && (
-        <textarea {...register(item.id)} className="textarea textarea-bordered w-full h-32" />
-      )}
-      {item.type === "choice" && <ChoiceFormItem {...{ item, register }} />}
-      {item.type === "choice_table" && <ChoiceTableFormItem {...{ item, register, error }} />}
+      <div className="pl-4">
+        <div className="text-sm my-4  text-base-content/75">{styledText(item.description)}</div>
+        <div className="text-error">{error?.message?.toString()}</div>
+        {item.type === "short_text" && (
+          <input {...register(item.id)} className="input input-bordered  w-full" />
+        )}
+        {item.type === "long_text" && (
+          <textarea {...register(item.id)} className="textarea textarea-bordered w-full h-32" />
+        )}
+        {item.type === "choice" && <ChoiceFormItem {...{ item, register }} />}
+        {item.type === "choice_table" && <ChoiceTableFormItem {...{ item, register, error }} />}
+      </div>
     </div>
   );
 }

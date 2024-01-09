@@ -21,7 +21,10 @@
   "postCreateCommand": "sudo chmod -R 777 node_modules",
   "customizations": {
     "vscode": {
-      "extensions": ["GitHub.copilot-chat"]
+      "extensions": [
+        "GitHub.copilot-chat",
+        "YoavBls.pretty-ts-errors"
+      ]
     }
   }
   // Features to add to the dev container. More info: https://containers.dev/features.
