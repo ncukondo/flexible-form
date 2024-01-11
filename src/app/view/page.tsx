@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { makeDefaultValues, SearchParams } from "@/common/url";
-import DefinedFormViewer from "@/features/defined-form/DefinedFormViewer";
+import DefinedFormViewer from "@/features/defined-form/defined-form-viewer";
 import { getFormDefinitionForView } from "@/features/form-definition/server";
 import { safeParseFormDefinitionForView } from "../../features/form-definition/schema";
 
