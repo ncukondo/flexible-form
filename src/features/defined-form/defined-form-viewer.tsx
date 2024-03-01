@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import { submitFormAction } from "./actions";
 import { DefinedForm } from "./defined-form";
@@ -8,22 +8,19 @@ import { ParamObject } from "../../common/flatten-object";
 import { FormDefinitionForView } from "../form-definition/schema";
 
 const useFormSubmission = (id_for_view: string, formDefinition: FormDefinitionForView) => {
-  const [, startTransition] = useTransition();
   const [isPending, setIsPending] = useState(false);
   const submitForm = (formValue: unknown) => {
     setIsPending(true);
-    startTransition(() => {
-      (async () => {
-        try {
-          await submitFormAction(id_for_view, formValue, formDefinition);
-        } catch (e) {
-          toast.error("Error submitting form");
-          console.error(e);
-        } finally {
-          setIsPending(false);
-        }
-      })();
-    });
+    (async () => {
+      try {
+        await submitFormAction(id_for_view, formValue, formDefinition);
+      } catch (e) {
+        toast.error("Error submitting form");
+        console.error(e);
+      } finally {
+        setIsPending(false);
+      }
+    })();
   };
   return { isPending, submitForm };
 };

@@ -1,5 +1,6 @@
 import { Suspense } from "react";
-import { signIn,signOut } from "./auth";
+import { signIn, signOut } from "./auth";
+import { LoginButton } from "./login-button";
 import { User, isUserInWhileListForEdit, whilteListDomain } from "./user";
 import FormList from "../form-list/form-list";
 
@@ -35,36 +36,31 @@ function LogoutButton() {
         await signOut();
       }}
     >
-      <button className="btn btn-ghost">
-        Logout
-      </button>
+      <button className="btn btn-ghost">Logout</button>
     </form>
   );
 }
 
-function LoginButton() {
+function LoginForm() {
   return (
     <form
-      action={async (data:FormData) => {
+      action={async (data: FormData) => {
         "use server";
-        await signIn("email",{email:data.get("email")});
+        await signIn("email", { email: data.get("email") });
       }}
-    ><input name="email" className="input" placeholder="Email Address"></input>
-      <button className="btn btn-primary">
-        Login
-      </button>
+    >
+      <input name="email" className="input  input-bordered" placeholder="Email Address"></input>
+      <LoginButton />
     </form>
   );
 }
-
-
 
 const Login = () => {
   return (
     <>
       <div>Please Login before making form.</div>
       <CautionMessage />
-      <LoginButton />
+      <LoginForm />
     </>
   );
 };

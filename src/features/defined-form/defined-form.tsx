@@ -1,18 +1,13 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import {
-  useForm,
-  UseFormReset,
-} from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { ParamObject } from "@/common/flatten-object";
 import { makePrevilledUrl } from "@/common/url";
 import { FormItem } from "./form-item";
 import { makeFormItemsValueSchema } from "./form-value-schema";
 import { styledText } from "./styled-text";
-import {
-  FormDefinitionForView,
-} from "../../features/form-definition/schema";
+import { FormDefinitionForView } from "../../features/form-definition/schema";
 import "@/common/url/init-client-url";
 import { showConfirmDialog } from "../../ui/confirm-dialog";
 import { CopyButton } from "../../ui/copy-button";
@@ -34,7 +29,10 @@ const showUrl = async (url: string) => {
   await showConfirmDialog({ content });
 };
 
-const ResetButton = ({ reset }: { reset: UseFormReset<ParamObject> }) => {
+type ResetButtonProps = {
+  reset: () => void;
+};
+const ResetButton = ({ reset }: ResetButtonProps) => {
   return (
     <button
       className="btn btn-ghost"
@@ -81,6 +79,24 @@ const PrefilledUrlButton = ({
   );
 };
 
+type SubmitButtonProps = {
+  isPending: boolean;
+  isValid: boolean;
+};
+const SubmitButton = ({ isPending, isValid }: SubmitButtonProps) => {
+  return (
+    <button className="btn btn-primary" type="submit" disabled={!isValid || isPending}>
+      {isPending ? (
+        <span className="flex flex-row items-center gap-4">
+          <span className="loading loading-spinner loading-xs"></span>Sending...
+        </span>
+      ) : (
+        "send"
+      )}
+    </button>
+  );
+};
+
 type DefinedFormProps = {
   onSubmit: ((data: { [x: string]: any }) => void) | undefined;
   formDefinition: FormDefinitionForView;
@@ -114,8 +130,10 @@ export function DefinedForm({
     reset,
   } = useForm({ resolver: zodResolver(formItemValidator), mode: "onBlur", defaultValues });
   return (
-    <form onSubmit={handleSubmit(data => onSubmit?.(data))} 
-    className="grid gap-20 h-full overflow-auto">
+    <form
+      onSubmit={handleSubmit(data => onSubmit?.(data))}
+      className="grid gap-20 h-full overflow-auto"
+    >
       <div>
         <div className="text-4xl">{formDefinition.title}</div>
         <div>{styledText(formDefinition.description)}</div>
@@ -128,15 +146,7 @@ export function DefinedForm({
       <div className="flex justify-end p-2 gap-3">
         <ResetButton reset={reset} />
         {urlMakingMode && <PrefilledUrlButton {...{ getValues, id_for_view, formDefinition }} />}
-        <button className="btn btn-primary" disabled={!isValid || isPending}>
-          {isPending ? (
-            <span className="flex flex-row items-center gap-4">
-              <span className="loading loading-spinner loading-xs"></span>Sending...
-            </span>
-          ) : (
-            "send"
-          )}
-        </button>
+        <SubmitButton {...{ isPending: Boolean(isPending), isValid }} />
       </div>
     </form>
   );
