@@ -1,6 +1,5 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { makeFormItemsValueSchema, makeFormItemsValueSchemaKeys } from "./form-value-schema";
 import { sendSystemMessageMail } from "./send-mail";
@@ -49,9 +48,7 @@ async function submitFormAction(
         throw new Error(`Unknown action tag: ${tag}`);
       }),
   );
-  revalidatePath("/");
   redirect("/view/thank-you?id_for_view=" + idForView);
-  return true;
 }
 
 export { submitFormAction };
