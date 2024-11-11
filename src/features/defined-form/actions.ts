@@ -50,6 +50,7 @@ async function submitFormAction(
           } else {
             console.log("submit Https action", action, "status", res.status);
           }
+          return res;
         }
         throw new Error(`Unknown action tag: ${tag}`);
       }),

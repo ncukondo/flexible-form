@@ -4,17 +4,21 @@ import {
   FieldErrors,
   FieldErrorsImpl,
   FieldValues,
-  Merge, UseFormRegister
+  Merge,
+  UseFormRegister,
 } from "react-hook-form";
 import { styledText } from "./styled-text";
 import {
   ChoiceItemDefinition,
   ChoiceTableItemDefinition,
-  ConstantItemDefinition, FormItemDefinition
+  ConstantItemDefinition,
+  FormItemDefinition,
 } from "../form-definition/schema";
 
 function ChoiceTableFormItem({
-  error, item, register,
+  error,
+  item,
+  register,
 }: {
   item: ChoiceTableItemDefinition;
   register: UseFormRegister<any>;
@@ -49,7 +53,8 @@ function ChoiceTableFormItem({
                       type={item.multiple ? "checkbox" : "radio"}
                       className={item.multiple ? "checkbox" : "radio"}
                       {...register(`${subItem.id}`)}
-                      value={choice.value} />
+                      value={choice.value}
+                    />
                   </div>
                 </td>
               ))}
@@ -62,7 +67,8 @@ function ChoiceTableFormItem({
 }
 
 function ChoiceFormItem({
-  item, register,
+  item,
+  register,
 }: {
   item: ChoiceItemDefinition;
   register: UseFormRegister<any>;
@@ -75,7 +81,8 @@ function ChoiceFormItem({
           className={item.multiple ? "checkbox" : "radio"}
           {...register(item.id)}
           value={choice.value}
-          id={item.id + "." + choice.value} />
+          id={item.id + "." + choice.value}
+        />
         <span className="label-text">{choice.title}</span>
       </label>
     </div>
@@ -91,11 +98,13 @@ type ConstantItemProps = {
 function ConstantItem({ urlMakingMode, item, register }: ConstantItemProps) {
   return (
     <div className="text-base mt-10 w-full">
-      {item.title}:{" "}
+      <div>{item.title}</div>
+      <div className="text-base-content/75">{item.description}</div>
       <input
         disabled={!Boolean(urlMakingMode)}
         {...register(item.id, { value: item.value })}
-        className={`w-full bg-transparent ${urlMakingMode ? "input input-bordered" : ""}`} />
+        className={`w-full bg-transparent ${urlMakingMode ? "input input-bordered" : ""}`}
+      />
     </div>
   );
 }
@@ -133,4 +142,4 @@ function FormItem({ errors, item, register, urlMakingMode }: FormItemProps) {
   );
 }
 
-export { FormItem }
+export { FormItem };
