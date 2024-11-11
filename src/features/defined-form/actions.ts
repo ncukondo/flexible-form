@@ -47,6 +47,7 @@ async function submitFormAction(
           const res = await fetch(action, { method: "POST", body: JSON.stringify(payload) });
           if (res.status !== 200) {
             console.error("submit Https action", action, "status", res.status);
+            throw new Error(`Failed to submit Https action status ${res.status}`);
           } else {
             console.log("submit Https action", action, "status", res.status);
           }
