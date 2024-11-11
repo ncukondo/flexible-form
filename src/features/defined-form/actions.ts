@@ -50,10 +50,14 @@ async function submitFormAction(
             headers: { "Content-Type": "application/json" }
           });
           if (res.status !== 200) {
-            console.error("submit Https action", action, "status", res.status);
+            console.error(
+              "Error: submit Https action", action,
+              "status", res.status,
+              "body", await res.text()
+            );
             throw new Error(`Failed to submit Https action status ${res.status}`);
           } else {
-            console.log("submit Https action", action, "status", res.status);
+            console.log("Success: submit Https action", action, "status", res.status);
           }
           return res;
         }
