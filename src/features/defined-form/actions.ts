@@ -1,6 +1,6 @@
 "use server";
-
 import { redirect } from "next/navigation";
+
 import { makeFormItemsValueSchema, makeFormItemsValueSchemaKeys } from "./form-value-schema";
 import { sendSystemMessageMail } from "./send-mail";
 import { FormDefinitionForView } from "../../features/form-definition/schema";
@@ -43,12 +43,19 @@ async function submitFormAction(
           );
         if (tag === "log") return console.log(JSON.stringify(payload, null, 2));
         if (tag === "https") {
-          return await fetch(action, { method: "POST", body: JSON.stringify(payload) });
+          console.log("submit Https action", action, "payload", JSON.stringify(payload, null, 2));
+          const res = await fetch(action, { method: "POST", body: JSON.stringify(payload) });
+          if (res.status !== 200) {
+            console.error("submit Https action", action, "status", res.status);
+          } else {
+            console.log("submit Https action", action, "status", res.status);
+          }
         }
         throw new Error(`Unknown action tag: ${tag}`);
       }),
   );
   redirect("/view/thank-you?id_for_view=" + idForView);
+
 }
 
 export { submitFormAction };
