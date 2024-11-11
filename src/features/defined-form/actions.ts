@@ -44,7 +44,11 @@ async function submitFormAction(
         if (tag === "log") return console.log(JSON.stringify(payload, null, 2));
         if (tag === "https") {
           console.log("submit Https action", action, "payload", JSON.stringify(payload, null, 2));
-          const res = await fetch(action, { method: "POST", body: JSON.stringify(payload) });
+          const res = await fetch(action, {
+            method: "POST",
+            body: JSON.stringify(payload),
+            headers: { "Content-Type": "application/json" }
+          });
           if (res.status !== 200) {
             console.error("submit Https action", action, "status", res.status);
             throw new Error(`Failed to submit Https action status ${res.status}`);
