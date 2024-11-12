@@ -105,6 +105,26 @@ function ConstantItem({ urlMakingMode, item, register }: ConstantItemProps) {
   );
 }
 
+function LongTextItem({
+  item,
+  register,
+}: {
+  item: FormItemDefinition;
+  register: UseFormRegister<any>;
+}) {
+  return <textarea {...register(item.id)} className="textarea textarea-bordered w-full h-32" />;
+}
+
+function ShortTextItem({
+  item,
+  register,
+}: {
+  item: FormItemDefinition;
+  register: UseFormRegister<any>;
+}) {
+  return <input {...register(item.id)} className="input input-bordered w-full" />;
+}
+
 function Description({ description }: { description: string }) {
   return <div className="text-sm my-4  text-base-content/75">{styledText(description)}</div>;
 }
@@ -134,12 +154,8 @@ function FormItem({ errors, item, register, urlMakingMode }: FormItemProps) {
       <div className="pl-4">
         <Description description={item.description} />
         <div className="text-error">{error?.message?.toString()}</div>
-        {item.type === "short_text" && (
-          <input {...register(item.id)} className="input input-bordered  w-full" />
-        )}
-        {item.type === "long_text" && (
-          <textarea {...register(item.id)} className="textarea textarea-bordered w-full h-32" />
-        )}
+        {item.type === "short_text" && <ShortTextItem {...{ item, register }} />}
+        {item.type === "long_text" && <LongTextItem {...{ item, register }} />}
         {item.type === "constant" && <ConstantItem {...{ item, register, urlMakingMode }} />}
         {item.type === "choice" && <ChoiceFormItem {...{ item, register }} />}
         {item.type === "choice_table" && <ChoiceTableFormItem {...{ item, register, error }} />}
