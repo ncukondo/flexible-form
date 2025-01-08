@@ -132,7 +132,7 @@ export function DefinedForm({
   return (
     <form
       onSubmit={handleSubmit(data => onSubmit?.(data))}
-      className="grid gap-20 h-full overflow-auto"
+      className="grid gap-20 h-full overflow-auto print:overflow-hidden"
     >
       <div>
         <div className="text-4xl">{formDefinition.title}</div>
