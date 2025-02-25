@@ -1,9 +1,5 @@
 import sgMail from "@sendgrid/mail";
 
-const avoidErrorByUrlAutoProcess = (text: string) => {
-  const regex = /(https?:\/\/[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+)"/g;
-  return text.replaceAll(regex, "$1 \"");
-}
 
 const sendSystemMessageMail = async (mailTo: string, body: string, title = "") => {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY ?? "");
@@ -11,7 +7,7 @@ const sendSystemMessageMail = async (mailTo: string, body: string, title = "") =
     to: mailTo,
     from: process.env.SENDGRID_MAIL_FROM ?? "",
     subject: title || "System Mail from THERS",
-    text: avoidErrorByUrlAutoProcess(body),
+    text: body,
   };
   console.log("mail", msg);
   try {
