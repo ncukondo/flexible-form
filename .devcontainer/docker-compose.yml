@@ -8,7 +8,7 @@ services:
     networks:
       - db-network
   db:
-    image: postgres:latest
+    image: postgres:15.12
     restart: unless-stopped
     hostname: db
     volumes:
@@ -22,7 +22,7 @@ services:
     networks:
       - db-network
   shadow-db:
-    image: postgres:latest
+    image: postgres:15.12
     restart: unless-stopped
     hostname: shadow-db
     ports:
