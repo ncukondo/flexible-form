@@ -4,47 +4,68 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  provider          = "postgresql"
+  url               = env("POSTGRES_PRISMA_URL")
+  directUrl         = env("POSTGRES_URL_NON_POOLING")
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.Text
-  session_state      String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                String  @id
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  User              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
 
+model FormDefinition {
+  id              String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at      DateTime         @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime         @default(now())
+  title           String
+  actions         String[]
+  source          String           @default("")
+  form_definition Json             @db.Json
+  id_for_edit     String           @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id_for_view     String           @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id_for_extend   String           @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  FormPermission  FormPermission[]
+}
+
+model FormPermission {
+  id             String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  form_id        String         @db.Uuid
+  email          String
+  role           FormAccessRole
+  FormDefinition FormDefinition @relation(fields: [form_id], references: [id])
+}
+
 model Session {
-  id           String   @id @default(cuid())
+  id           String   @id
   sessionToken String   @unique
   userId       String
   expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  User         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String    @id
   name          String?
   email         String?   @unique
   emailVerified DateTime?
   image         String?
-  accounts      Account[]
-  sessions      Session[]
+  Account       Account[]
+  Session       Session[]
 }
 
 model VerificationToken {
@@ -55,34 +76,8 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-model FormDefinition {
-  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  created_at     DateTime @default(now()) @db.Timestamptz(6)
-  updated_at     DateTime @updatedAt @default(now())
-  title         String
-  actions       String[]
-  source        String   @default("")
-  form_definition       Json     @db.Json
-  id_for_edit   String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  id_for_view   String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  id_for_extend String   @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  
-  // In supabase auth, the user id is uuid, but in other IdP like auth0, it is string.
-  // auth.uid() may cause an error if it is not uuid, so use jwt()->>'sub' instead
-  // author_uid      String?  @default(dbgenerated("gen_random_uuid()")) 
-  permisions      FormPermission[]
-}
-
 enum FormAccessRole {
   ADMIN
   EDITOR
   VIEWER
-}
-
-model FormPermission {
-  id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  FormDefinition     FormDefinition @relation(fields: [form_id], references: [id])
-  form_id            String   @db.Uuid
-  email              String
-  role               FormAccessRole
 }
