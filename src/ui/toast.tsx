@@ -1,5 +1,5 @@
 /* eslint-disable tailwindcss/no-custom-classname */
-import toast, { Toaster } from "react-hot-toast";
+import toast, { Toaster, type Toast } from "react-hot-toast";
 
 type ToastProps = {
   message: string;
@@ -33,7 +33,7 @@ const customToast = (prop: string | ToastProps) => {
     toast.dismiss(id);
   }, duration);
   toast.custom(
-    t => {
+    (t: Toast) => {
       id = t.id;
       return (
         <div

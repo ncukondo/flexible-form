@@ -1,8 +1,8 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, type ComponentPropsWithoutRef } from "react";
 import { useTomlText } from "./store";
 
-type EditConfigProps = JSX.IntrinsicElements["textarea"];
+type EditConfigProps = ComponentPropsWithoutRef<"textarea">;
 function EditConfig(props: EditConfigProps) {
   const { toml, setToml } = useTomlText(s => ({ toml: s.toml, setToml: s.setToml }));
   useEffect(() => {

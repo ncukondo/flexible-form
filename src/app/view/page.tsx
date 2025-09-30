@@ -16,20 +16,28 @@ const extractRegisteredFormDefinitionForView = async (urlParams: unknown) => {
   return await getFormDefinitionForView(id_for_view);
 };
 
+
+
 function FormNotFound() {
   return <div>not found</div>;
 }
 
-export default async function ViewForm({ searchParams }: { searchParams: SearchParams }) {
+export default async function ViewForm({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  const resolvedSearchParams = await searchParams;
   const registeredFormDefinitionForEdit =
-    await extractRegisteredFormDefinitionForView(searchParams);
+    await extractRegisteredFormDefinitionForView(resolvedSearchParams);
   if (!registeredFormDefinitionForEdit) return <FormNotFound />;
   const formDefinitionRes = safeParseFormDefinitionForView(
     registeredFormDefinitionForEdit.form_definition,
   );
   if (!formDefinitionRes.success) return <FormNotFound />;
   const formDefinition = formDefinitionRes.data;
-  const defaultValues = makeDefaultValues(searchParams);
+
+  const defaultValues = makeDefaultValues(resolvedSearchParams);
   return (
     <DefinedFormViewer
       {...{

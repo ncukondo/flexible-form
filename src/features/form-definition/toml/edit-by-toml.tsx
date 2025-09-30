@@ -3,7 +3,7 @@ import "@/common/url/init-client-url";
 import crypto from "crypto";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FormEvent, useEffect, useState, useTransition } from "react";
+import { ComponentPropsWithoutRef, FormEvent, useEffect, useState, useTransition } from "react";
 import { getEditUrl, getViewUrl } from "@/common/url";
 import { ErrorDisplay, useErrorMessage } from "./error-display";
 import sampleTomlDefinition from "./sample.toml";
@@ -78,7 +78,10 @@ function useInitTomlStore(formDefinitionForEdit: FormDefinitionForEdit | null | 
   }, [formDefinitionForEdit]);
 }
 
-type EditConfigProps = Omit<JSX.IntrinsicElements["textarea"], "value" | "onChange" | "onSubmit">;
+type EditConfigProps = Omit<
+  ComponentPropsWithoutRef<"textarea">,
+  "value" | "onChange" | "onSubmit"
+>;
 
 function EditConfig(props: EditConfigProps) {
   const { getToml, setToml, reset } = useTomlText();

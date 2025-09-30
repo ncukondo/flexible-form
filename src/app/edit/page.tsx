@@ -17,9 +17,15 @@ const extractRegisteredFormDefinitionForEdit = async (urlParams: unknown) => {
   return await getFormDefinitionForEdit(id_for_edit);
 };
 
-export default async function EditForm({ searchParams }: { searchParams: SearchParams }) {
-  const formDefinitionForEdit = await extractRegisteredFormDefinitionForEdit(searchParams);
-  const defaultValues = makeDefaultValues(searchParams);
+export default async function EditForm({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  const resolvedSearchParams = await searchParams;
+  const formDefinitionForEdit =
+    await extractRegisteredFormDefinitionForEdit(resolvedSearchParams);
+  const defaultValues = makeDefaultValues(resolvedSearchParams);
   const user = await getUser();
   if (!user || !isUserInWhileListForEdit(user))
     return <LogInPanel {...{ user, buttonToEditForm: false }} />;

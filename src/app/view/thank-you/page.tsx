@@ -1,3 +1,4 @@
+import { use } from "react";
 import { z } from "zod";
 import { getPostSubmit } from "@/features/form-definition/server/get";
 
@@ -17,8 +18,13 @@ const extractMessage = async (urlParams: unknown) => {
   return postSubmitInfo?.message || defaultMessage;
 };
 
-export default function ThankYou({ searchParams }: { searchParams: SearchParams }) {
-  const message = extractMessage(searchParams);
+export default function ThankYou({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  const resolvedSearchParams = use(searchParams);
+  const message = use(extractMessage(resolvedSearchParams));
   return (
     <div className="grid justify-center items-center min-h-[100dvh] p-4">
       <div className="flex flex-col gap-5">{message}</div>

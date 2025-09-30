@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Suspense } from "react";
 import { signIn, signOut } from "./auth";
 import { LoginButton } from "./login-button";
@@ -81,9 +82,9 @@ const UserStatus = ({
       <div className="grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-5">
         {isUserInWhileListForEdit(user) ? (
           buttonToEditForm && (
-            <a href="/edit" className="btn btn-primary">
+            <Link href="/edit" className="btn btn-primary">
               Make new form.
-            </a>
+            </Link>
           )
         ) : (
           <CautionMessage />
