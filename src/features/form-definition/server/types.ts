@@ -30,4 +30,8 @@ type FormDefinitionForView = {
   id_for_view: string;
 };
 
-export { type RegisteredFormDefinition, type FormDefinitionForEdit, type FormDefinitionForView };
+export {
+  type RegisteredFormDefinition,
+  type FormDefinitionForEdit,
+  type FormDefinitionForView
+};
