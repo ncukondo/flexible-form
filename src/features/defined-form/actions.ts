@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 
 import { makeFormItemsValueSchema, makeFormItemsValueSchemaKeys } from "./form-value-schema";
 import { sendSystemMessageMail } from "./send-mail";
-import { makePrefilledParams, getViewUrl } from "../../common/url";
+import { makePrefilledParams, getViewUrl } from "@/common/url";
 import { FormDefinitionForView } from "../../features/form-definition/schema";
 import { getFormAction } from "../../features/form-definition/server/get";
 
