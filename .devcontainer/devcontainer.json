@@ -5,7 +5,9 @@
   "remoteEnv": {
     "APP_NAME": "${localWorkspaceFolderBasename}"
   },
-  "mounts": [],
+  "mounts": [
+    "source=claude-code-config-${devcontainerId},target=/home/node/.claude,type=volume"
+  ],
   // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
   "dockerComposeFile": "docker-compose.yml",
   "service": "devcontainer",
@@ -18,10 +20,10 @@
       "version": "latest"
     }
   },
-  "postCreateCommand": "sudo chmod -R 777 node_modules",
   "customizations": {
     "vscode": {
       "extensions": [
+        "anthropic.claude-code",
         "GitHub.copilot-chat",
         "YoavBls.pretty-ts-errors"
       ]
