@@ -1,6 +1,7 @@
 "use server";
 import { redirect } from "next/navigation";
 
+import "@/common/url/init-server-url";
 import { makePrefilledParams, getViewUrl } from "@/common/url";
 import { makeFormItemsValueSchema, makeFormItemsValueSchemaKeys } from "./form-value-schema";
 import { sendSystemMessageMail } from "./send-mail";
