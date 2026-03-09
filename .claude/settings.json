@@ -1,8 +1,14 @@
 {
   "permissions": {
     "allow": [
-      "Bash(tmux:*)",
-      "Bash(which:*)",
+      "Bash(tmux capture-pane:*)",
+      "Bash(tmux send-keys:*)",
+      "Bash(tmux list-panes:*)",
+      "Bash(tmux list-windows:*)",
+      "Bash(tmux kill-pane:*)",
+      "Bash(tmux new-session:*)",
+      "Bash(tmux has-session:*)",
+      "Bash(which tmux)",
       "Bash(sleep:*)",
       "Read(/workspaces/flexible-form--worktrees/**)"
     ]
@@ -12,13 +18,28 @@
     "command": "$CLAUDE_PROJECT_DIR/.claude/statusline.sh"
   },
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR/scripts/check-worker-launch.sh\"",
+            "statusMessage": "Checking launch method..."
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": "Bash",
         "hooks": [
           {
             "type": "command",
-            "command": "bash /workspaces/flexible-form/.claude/hooks/block-force-push.sh"
+            "command": "\"$CLAUDE_PROJECT_DIR/.claude/hooks/validate-worktree-path.sh\""
+          },
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR/.claude/hooks/block-force-push.sh\""
           }
         ]
       }

@@ -1,23 +1,24 @@
 #!/usr/bin/env bash
-# Block dangerous force-push commands
+# Hook: Block git push --force and variants to prevent destructive pushes.
+# Exit code 2 = block the tool call (stderr shown to Claude as error).
+
 set -euo pipefail
 
-INPUT=$(cat)
-COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
+# Read JSON input from stdin
+input=$(cat)
 
-if [[ -z "$COMMAND" ]]; then
-  echo '{"decision":"allow"}'
+# Extract the command from tool_input.command
+command=$(echo "$input" | jq -r '.tool_input.command // ""')
+
+# Only check git push commands
+if ! echo "$command" | grep -qE 'git\s+push\b'; then
   exit 0
 fi
 
-if echo "$COMMAND" | grep -qE 'git\s+push\s+.*--(force|force-with-lease|force-if-includes)'; then
-  echo '{"decision":"block","reason":"Force push is blocked. Use normal push or ask the user explicitly."}'
-  exit 0
+# Block force push flags: --force, -f, --force-with-lease, --force-if-includes
+if echo "$command" | grep -qE '(^|\s)(--force|-f|--force-with-lease|--force-if-includes)(\s|$)'; then
+  echo "Error: Force push is not allowed. Use regular git push instead." >&2
+  exit 2
 fi
 
-if echo "$COMMAND" | grep -qE 'git\s+push\s+-[^-]*f'; then
-  echo '{"decision":"block","reason":"Force push (-f) is blocked. Use normal push or ask the user explicitly."}'
-  exit 0
-fi
-
-echo '{"decision":"allow"}'
+exit 0
