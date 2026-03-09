@@ -1,27 +1,127 @@
-# Skill: implement
+---
+name: implement
+description: Analyzes ROADMAP and implements tasks in parallel with automatic orchestration. Use when starting implementation work.
+---
 
-Implement tasks from spec files using TDD in isolated worktrees.
+# Parallel Implementation
 
-## Trigger
+spec/tasks/ROADMAP.md を確認し、並列実装可能なタスクを分析して実装を進めます。
 
-User runs `/implement <task-file>` or `/implement` (auto-detect next task from ROADMAP).
+## CRITICAL: Main Agent Role
 
-## Workflow
+**メインエージェントは管理・指揮のみを行い、直接作業は一切行いません。**
 
-1. **Read ROADMAP** — Find the next "Not Started" or "In Progress" task
-2. **Read task spec** — Understand purpose, related files, and steps
-3. **Create worktree branch** — `task/<YYYYMMDD-NN-short-name>`
-4. **For each implementation step:**
-   - Follow the TDD cycle (Red → Green → Refactor)
-   - Update task checkboxes as steps complete
-   - Commit after each step
-5. **Run quality checks** — `npm run lint && npm run build`
-6. **Create PR** — Reference the issue number
-7. **Update ROADMAP** — Mark task as "In Progress"
+以下は全てサブエージェント（ワーカー）に委譲すること：
+- **実装**: コードの作成・編集
+- **テスト**: テストの実行・確認
+- **レビュー**: PRのレビュー
+- **調査**: コードベースの調査・分析
 
-## Rules
+メインエージェントが行うのは：
+- タスク分析と優先順位付け
+- ワーカーのスポーン・監視
+- オーケストレーション管理
+- マージとROADMAP更新
 
-- Work only in your worktree, never touch main directly
-- Commit specific files, never `git add -A`
-- Do not merge PRs, update ROADMAP status to "Done", or move task files to completed
-- If context is running low, commit current progress and create the PR with [WIP] prefix
+## Planned Tasks
+!`grep "Planned" spec/tasks/ROADMAP.md`
+
+## Active Worktrees
+!`git worktree list`
+
+## Steps
+
+### 1. Task Analysis
+
+- Check spec/tasks/ROADMAP.md for "Planned" tasks
+- Identify tasks with satisfied dependencies (parallel candidates)
+- Select tasks to implement
+  - Multiple parallelizable tasks → use spawn-worker.sh
+
+### 2. Spawn Workers
+
+**Pane limit: max 4 workers** (main + 4 workers = 5 panes).
+Before spawning, check current pane count:
+```bash
+tmux list-panes | wc -l  # Must be < 5
+```
+If 5+ tasks exist, spawn sequentially — wait for one to complete before spawning the next.
+
+```bash
+# Spawn worker for each task
+./scripts/spawn-worker.sh <branch-name> <task-keyword>
+```
+
+spawn-worker.sh automatically:
+1. Creates worktree at `flexible-form--worktrees/<branch-name>`
+2. Runs npm install
+3. Creates new pane in current window
+4. Starts Claude with the task
+
+### 3. Start Orchestration
+
+After spawning all workers:
+
+```bash
+# Background orchestration (recommended)
+./scripts/orchestrate.sh --background
+```
+
+Orchestrator automatically:
+- Worker completion → spawns Reviewer
+- Reviewer approval → notifies main agent
+- Changes requested → sends fix instructions
+- Errors → notifies main agent
+
+### 4. Apply Layout
+
+```bash
+./scripts/apply-layout.sh
+```
+
+### 5. Monitor (optional)
+
+```bash
+# Check orchestrator status
+./scripts/orchestrate.sh --status
+
+# View logs
+tail -f /tmp/claude-orchestrator/orchestrator.log
+
+# View event files
+ls /tmp/claude-orchestrator/events/
+```
+
+### 6. Review Report (main agent only)
+
+レビュー完了の通知を受けたら：
+1. PRのレビュー結果を取得する（`gh api repos/<owner>/<repo>/pulls/<PR>/reviews`）
+2. **Minor/Suggestions を含む全指摘事項をユーザーに報告する**
+3. ユーザーの判断を仰ぐ（マージ / 修正対応 / 保留）
+
+**ユーザーの明示的な承認なしにマージしないこと。**
+
+### 7. Merge (main agent only)
+
+ユーザーからマージの承認を得たら：
+```bash
+./scripts/merge-pr.sh <pr-number>
+```
+
+merge-pr.sh automatically:
+- Squash merges the PR
+- Removes worktree and branch
+- Moves task file to `spec/tasks/completed/`
+
+### 8. Post-Merge (main branch)
+
+- Update ROADMAP.md status to "Done"
+- Check if all tasks for the issue are done
+
+## Notes
+
+- **メインエージェントは直接コードを書かない・テストを実行しない・レビューしない・調査しない**
+- All agents run in panes within the same tmux window
+- Use `git worktree list` to see all worktrees
+- Use `./scripts/monitor-agents.sh` to see agent states
+- Be aware of dependency conflicts during parallel work
