@@ -35,14 +35,18 @@ const getViewUrl = (id_for_view: string) => {
   return `${origin}/v/${id_for_view}`;
 };
 
-const makePrevilledUrl = (values: ParamObject, id_for_view: string) => {
+const makePrefilledParams = (values: ParamObject): string => {
   const flatten = flattenObject({ data: values as any });
   const params = Object.fromEntries(
     Object.entries(flatten).filter(
       ([, v]) => v !== undefined || v !== null || v !== "" || v !== false,
     ),
   );
-  const search = new URLSearchParams(params).toString();
+  return new URLSearchParams(params).toString();
+};
+
+const makePrevilledUrl = (values: ParamObject, id_for_view: string) => {
+  const search = makePrefilledParams(values);
   return `${getViewUrl(id_for_view)}?${search}`;
 };
 
@@ -57,6 +61,7 @@ type SearchParams = { [key: string]: string | string[] | undefined };
 
 export {
   currentUrl,
+  makePrefilledParams,
   makePrevilledUrl,
   setCurrentUrlGetter,
   loginUrl,
