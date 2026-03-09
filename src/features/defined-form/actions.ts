@@ -1,6 +1,7 @@
 "use server";
 import { redirect } from "next/navigation";
 
+import { makePrefilledParams, getViewUrl } from "@/common/url";
 import { makeFormItemsValueSchema, makeFormItemsValueSchemaKeys } from "./form-value-schema";
 import { sendSystemMessageMail } from "./send-mail";
 import { FormDefinitionForView } from "../../features/form-definition/schema";
@@ -27,6 +28,8 @@ async function submitFormAction(
     value,
     keys,
     schema,
+    prefilledParams: makePrefilledParams(value),
+    viewUrl: getViewUrl(idForView),
   };
   await Promise.all(
     actions
