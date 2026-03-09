@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { ParamObject } from "@/common/flatten-object";
-import { makePrevilledUrl } from "@/common/url";
+import { makePrefilledUrl } from "@/common/url";
 import type { ActionError } from "./actions";
 import { FormItem } from "./form-item";
 import { makeFormItemsValueSchema } from "./form-value-schema";
@@ -71,7 +71,7 @@ const PrefilledUrlButton = ({
         const values = Object.fromEntries(
           Object.entries(getValues()).filter(([key, value]) => !isConstant(key, value)),
         );
-        const url = makePrevilledUrl(values, id_for_view);
+        const url = makePrefilledUrl(values, id_for_view);
         showUrl(url);
         e.preventDefault();
       }}

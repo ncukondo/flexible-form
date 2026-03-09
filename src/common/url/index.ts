@@ -45,7 +45,7 @@ const makePrefilledParams = (values: ParamObject): string => {
   return new URLSearchParams(params).toString();
 };
 
-const makePrevilledUrl = (values: ParamObject, id_for_view: string) => {
+const makePrefilledUrl = (values: ParamObject, id_for_view: string) => {
   const search = makePrefilledParams(values);
   return `${getViewUrl(id_for_view)}?${search}`;
 };
@@ -62,7 +62,7 @@ type SearchParams = { [key: string]: string | string[] | undefined };
 export {
   currentUrl,
   makePrefilledParams,
-  makePrevilledUrl,
+  makePrefilledUrl,
   setCurrentUrlGetter,
   loginUrl,
   logoutUrl,
