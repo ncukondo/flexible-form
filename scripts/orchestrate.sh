@@ -267,13 +267,14 @@ process_implement_completion() {
       pr_num=$(gh pr list --head "$branch" --json number --jq '.[0].number' 2>/dev/null || true)
 
       if [ -n "$pr_num" ]; then
-        log "Branch $branch: Worker completed, PR #$pr_num, CI passed."
+        log "Branch $branch: Worker completed, PR #$pr_num, CI passed. Killing worker."
+
+        # Kill the worker agent now that PR is confirmed
+        "$SCRIPT_DIR/kill-agent.sh" "$pane_id" 2>/dev/null || true
 
         write_event "$branch" "worker-completed" \
-          "Worker finished implementation. PR #$pr_num created and CI passed." \
-          "# 1. Kill worker and spawn reviewer
-./scripts/kill-agent.sh $pane_id && sleep 2 && ./scripts/spawn-reviewer.sh $branch $pr_num
-# 2. Or spawn reviewer while keeping worker alive
+          "Worker finished implementation. PR #$pr_num created and CI passed. Worker killed." \
+          "# Spawn reviewer for this PR
 ./scripts/spawn-reviewer.sh $branch $pr_num" \
           "$pr_num" "$pane_id"
 
@@ -358,12 +359,13 @@ gh pr list --head $branch" \
 
   case "$review_status" in
     approved)
+      log "Branch $branch: Review approved for PR #$pr_num. Killing reviewer."
+      "$SCRIPT_DIR/kill-agent.sh" "$pane_id" 2>/dev/null || true
+
       write_event "$branch" "review-approved" \
-        "PR #$pr_num has been approved by the reviewer." \
-        "# Kill reviewer and merge PR
-./scripts/kill-agent.sh $pane_id
-gh pr merge $pr_num --squash --delete-branch
-git worktree remove $WORKTREE_BASE/$branch_dash --force" \
+        "PR #$pr_num has been approved by the reviewer. Reviewer killed." \
+        "# Merge PR
+./scripts/merge-pr.sh $pr_num" \
         "$pr_num" "$pane_id"
 
       BRANCH_STATES["${branch}:review"]="approved"
@@ -373,14 +375,16 @@ git worktree remove $WORKTREE_BASE/$branch_dash --force" \
       local review_body
       review_body=$(gh pr view "$pr_num" --json reviews --jq '.reviews[-1].body // "No details"' 2>/dev/null | head -c 500 || echo "")
 
+      log "Branch $branch: Review requested changes for PR #$pr_num. Killing reviewer."
+      "$SCRIPT_DIR/kill-agent.sh" "$pane_id" 2>/dev/null || true
+
       write_event "$branch" "review-changes-requested" \
-        "PR #$pr_num has changes requested.
+        "PR #$pr_num has changes requested. Reviewer killed.
 
 ## Review Feedback
 $review_body" \
-        "# Switch role to implement and send fix instructions
-./scripts/set-role.sh $WORKTREE_BASE/$branch_dash implement
-./scripts/send-to-agent.sh $pane_id \"/pr-comments $pr_num\"" \
+        "# Spawn worker to fix
+./scripts/spawn-worker.sh $branch_dash \"/pr-comments $pr_num\"" \
         "$pr_num" "$pane_id"
 
       BRANCH_STATES["${branch}:review"]="fix-requested"
@@ -394,8 +398,11 @@ $review_body" \
       local review_body
       review_body=$(gh pr view "$pr_num" --json reviews --jq '.reviews[-1].body // "No details"' 2>/dev/null | head -c 500 || echo "")
 
+      log "Branch $branch: Review commented on PR #$pr_num. Killing reviewer."
+      "$SCRIPT_DIR/kill-agent.sh" "$pane_id" 2>/dev/null || true
+
       write_event "$branch" "review-commented" \
-        "PR #$pr_num has a comment-only review (no approve/reject).
+        "PR #$pr_num has a comment-only review (no approve/reject). Reviewer killed.
 
 ## Review Comment
 $review_body" \
