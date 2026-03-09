@@ -39,7 +39,7 @@ const makePrefilledParams = (values: ParamObject): string => {
   const flatten = flattenObject({ data: values as any });
   const params = Object.fromEntries(
     Object.entries(flatten).filter(
-      ([, v]) => v !== undefined || v !== null || v !== "" || v !== false,
+      ([, v]) => v !== undefined && v !== null && v !== "",
     ),
   );
   return new URLSearchParams(params).toString();
