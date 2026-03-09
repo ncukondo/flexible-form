@@ -15,11 +15,11 @@ Extract the query string generation logic from `makePrevilledUrl` into a standal
 
 Extract the flattening and URLSearchParams logic from `makePrevilledUrl` into a new exported function `makePrefilledParams(values: ParamObject): string`.
 
-- [ ] Add `makePrefilledParams` to `src/common/url/index.ts`
+- [x] Add `makePrefilledParams` to `src/common/url/index.ts`
   - Takes `values: ParamObject` as input
   - Flattens with `flattenObject({ data: values })`
   - Filters out empty/falsy values
   - Returns `new URLSearchParams(params).toString()`
-- [ ] Refactor `makePrevilledUrl` to use `makePrefilledParams` internally
-- [ ] Run `npm run lint && npm run typecheck`
-- [ ] Acceptance: `makePrefilledParams` is exported and `makePrevilledUrl` still works correctly
+- [x] Refactor `makePrevilledUrl` to use `makePrefilledParams` internally
+- [x] Run `npm run lint && npm run typecheck`
+- [x] Acceptance: `makePrefilledParams` is exported and `makePrevilledUrl` still works correctly
