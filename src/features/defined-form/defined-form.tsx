@@ -4,9 +4,11 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { ParamObject } from "@/common/flatten-object";
 import { makePrevilledUrl } from "@/common/url";
+import type { ActionError } from "./actions";
 import { FormItem } from "./form-item";
 import { makeFormItemsValueSchema } from "./form-value-schema";
 import { styledText } from "./styled-text";
+import { SubmitErrorAlert } from "./submit-error-alert";
 import { FormDefinitionForView } from "../../features/form-definition/schema";
 import "@/common/url/init-client-url";
 import { showConfirmDialog } from "../../ui/confirm-dialog";
@@ -102,6 +104,7 @@ type DefinedFormProps = {
   formDefinition: FormDefinitionForView;
   defaultValues?: ParamObject;
   isPending?: boolean | undefined;
+  submitErrors?: ActionError[] | null;
   id_for_view?: string | undefined;
   showPrefilledUrlButton?: boolean | undefined;
 };
@@ -110,6 +113,7 @@ export function DefinedForm({
   onSubmit,
   defaultValues,
   isPending,
+  submitErrors,
   id_for_view = "",
   showPrefilledUrlButton = false,
 }: DefinedFormProps) {
@@ -143,6 +147,7 @@ export function DefinedForm({
           ))}
         </div>
       </div>
+      <SubmitErrorAlert errors={submitErrors} />
       <div className="flex justify-end p-2 gap-3">
         <ResetButton reset={reset} />
         {urlMakingMode && <PrefilledUrlButton {...{ getValues, id_for_view, formDefinition }} />}

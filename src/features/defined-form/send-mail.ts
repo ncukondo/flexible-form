@@ -21,12 +21,8 @@ const sendSystemMessageMail = async (mailTo: string, body: string, title = "") =
     text: body,
   };
   console.log("mail", msg);
-  try {
-    await transporter.sendMail(msg);
-    console.log("mail sent");
-  } catch (e) {
-    console.error(e);
-  }
+  await transporter.sendMail(msg);
+  console.log("mail sent");
 };
 
 export { sendSystemMessageMail };
