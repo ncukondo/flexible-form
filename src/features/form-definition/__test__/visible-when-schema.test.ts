@@ -40,6 +40,15 @@ describe("visible_when schema field", () => {
     expect(result.success).toBe(true);
   });
 
+  it("rejects empty string visible_when", () => {
+    const result = safeParseFormDefinition(makeFormDef({ visible_when: "" }));
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      const messages = result.error.issues.map(i => i.message);
+      expect(messages).toContain("Invalid visible_when syntax");
+    }
+  });
+
   it("rejects invalid visible_when syntax", () => {
     const result = safeParseFormDefinition(makeFormDef({ visible_when: "{{{invalid" }));
     expect(result.success).toBe(false);

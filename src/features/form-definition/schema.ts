@@ -92,7 +92,7 @@ const actions = z
 const visibleWhen = z
   .string()
   .optional()
-  .refine(val => !val || safeParseSource(val).ok, {
+  .refine(val => val === undefined || (val.length > 0 && safeParseSource(val).ok), {
     message: "Invalid visible_when syntax",
   });
 
