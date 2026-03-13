@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 
-const transporter = nodemailer.createTransport({
+const makeTransporter = () => nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: Number(process.env.SMTP_PORT),
   secure: false,
@@ -14,6 +14,7 @@ const transporter = nodemailer.createTransport({
 
 
 const sendSystemMessageMail = async (mailTo: string, body: string, title = "") => {
+  const transporter = makeTransporter();
   const msg = {
     to: mailTo,
     from: process.env.EMAIL_FROM ?? "",
