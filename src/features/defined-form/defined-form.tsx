@@ -143,7 +143,7 @@ export function DefinedForm({
     reset,
   } = useForm({
     resolver: visibilityAwareResolver,
-    mode: "onBlur",
+    mode: "onChange",
     defaultValues,
   });
   useWatch({ control, name: dependentKeys });
