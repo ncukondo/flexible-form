@@ -20,5 +20,5 @@
 | # | Task | Deps | Status | Task File |
 |---|------|------|--------|-----------|
 | 1 | Add `visible_when` field to form item schema | — | ✅ Done | [20260311-01](completed/20260311-01-add-visible-when-schema.md) |
-| 2 | Render conditional visibility with validation and submission handling | 1 | | [20260311-02](20260311-02-render-conditional-visibility.md) |
+| 2 | Render conditional visibility with validation and submission handling | 1 | ✅ Done | [20260311-02](completed/20260311-02-render-conditional-visibility.md) |
 | 3 | Update documentation and close issue #20 | 1, 2 | | [20260311-04](20260311-04-update-docs-and-close-issue.md) |
