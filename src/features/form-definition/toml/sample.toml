@@ -121,3 +121,30 @@ choices=[
   "scale7",
   "scale8",
 ]
+
+# --- Conditional Visibility (visible_when) ---
+# You can conditionally show/hide items using the visible_when field.
+# The item is shown only when the expression evaluates to true.
+# The expression references other items by their id.
+#
+# Syntax:
+#   Comparison:    id = "value"           id <> "value"
+#   Contains:      id includes "value"    id notIncludes "value"
+#   Set:           id in ["a","b","c"]    id notIn ["a","b"]
+#   Regex:         id matches "\\d+"       id notMatches "\\d+"
+#   Logical:       (expr) and (expr)      (expr) or (expr)      not (expr)
+#   Multi-key:     anyOf(id1,id2) = "x"   allOf(id1,id2) in ["a","b"]   noneOf(id1,id2) = "x"
+#
+# Note: Unquoted simple values are allowed (e.g. id=value), but quoting is recommended.
+
+[[items]]
+type="choice"
+id="has_other"
+title="Do you have other comments?"
+choices=["yes", "no"]
+
+[[items]]
+type="long_text"
+id="other_comments"
+title="Other Comments"
+visible_when='has_other = "yes"' # shown only when "yes" is selected above
