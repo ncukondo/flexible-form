@@ -1,3 +1,4 @@
+import { safeParseSource } from "@ncukondo/dynamic-form-rules";
 import { z } from "zod";
 
 // ------- general functions -------
@@ -88,11 +89,19 @@ const actions = z
   .transform(x => (Array.isArray(x) ? x : [x]))
   .pipe(action.array().min(1));
 
+const visibleWhen = z
+  .string()
+  .optional()
+  .refine(val => val === undefined || (val.length > 0 && safeParseSource(val).ok), {
+    message: "Invalid visible_when syntax",
+  });
+
 const basicFormItem = z.object({
   title: z.string().default(`Set title here`),
   description: z.string().default(""),
   required: z.boolean().default(false),
   id: z.string().default(""),
+  visible_when: visibleWhen,
 });
 
 const inputItem = basicFormItem.extend({
