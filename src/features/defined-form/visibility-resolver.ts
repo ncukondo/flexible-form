@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { FieldValues, Resolver } from "react-hook-form";
 import { makeFormItemsValueSchema } from "./form-value-schema";
-import { getVisibleIds } from "./visibility";
+import { getVisibleIds, getVisibleItems } from "./visibility";
 import type { FormItemsDefinition } from "../form-definition/schema";
 
 const makeVisibilityAwareResolver = (
@@ -18,7 +18,9 @@ const makeVisibilityAwareResolver = (
       Object.entries(result.errors).filter(([key]) => visibleIds.has(key)),
     );
     if (Object.keys(filteredErrors).length === 0) {
-      return { values, errors: {} };
+      const visibleItems = getVisibleItems(items, values);
+      const visibleResolver = zodResolver(makeFormItemsValueSchema(visibleItems));
+      return visibleResolver(values, context, options);
     }
     return { values: result.values, errors: filteredErrors };
   };

@@ -149,10 +149,10 @@ export function DefinedForm({
   useWatch({ control, name: dependentKeys });
   const currentValues = getValues();
   const visibleItems = getVisibleItems(formItemsDefinition, currentValues);
-  const visibleIds = getVisibleIds(formItemsDefinition, currentValues);
   const handleFormSubmit = handleSubmit(data => {
+    const submitVisibleIds = getVisibleIds(formItemsDefinition, data);
     const filteredData = Object.fromEntries(
-      Object.entries(data).filter(([key]) => visibleIds.has(key)),
+      Object.entries(data).filter(([key]) => submitVisibleIds.has(key)),
     );
     onSubmit?.(filteredData);
   });

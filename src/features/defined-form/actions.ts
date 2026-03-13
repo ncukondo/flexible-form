@@ -3,9 +3,8 @@ import { redirect } from "next/navigation";
 
 import "@/common/url/init-server-url";
 import { makePrefilledUrl } from "@/common/url";
-import { makeFormItemsValueSchema, makeFormItemsValueSchemaKeys } from "./form-value-schema";
+import { parseValue } from "./parse-value";
 import { sendSystemMessageMail } from "./send-mail";
-import { getVisibleIds } from "./visibility";
 import { FormDefinitionForView } from "../../features/form-definition/schema";
 import { getFormAction } from "../../features/form-definition/server/get";
 
@@ -17,19 +16,6 @@ type ActionError = {
 type SubmitFormResult = {
   success: false;
   errors: ActionError[];
-};
-
-const parseValue = (formValue: unknown, formDefinition: FormDefinitionForView) => {
-  const parsed = makeFormItemsValueSchema(formDefinition.items).parse(formValue);
-  const parsedRecord = parsed as Record<string, unknown>;
-  const visibleIds = getVisibleIds(formDefinition.items, parsedRecord);
-  const allKeys = makeFormItemsValueSchemaKeys(formDefinition.items);
-  const keys = allKeys.filter(key => visibleIds.has(key));
-  const value = Object.fromEntries(
-    Object.entries(parsedRecord).filter(([key]) => visibleIds.has(key)),
-  ) as typeof parsed;
-  const schema = formDefinition.items;
-  return { value, keys, schema };
 };
 
 async function submitFormAction(
