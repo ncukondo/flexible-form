@@ -1,14 +1,15 @@
 "use client";
-import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { useForm } from "react-hook-form";
+import { useMemo } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { ParamObject } from "@/common/flatten-object";
 import { makePrefilledUrl } from "@/common/url";
 import type { ActionError } from "./actions";
 import { FormItem } from "./form-item";
-import { makeFormItemsValueSchema } from "./form-value-schema";
 import { styledText } from "./styled-text";
 import { SubmitErrorAlert } from "./submit-error-alert";
+import { getVisibilityDependentKeys, getVisibleIds, getVisibleItems } from "./visibility";
+import { makeVisibilityAwareResolver } from "./visibility-resolver";
 import { FormDefinitionForView } from "../../features/form-definition/schema";
 import "@/common/url/init-client-url";
 import { showConfirmDialog } from "../../ui/confirm-dialog";
@@ -125,24 +126,46 @@ export function DefinedForm({
   };
   const urlMakingMode = Boolean(showPrefilledUrlButton && id_for_view);
   const formItemsDefinition = formDefinition?.items;
-  const formItemValidator = makeFormItemsValueSchema(formItemsDefinition);
+  const visibilityAwareResolver = useMemo(
+    () => makeVisibilityAwareResolver(formItemsDefinition),
+    [formItemsDefinition],
+  );
+  const dependentKeys = useMemo(
+    () => getVisibilityDependentKeys(formItemsDefinition),
+    [formItemsDefinition],
+  );
   const {
     register,
     handleSubmit,
     getValues,
+    control,
     formState: { errors, isValid },
     reset,
-  } = useForm({ resolver: zodResolver(formItemValidator), mode: "onBlur", defaultValues });
+  } = useForm({
+    resolver: visibilityAwareResolver,
+    mode: "onBlur",
+    defaultValues,
+  });
+  useWatch({ control, name: dependentKeys });
+  const currentValues = getValues();
+  const visibleItems = getVisibleItems(formItemsDefinition, currentValues);
+  const handleFormSubmit = handleSubmit(data => {
+    const submitVisibleIds = getVisibleIds(formItemsDefinition, data);
+    const filteredData = Object.fromEntries(
+      Object.entries(data).filter(([key]) => submitVisibleIds.has(key)),
+    );
+    onSubmit?.(filteredData);
+  });
   return (
     <form
-      onSubmit={handleSubmit(data => onSubmit?.(data))}
+      onSubmit={handleFormSubmit}
       className="grid gap-20 h-full overflow-auto print:overflow-hidden"
     >
       <div>
         <div className="text-4xl">{formDefinition.title}</div>
         <div>{styledText(formDefinition.description)}</div>
         <div className="grid gap-20">
-          {formDefinition.items.map(item => (
+          {visibleItems.map(item => (
             <FormItem {...{ register, errors, item, urlMakingMode }} key={item.id} />
           ))}
         </div>

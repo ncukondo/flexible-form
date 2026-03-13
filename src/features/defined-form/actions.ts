@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 
 import "@/common/url/init-server-url";
 import { makePrefilledUrl } from "@/common/url";
-import { makeFormItemsValueSchema, makeFormItemsValueSchemaKeys } from "./form-value-schema";
+import { parseValue } from "./parse-value";
 import { sendSystemMessageMail } from "./send-mail";
 import { FormDefinitionForView } from "../../features/form-definition/schema";
 import { getFormAction } from "../../features/form-definition/server/get";
@@ -16,13 +16,6 @@ type ActionError = {
 type SubmitFormResult = {
   success: false;
   errors: ActionError[];
-};
-
-const parseValue = (formValue: unknown, formDefinition: FormDefinitionForView) => {
-  const parsed = makeFormItemsValueSchema(formDefinition.items).parse(formValue);
-  const keys = makeFormItemsValueSchemaKeys(formDefinition.items);
-  const schema = formDefinition.items;
-  return { value: parsed, keys, schema };
 };
 
 async function submitFormAction(
