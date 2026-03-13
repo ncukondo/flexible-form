@@ -6,7 +6,8 @@ Welcome to `Flexible Form` - a dynamic form builder application built with Next.
 
 - **Form Definition with TOML**: Define your forms easily in TOML, making them highly configurable and easy to manage.
 - **Vercel Postgres Backend**: Leverages the power of Vercel's serverless infrastructure along with a robust Postgres database.
-- **Email Integration**: Integrated with SendGrid for form email functionalities.
+- **Conditional Visibility**: Show or hide form items dynamically based on other items' values using `visible_when` expressions.
+- **Email Integration**: Integrated with Resend for form email functionalities.
 
 ## Live Application
 
@@ -23,7 +24,7 @@ To get a local copy up and running, follow these simple steps.
 ### Prerequisites
 
 - Vercel account for deployment
-- Vercel Postgres and SendGrid accounts for backend services
+- Vercel Postgres and Resend accounts for backend services
 
 ### Installation
 
@@ -39,7 +40,7 @@ To get a local copy up and running, follow these simple steps.
    ```
    npm install
    ```
-4. Duplicate `.env.sample` and rename to `.env`. Fill in the necessary Vercel Postgres and SendGrid credentials.
+4. Duplicate `.env.sample` and rename to `.env`. Fill in the necessary Vercel Postgres and Resend credentials.
 
 ## Usage
 
