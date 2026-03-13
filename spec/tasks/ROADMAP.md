@@ -22,3 +22,9 @@
 | 1 | Add `visible_when` field to form item schema | — | ✅ Done | [20260311-01](completed/20260311-01-add-visible-when-schema.md) |
 | 2 | Render conditional visibility with validation and submission handling | 1 | ✅ Done | [20260311-02](completed/20260311-02-render-conditional-visibility.md) |
 | 3 | Update documentation and close issue #20 | 1, 2 | ✅ Done | [20260311-04](completed/20260311-04-update-docs-and-close-issue.md) |
+
+## Improve TOML editor error messages
+
+| # | Task | Deps | Status | Task File |
+|---|------|------|--------|-----------|
+| 1 | Structured error display with line numbers and visible_when details | — | 🔲 Todo | [20260313-01](20260313-01-improve-toml-editor-error-messages.md) |
