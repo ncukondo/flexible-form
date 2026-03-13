@@ -1,5 +1,6 @@
 import {
   evaluateRule,
+  extractDependentKeys,
   safeParseSource,
   type KeyValues,
 } from "@ncukondo/dynamic-form-rules";
@@ -69,4 +70,21 @@ const getVisibleIds = (
   }));
 };
 
-export { getVisibleItems, getVisibleIds, isVisible, toStringValues };
+const getVisibilityDependentKeys = (
+  items: FormItemsDefinition | undefined,
+): string[] => {
+  if (!items) return [];
+  const keys = new Set<string>();
+  for (const item of items) {
+    if (!item.visible_when) continue;
+    const parsed = safeParseSource(item.visible_when);
+    if (parsed.ok) {
+      for (const key of extractDependentKeys(parsed.value)) {
+        keys.add(key);
+      }
+    }
+  }
+  return [...keys];
+};
+
+export { getVisibleItems, getVisibleIds, getVisibilityDependentKeys, isVisible };

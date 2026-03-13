@@ -1,14 +1,14 @@
 "use client";
 import Link from "next/link";
 import { useMemo } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { ParamObject } from "@/common/flatten-object";
 import { makePrefilledUrl } from "@/common/url";
 import type { ActionError } from "./actions";
 import { FormItem } from "./form-item";
 import { styledText } from "./styled-text";
 import { SubmitErrorAlert } from "./submit-error-alert";
-import { getVisibleIds, getVisibleItems } from "./visibility";
+import { getVisibilityDependentKeys, getVisibleIds, getVisibleItems } from "./visibility";
 import { makeVisibilityAwareResolver } from "./visibility-resolver";
 import { FormDefinitionForView } from "../../features/form-definition/schema";
 import "@/common/url/init-client-url";
@@ -130,11 +130,15 @@ export function DefinedForm({
     () => makeVisibilityAwareResolver(formItemsDefinition),
     [formItemsDefinition],
   );
+  const dependentKeys = useMemo(
+    () => getVisibilityDependentKeys(formItemsDefinition),
+    [formItemsDefinition],
+  );
   const {
     register,
     handleSubmit,
     getValues,
-    watch,
+    control,
     formState: { errors, isValid },
     reset,
   } = useForm({
@@ -142,15 +146,10 @@ export function DefinedForm({
     mode: "onBlur",
     defaultValues,
   });
-  const watchedValues = watch();
-  const visibleItems = useMemo(
-    () => getVisibleItems(formItemsDefinition, watchedValues),
-    [formItemsDefinition, watchedValues],
-  );
-  const visibleIds = useMemo(
-    () => getVisibleIds(formItemsDefinition, watchedValues),
-    [formItemsDefinition, watchedValues],
-  );
+  useWatch({ control, name: dependentKeys });
+  const currentValues = getValues();
+  const visibleItems = getVisibleItems(formItemsDefinition, currentValues);
+  const visibleIds = getVisibleIds(formItemsDefinition, currentValues);
   const handleFormSubmit = handleSubmit(data => {
     const filteredData = Object.fromEntries(
       Object.entries(data).filter(([key]) => visibleIds.has(key)),
