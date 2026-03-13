@@ -1,11 +1,8 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   evaluateRule,
   safeParseSource,
   type KeyValues,
 } from "@ncukondo/dynamic-form-rules";
-import type { FieldValues, Resolver } from "react-hook-form";
-import { makeFormItemsValueSchema } from "./form-value-schema";
 import type { FormItemsDefinition } from "../form-definition/schema";
 
 const isVisible = (
@@ -14,10 +11,18 @@ const isVisible = (
 ): boolean => {
   if (!visibleWhen) return true;
   const parsed = safeParseSource(visibleWhen);
-  if (!parsed.ok) return true;
+  if (!parsed.ok) {
+    if (process.env.NODE_ENV === "development") {
+      console.warn(`[visible_when] failed to parse: "${visibleWhen}"`);
+    }
+    return true;
+  }
   try {
     return evaluateRule(formValues, parsed.value);
-  } catch {
+  } catch (e) {
+    if (process.env.NODE_ENV === "development") {
+      console.warn(`[visible_when] evaluation error for: "${visibleWhen}"`, e);
+    }
     return true;
   }
 };
@@ -64,24 +69,4 @@ const getVisibleIds = (
   }));
 };
 
-const makeVisibilityAwareResolver = (
-  items: FormItemsDefinition | undefined,
-): Resolver<FieldValues> => {
-  const baseResolver = zodResolver(makeFormItemsValueSchema(items));
-  return async (values, context, options) => {
-    const result = await baseResolver(values, context, options);
-    if (!result.errors || Object.keys(result.errors).length === 0) {
-      return result;
-    }
-    const visibleIds = getVisibleIds(items, values);
-    const filteredErrors = Object.fromEntries(
-      Object.entries(result.errors).filter(([key]) => visibleIds.has(key)),
-    );
-    if (Object.keys(filteredErrors).length === 0) {
-      return { values, errors: {} };
-    }
-    return { values: result.values, errors: filteredErrors };
-  };
-};
-
-export { getVisibleItems, getVisibleIds, isVisible, makeVisibilityAwareResolver };
+export { getVisibleItems, getVisibleIds, isVisible, toStringValues };

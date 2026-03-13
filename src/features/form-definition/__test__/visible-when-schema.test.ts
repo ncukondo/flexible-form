@@ -31,12 +31,14 @@ describe("visible_when schema field", () => {
   });
 
   it("accepts a visible_when with 'in' operator", () => {
-    const result = safeParseFormDefinition(makeFormDef({ visible_when: 'color in ["red","blue"]' }));
+    const def = makeFormDef({ visible_when: 'color in ["red","blue"]' });
+    const result = safeParseFormDefinition(def);
     expect(result.success).toBe(true);
   });
 
   it("accepts a visible_when with logical operators", () => {
-    const result = safeParseFormDefinition(makeFormDef({ visible_when: '(a = "1") and (b = "2")' }));
+    const def = makeFormDef({ visible_when: '(a = "1") and (b = "2")' });
+    const result = safeParseFormDefinition(def);
     expect(result.success).toBe(true);
   });
 

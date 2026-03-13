@@ -8,7 +8,8 @@ import type { ActionError } from "./actions";
 import { FormItem } from "./form-item";
 import { styledText } from "./styled-text";
 import { SubmitErrorAlert } from "./submit-error-alert";
-import { getVisibleItems, makeVisibilityAwareResolver } from "./visibility";
+import { getVisibleIds, getVisibleItems } from "./visibility";
+import { makeVisibilityAwareResolver } from "./visibility-resolver";
 import { FormDefinitionForView } from "../../features/form-definition/schema";
 import "@/common/url/init-client-url";
 import { showConfirmDialog } from "../../ui/confirm-dialog";
@@ -146,7 +147,10 @@ export function DefinedForm({
     () => getVisibleItems(formItemsDefinition, watchedValues),
     [formItemsDefinition, watchedValues],
   );
-  const visibleIds = useMemo(() => new Set(visibleItems.map(item => item.id)), [visibleItems]);
+  const visibleIds = useMemo(
+    () => getVisibleIds(formItemsDefinition, watchedValues),
+    [formItemsDefinition, watchedValues],
+  );
   const handleFormSubmit = handleSubmit(data => {
     const filteredData = Object.fromEntries(
       Object.entries(data).filter(([key]) => visibleIds.has(key)),
