@@ -27,4 +27,4 @@
 
 | # | Task | Deps | Status | Task File |
 |---|------|------|--------|-----------|
-| 1 | Structured error display with line numbers and visible_when details | — | 🔲 Todo | [20260313-01](20260313-01-improve-toml-editor-error-messages.md) |
+| 1 | Structured error display with line numbers and visible_when details | — | ✅ Done | [20260313-01](completed/20260313-01-improve-toml-editor-error-messages.md) |
