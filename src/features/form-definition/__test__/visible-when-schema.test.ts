@@ -47,16 +47,18 @@ describe("visible_when schema field", () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       const messages = result.error.issues.map(i => i.message);
-      expect(messages).toContain("Invalid visible_when syntax");
+      expect(messages.some(m => m.startsWith("Invalid visible_when:"))).toBe(true);
     }
   });
 
-  it("rejects invalid visible_when syntax", () => {
+  it("rejects invalid visible_when syntax with descriptive message", () => {
     const result = safeParseFormDefinition(makeFormDef({ visible_when: "{{{invalid" }));
     expect(result.success).toBe(false);
     if (!result.success) {
       const messages = result.error.issues.map(i => i.message);
-      expect(messages).toContain("Invalid visible_when syntax");
+      const msg = messages.find(m => m.startsWith("Invalid visible_when:"));
+      expect(msg).toBeDefined();
+      expect(msg).toMatch(/expected .+ at position \d+/);
     }
   });
 
