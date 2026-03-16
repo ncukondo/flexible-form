@@ -64,6 +64,8 @@ function escapeRegex(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+// Teen numbers (11, 12, 13) work correctly: (v - 20) % 10 yields a negative
+// index, which returns undefined from s[], so it falls through to s[0] ("th").
 function ordinal(n: number): string {
   const s = ["th", "st", "nd", "rd"];
   const v = n % 100;

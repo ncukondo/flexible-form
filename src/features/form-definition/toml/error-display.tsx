@@ -9,7 +9,7 @@ export function useHasError() {
 }
 
 export function ErrorDisplay() {
-  const { error: syntaxError } = useTomlDerivedJson(s => ({ error: s.error }));
+  const syntaxError = useTomlDerivedJson(s => s.error);
   const schemaErrors = useFormDefinition(s => s.error);
   const tomlText = useTomlText(s => s.getToml());
 
