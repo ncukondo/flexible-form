@@ -1,3 +1,4 @@
+import { type ZodIssue } from "zod";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { FormDefinition, safeParseFormDefinition as safeParseFormDefinition } from "./schema";
@@ -5,7 +6,7 @@ import { FormDefinitionForEdit } from "./server/types";
 
 interface FormDefinitionStore {
   source: object | null;
-  error: string;
+  error: ZodIssue[];
   setSource: (source: object | null) => void;
   formDefinition: FormDefinition | null;
 }
@@ -15,12 +16,12 @@ const useFormDefinition = create<FormDefinitionStore>()(
     const setSource = (source: object | null) => {
       const res = safeParseFormDefinition(source);
       if (res.success) {
-        set({ formDefinition: res.data, error: "" });
+        set({ formDefinition: res.data, error: [] });
       } else {
-        set({ error: res.error.message });
+        set({ error: res.error.issues });
       }
     };
-    return { source: null, setSource, formDefinition: null, error: "" };
+    return { source: null, setSource, formDefinition: null, error: [] };
   }),
 );
 

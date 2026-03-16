@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState, useTransition } from "react";
 import { getEditUrl, getViewUrl } from "@/common/url";
-import { ErrorDisplay, useErrorMessage } from "./error-display";
+import { ErrorDisplay, useHasError } from "./error-display";
 import sampleTomlDefinition from "./sample.toml";
 import { initTomlText, useTomlText, resetTomlText } from "./store";
 import { ParamObject } from "../../../common/flatten-object";
@@ -86,7 +86,7 @@ function EditConfig(props: EditConfigProps) {
   const { formDefinitionForEdit } = useFormDefinitionForEdit();
   useInitTomlStore(formDefinitionForEdit);
   const formDefinition = useFormDefinition(s => s.formDefinition);
-  const error = useErrorMessage();
+  const hasError = useHasError();
   const handleOnSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (formDefinition) {
@@ -131,7 +131,7 @@ function EditConfig(props: EditConfigProps) {
         )}
         <button
           className="btn"
-          disabled={!!error && formDefinition !== null && !isPending}
+          disabled={hasError && formDefinition !== null && !isPending}
           type="submit"
         >
           {isPending ? (

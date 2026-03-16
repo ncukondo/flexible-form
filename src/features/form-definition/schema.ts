@@ -92,8 +92,23 @@ const actions = z
 const visibleWhen = z
   .string()
   .optional()
-  .refine(val => val === undefined || (val.length > 0 && safeParseSource(val).ok), {
-    message: "Invalid visible_when syntax",
+  .superRefine((val, ctx) => {
+    if (val === undefined) return;
+    if (val.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Invalid visible_when: expected non-empty string",
+      });
+      return;
+    }
+    const result = safeParseSource(val);
+    if (!result.ok) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `Invalid visible_when: expected ${result.expect}`
+          + ` at position ${result.pos}: "${val}"`,
+      });
+    }
   });
 
 const basicFormItem = z.object({
