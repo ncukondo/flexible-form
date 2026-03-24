@@ -5,9 +5,10 @@ import { FormDefinitionForView } from "../../features/form-definition/schema";
 const parseValue = (formValue: unknown, formDefinition: FormDefinitionForView) => {
   const formRecord = formValue as Record<string, unknown>;
   const visibleItems = getVisibleItems(formDefinition.items, formRecord);
-  const keys = new Set(makeFormItemsValueSchemaKeys(visibleItems));
+  const keys = makeFormItemsValueSchemaKeys(visibleItems);
+  const keySet = new Set(keys);
   const visibleFormValue = Object.fromEntries(
-    Object.entries(formRecord).filter(([key]) => keys.has(key)),
+    Object.entries(formRecord).filter(([key]) => keySet.has(key)),
   );
   const parsed = makeFormItemsValueSchema(visibleItems).parse(visibleFormValue);
   const schema = formDefinition.items;
