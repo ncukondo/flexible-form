@@ -17,6 +17,11 @@ URLs are auto linked -> https://sample.com/
 # - https: Send the form data to the specified URL via POST method.(e.g. https://example.com)
 actions="log:" 
 
+# Choose how multiple choice items are shown. This is optional.
+# - default: List every choice under each item.
+# - search: Show one search box for all multiple choice items, with selected choices listed by item.
+# layout="search"
+
 # Define actions to be executed after the form is submitted. This is optional.
 [post_submit]
 # message is the message to be displayed after the form is submitted.

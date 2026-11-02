@@ -6,6 +6,7 @@ Welcome to `Flexible Form` - a dynamic form builder application built with Next.
 
 - **Form Definition with TOML**: Define your forms easily in TOML, making them highly configurable and easy to manage.
 - **Vercel Postgres Backend**: Leverages the power of Vercel's serverless infrastructure along with a robust Postgres database.
+- **Search Layout**: Set `layout = "search"` to replace long multiple choice lists with one search box and a list of selected choices per item. Submitted data stays the same.
 - **Conditional Visibility**: Show or hide form items dynamically based on other items' values using `visible_when` expressions.
 - **Email Integration**: Integrated with Resend for form email functionalities.
 

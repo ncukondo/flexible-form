@@ -89,6 +89,8 @@ const actions = z
   .transform(x => (Array.isArray(x) ? x : [x]))
   .pipe(action.array().min(1));
 
+const layout = z.enum(["default", "search"]).optional();
+
 const visibleWhen = z
   .string()
   .optional()
@@ -190,6 +192,7 @@ const formDefinitionSchema = z.object({
   description,
   actions,
   post_submit: postSubmit,
+  layout,
   items: formItemsSchema.default([]),
 });
 
