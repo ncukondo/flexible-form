@@ -21,7 +21,6 @@ const sendSystemMessageMail = async (mailTo: string, body: string, title = "") =
     subject: title || "System Mail from THERS",
     text: body,
   };
-  console.log("mail", msg);
   await transporter.sendMail(msg);
   console.log("mail sent");
 };

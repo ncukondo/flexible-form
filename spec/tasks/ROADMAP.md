@@ -7,11 +7,12 @@
 
 ---
 
-## Stop logging https action payloads
+## Stop logging submission content
 
 | # | Task | Deps | Status | Task File |
 |---|------|------|--------|-----------|
-| 1 | Log only destination type and status for https actions | — | 🔄 In Progress | [20261102-01](20261102-01-stop-logging-https-action-payloads.md) |
+| 1 | Log only destination type and status for https actions | — | ✅ Done | [20261102-01](completed/20261102-01-stop-logging-https-action-payloads.md) |
+| 2 | Stop logging mail content | — | 🔄 In Progress | [20261102-03](20261102-03-stop-logging-mail-content.md) |
 
 ## Issue #17: Add prefilledParams and viewUrl to POST payload
 
@@ -39,4 +40,4 @@
 
 | # | Task | Deps | Status | Task File |
 |---|------|------|--------|-----------|
-| 1 | Add optional `layout = "search"` form setting | — | 🔄 In Progress | [20261102-02](20261102-02-add-form-search-layout.md) |
+| 1 | Add optional `layout = "search"` form setting | — | ✅ Done | [20261102-02](completed/20261102-02-add-form-search-layout.md) |
