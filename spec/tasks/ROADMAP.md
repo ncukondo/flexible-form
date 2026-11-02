@@ -7,6 +7,12 @@
 
 ---
 
+## Stop logging https action payloads
+
+| # | Task | Deps | Status | Task File |
+|---|------|------|--------|-----------|
+| 1 | Log only destination type and status for https actions | — | 🔄 In Progress | [20261102-01](20261102-01-stop-logging-https-action-payloads.md) |
+
 ## Issue #17: Add prefilledParams and viewUrl to POST payload
 
 | # | Task | Deps | Status | Task File |

@@ -55,18 +55,16 @@ async function submitFormAction(
         return;
       }
       if (tag === "https") {
-        console.log("submit Https action", action, "payload", JSON.stringify(payload, null, 2));
         const res = await fetch(action, {
           method: "POST",
           body: JSON.stringify(payload),
           headers: { "Content-Type": "application/json" },
         });
         if (res.status !== 200) {
-          const body = await res.text();
-          console.error("Error: submit Https action", action, "status", res.status, "body", body);
+          console.error("submit action failed", tag, "status", res.status);
           throw new Error(`HTTP ${res.status}`);
         }
-        console.log("Success: submit Https action", action, "status", res.status);
+        console.log("submit action", tag, "status", res.status);
         return;
       }
       throw new Error(`Unknown action tag: ${tag}`);
