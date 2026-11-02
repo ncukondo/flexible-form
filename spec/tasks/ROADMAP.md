@@ -12,7 +12,7 @@
 | # | Task | Deps | Status | Task File |
 |---|------|------|--------|-----------|
 | 1 | Log only destination type and status for https actions | — | ✅ Done | [20261102-01](completed/20261102-01-stop-logging-https-action-payloads.md) |
-| 2 | Stop logging mail content | — | 🔄 In Progress | [20261102-03](20261102-03-stop-logging-mail-content.md) |
+| 2 | Stop logging mail content | — | ✅ Done | [20261102-03](completed/20261102-03-stop-logging-mail-content.md) |
 
 ## Issue #17: Add prefilledParams and viewUrl to POST payload
 
