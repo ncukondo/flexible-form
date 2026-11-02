@@ -8,6 +8,17 @@ import { ChoiceItemDefinition, FormItemDefinition } from "../form-definition/sch
 const isSearchableItem = (item: FormItemDefinition): item is ChoiceItemDefinition =>
   item.type === "choice" && item.multiple;
 
+const LIST_TOGGLE_CLASS = [
+  "flex min-h-[2.75rem] w-full items-center justify-between gap-x-3",
+  "text-left text-sm font-bold text-base-content/75",
+].join(" ");
+
+const CHIP_CLASS = [
+  "flex min-h-[2.5rem] cursor-pointer items-center gap-x-2",
+  "rounded-lg border border-base-300 px-2 py-1",
+  "has-[:checked]:border-primary has-[:checked]:bg-primary/10",
+].join(" ");
+
 const checkboxId = (item: ChoiceItemDefinition, value: string) => `${item.id}.${value}`;
 
 /** Keeps the query on the last confirmed text while an input method is converting. */
@@ -54,10 +65,17 @@ type ChoiceSearchPanelProps = {
 function ChoiceSearchPanel({ items, register, control, errors }: ChoiceSearchPanelProps) {
   const { query, inputProps } = useConfirmedQuery();
   const watched: unknown[] = useWatch({ control, name: items.map(item => item.id) });
+  const [collapsedIds, setCollapsedIds] = useState<ReadonlySet<string>>(new Set());
 
   const isSearching = query.trim() !== "";
-  const isMatch = (title: string) => matchesQuery(title, query);
-  const resultCount = items.flatMap(({ choices }) => choices).filter(c => isMatch(c.title)).length;
+  const isShown = (title: string) => !isSearching || matchesQuery(title, query);
+  const resultCount = items.flatMap(({ choices }) => choices).filter(c => isShown(c.title)).length;
+
+  const toggleCollapsed = (id: string) => {
+    const next = new Set(collapsedIds);
+    if (!next.delete(id)) next.add(id);
+    setCollapsedIds(next);
+  };
 
   const remove = (item: ChoiceItemDefinition, value: string) => {
     // Through the checkbox itself, so that removing takes the same path as unchecking.
@@ -65,7 +83,7 @@ function ChoiceSearchPanel({ items, register, control, errors }: ChoiceSearchPan
   };
 
   return (
-    <div className="grid gap-8">
+    <div className="flex flex-col gap-8">
       <div className="sticky top-0 z-10 bg-base-100 py-2 print:hidden">
         <label className="grid gap-1">
           <span className="text-sm font-bold text-base-content/75">
@@ -80,36 +98,68 @@ function ChoiceSearchPanel({ items, register, control, errors }: ChoiceSearchPan
             className="input input-bordered w-full text-base"
           />
         </label>
+        <div role="status" className="pt-1 text-sm text-base-content/75 empty:hidden">
+          {isSearching && (resultCount > 0 ? `${resultCount}件` : "見つかりません")}
+        </div>
       </div>
-      <div role="status" className="text-sm text-base-content/75 empty:hidden print:hidden">
-        {isSearching && (resultCount > 0 ? `${resultCount}件` : "見つかりません")}
-      </div>
-      <div className={isSearching ? "print:hidden" : "hidden"}>
-        {items.flatMap(item =>
-          item.choices.map(choice => (
-            <div
-              key={checkboxId(item, choice.value)}
-              data-search-result
-              hidden={!isMatch(choice.title)}
+      <div
+        data-choice-lists
+        className={`grid gap-4 print:hidden ${isSearching ? "order-1" : "order-2"}`}
+      >
+        {items.map(item => {
+          const isCollapsed = collapsedIds.has(item.id);
+          return (
+            <section
+              key={item.id}
+              data-choice-list={item.id}
+              hidden={isSearching && !item.choices.some(c => isShown(c.title))}
             >
-              <label className="label min-h-[2.75rem] cursor-pointer justify-start gap-x-3">
-                <input
-                  type="checkbox"
-                  className="checkbox"
-                  {...register(item.id)}
-                  value={choice.value}
-                  id={checkboxId(item, choice.value)}
-                />
-                <span className="grid">
-                  <span className="label-text">{choice.title}</span>
-                  <span className="text-xs text-base-content/60">{item.title}</span>
-                </span>
-              </label>
-            </div>
-          )),
-        )}
+              {!isSearching && (
+                <button
+                  type="button"
+                  aria-expanded={!isCollapsed}
+                  className={LIST_TOGGLE_CLASS}
+                  onClick={() => toggleCollapsed(item.id)}
+                >
+                  <span>
+                    {item.title}の一覧（{item.choices.length}項目）
+                  </span>
+                  <span aria-hidden>{isCollapsed ? "▼" : "▲"}</span>
+                </button>
+              )}
+              <div hidden={isCollapsed && !isSearching}>
+                <div className="flex flex-wrap gap-2">
+                  {item.choices.map(choice => (
+                    <div
+                      key={choice.value}
+                      data-search-result
+                      className="max-w-full"
+                      hidden={!isShown(choice.title)}
+                    >
+                      <label className={CHIP_CLASS}>
+                        <input
+                          type="checkbox"
+                          className="checkbox checkbox-sm"
+                          {...register(item.id)}
+                          value={choice.value}
+                          id={checkboxId(item, choice.value)}
+                        />
+                        <span className="grid">
+                          <span className="label-text">{choice.title}</span>
+                          {isSearching && (
+                            <span className="text-xs text-base-content/60">{item.title}</span>
+                          )}
+                        </span>
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+          );
+        })}
       </div>
-      <div className="grid gap-8">
+      <div data-selected-groups className={`grid gap-8 ${isSearching ? "order-2" : "order-1"}`}>
         {items.map((item, i) => {
           const values = toSelectedValues(watched[i]);
           const selected = item.choices.filter(({ value }) => values.includes(value));

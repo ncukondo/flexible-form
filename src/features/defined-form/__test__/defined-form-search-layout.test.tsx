@@ -135,7 +135,7 @@ const setText = async (input: HTMLInputElement, text: string) => {
 
 const visibleResults = () =>
   [...container.querySelectorAll<HTMLElement>("[data-search-result]")]
-    .filter(row => !row.hidden)
+    .filter(row => row.closest("[hidden]") === null)
     .map(row => row.textContent);
 
 const dispatchSubmit = async () => {
@@ -310,10 +310,57 @@ describe("search layout keeps the webhook data the same as the default layout", 
 });
 
 describe("search layout display", () => {
-  it("shows one search input and no candidate list before searching", async () => {
+  it("shows one search input and lists every choice before searching", async () => {
     await mount(definitions.search, urlParams);
     expect(container.querySelectorAll("input[type=search]")).toHaveLength(1);
-    expect(visibleResults()).toEqual([]);
+    expect(visibleResults()).toEqual([
+      "皮膚消毒",
+      "気道内吸引",
+      "発熱",
+      "全身倦怠感",
+      "めまい",
+      "発熱性好中球減少症",
+      "脳出血",
+    ]);
+  });
+
+  it("shows selected items before the list of every choice", async () => {
+    await mount(definitions.search, urlParams);
+    const selected = container.querySelector("[data-selected-groups]") as HTMLElement;
+    const list = container.querySelector("[data-choice-lists]") as HTMLElement;
+    expect(selected.className).toContain("order-1");
+    expect(list.className).toContain("order-2");
+    await setText(searchInput(), "発熱");
+    expect(list.className).toContain("order-1");
+    expect(selected.className).toContain("order-2");
+  });
+
+  it("collapses one category of the list and keeps its selections", async () => {
+    await mount(definitions.search, urlParams);
+    const toggle = container.querySelector(
+      '[data-choice-list="symptoms"] button',
+    ) as HTMLButtonElement;
+    expect(toggle.getAttribute("aria-expanded")).toBe("true");
+    expect(toggle.type).toBe("button");
+    await click(toggle);
+    expect(toggle.getAttribute("aria-expanded")).toBe("false");
+    expect(visibleResults()).toEqual(["皮膚消毒", "気道内吸引", "発熱性好中球減少症", "脳出血"]);
+    expect(checkedValues("symptoms")).toEqual(["S1", "S3"]);
+  });
+
+  it("searches collapsed categories too", async () => {
+    await mount(definitions.search, {});
+    await click(
+      container.querySelector('[data-choice-list="symptoms"] button') as HTMLButtonElement,
+    );
+    await setText(searchInput(), "めまい");
+    expect(visibleResults()).toEqual(["めまい症候"]);
+  });
+
+  it("checking a choice in the list adds it to the selected group", async () => {
+    await mount(definitions.search, {});
+    await click(checkbox("symptoms", "S2"));
+    expect(removeButton("全身倦怠感")).not.toBeNull();
   });
 
   it("puts the search input before the other form items", async () => {
@@ -392,7 +439,7 @@ describe("search layout with an input method", () => {
     await compose("compositionstart");
     await setText(searchInput(), "はつねつ");
     expect(searchInput().value).toBe("はつねつ");
-    expect(visibleResults()).toEqual([]);
+    expect(visibleResults()).toHaveLength(7);
     expect(container.textContent).not.toContain("見つかりません");
   });
 

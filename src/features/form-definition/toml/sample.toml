@@ -19,7 +19,8 @@ actions="log:"
 
 # Choose how multiple choice items are shown. This is optional.
 # - default: List every choice under each item.
-# - search: Show one search box for all multiple choice items, with selected choices listed by item.
+# - search: Show one search box for all multiple choice items, selected choices by item,
+#   and a compact list of every choice.
 # layout="search"
 
 # Define actions to be executed after the form is submitted. This is optional.

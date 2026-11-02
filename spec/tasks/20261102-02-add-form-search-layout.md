@@ -3,8 +3,8 @@
 ## Purpose
 
 Forms with hundreds of multiple choice options are hard to read and fill in, especially on a
-smartphone. An optional form-level setting replaces the long lists with one search box and a list
-of selected choices per item, without changing the url format or the submitted data.
+smartphone. An optional form-level setting shows them as one search box and a list
+of selected choices per item, followed by a compact list of every choice, without changing the url format or the submitted data.
 
 ## Related Source Files
 
