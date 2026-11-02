@@ -34,3 +34,9 @@
 | # | Task | Deps | Status | Task File |
 |---|------|------|--------|-----------|
 | 1 | Structured error display with line numbers and visible_when details | — | ✅ Done | [20260313-01](completed/20260313-01-improve-toml-editor-error-messages.md) |
+
+## Search layout for long multiple choice forms
+
+| # | Task | Deps | Status | Task File |
+|---|------|------|--------|-----------|
+| 1 | Add optional `layout = "search"` form setting | — | 🔄 In Progress | [20261102-02](20261102-02-add-form-search-layout.md) |

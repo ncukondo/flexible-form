@@ -5,6 +5,7 @@ import { useForm, useWatch } from "react-hook-form";
 import { ParamObject } from "@/common/flatten-object";
 import { makePrefilledUrl } from "@/common/url";
 import type { ActionError } from "./actions";
+import { ChoiceSearchPanel, isSearchableItem } from "./choice-search-panel";
 import { FormItem } from "./form-item";
 import { styledText } from "./styled-text";
 import { SubmitErrorAlert } from "./submit-error-alert";
@@ -149,6 +150,9 @@ export function DefinedForm({
   useWatch({ control, name: dependentKeys });
   const currentValues = getValues();
   const visibleItems = getVisibleItems(formItemsDefinition, currentValues);
+  const searchableItems =
+    formDefinition.layout === "search" ? visibleItems.filter(isSearchableItem) : [];
+  const plainItems = visibleItems.filter(item => !searchableItems.some(({ id }) => id === item.id));
   const handleFormSubmit = handleSubmit(data => {
     const submitVisibleIds = getVisibleIds(formItemsDefinition, data);
     const filteredData = Object.fromEntries(
@@ -165,7 +169,10 @@ export function DefinedForm({
         <div className="text-4xl">{formDefinition.title}</div>
         <div>{styledText(formDefinition.description)}</div>
         <div className="grid gap-20">
-          {visibleItems.map(item => (
+          {searchableItems.length > 0 && (
+            <ChoiceSearchPanel {...{ items: searchableItems, register, control, errors }} />
+          )}
+          {plainItems.map(item => (
             <FormItem {...{ register, errors, item, urlMakingMode }} key={item.id} />
           ))}
         </div>

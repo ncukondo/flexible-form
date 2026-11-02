@@ -164,4 +164,4 @@ function FormItem({ errors, item, register, urlMakingMode }: FormItemProps) {
   );
 }
 
-export { FormItem };
+export { Description, FormItem, ItemTitle };
